@@ -1,0 +1,76 @@
+<div class="usuarios-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Configuración de Accesos por Rol</h2>
+            <p class="page-subtitle">Gestione de forma masiva los permisos de las pantallas del sistema.</p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del Rol del Sistema</th>
+                    <th style="text-align: center;">Acciones de Seguridad</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (rol of roles; track rol.id) {
+                <tr>
+                    <td><strong>#{{ rol.id }}</strong></td>
+                    <td><span class="badge-rol" style="font-size: 14px;">🛡️ {{ rol.nombre }}</span></td>
+                    <td style="text-align: center;">
+                        <button class="btn-primary" style="padding: 6px 12px; font-size: 13px;"
+                            (click)="abrirModalPermisos(rol)">
+                            ⚙️ Configurar Accesos
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (mostrarModal) {
+<div class="modal-backdrop">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>Permisos para: {{ rolSeleccionado?.nombre }}</h3>
+            <button type="button" class="close-btn" (click)="cerrarModal()">&times;</button>
+        </div>
+
+        <form (submit)="guardarPermisosMatriz($event)">
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; color: #666; font-size: 13px;">
+                    Marque las casillas de las opciones de menú que este rol tendrá permitido visualizar:
+                </p>
+
+                <div
+                    style="display: flex; flex-direction: column; gap: 12px; max-height: 300px; overflow-y: auto; padding: 5px;">
+                    @for (menu of menusCheck; track menu.id) {
+                    <label
+                        style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-bottom: 1px solid #eee;">
+                        <input type="checkbox" [name]="'menu_' + menu.id" [(ngModel)]="menu.activo"
+                            style="width: 18px; height: 18px; cursor: pointer;">
+                        <div>
+                            <span style="font-weight: 600; color: #333;">{{ menu.nombre }}</span>
+                            <br>
+                            <code style="font-size: 11px; color: #0076ff;">{{ menu.ruta }}</code>
+                        </div>
+                    </label>
+                    } @empty {
+                    <p style="text-align: center; color: #999;">No hay pantallas de menús registradas en el sistema.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-success">Guardar Permisos</button>
+            </div>
+        </form>
+    </div>
+</div>
+}

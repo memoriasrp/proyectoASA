@@ -1,0 +1,403 @@
+/* You can add global styles to this file, and also import other style files */
+.usuarios-container {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 20px;
+    color: #1e1e2d;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+}
+
+.page-subtitle {
+    font-size: 13px;
+    color: #b5b5c3;
+    margin: 0;
+}
+
+.btn-primary {
+    background-color: #3699ff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #187de4;
+}
+
+/* Tabla Estilos */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+}
+
+.custom-table th {
+    background-color: #f3f6f9;
+    color: #b5b5c3;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 16px;
+    border-bottom: 1px solid #ebedf3;
+}
+
+.custom-table td {
+    padding: 16px;
+    color: #464e5f;
+    border-bottom: 1px solid #ebedf3;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar-mini {
+    width: 32px;
+    height: 32px;
+    background-color: #e1f0ff;
+    color: #3699ff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* Badges de Roles */
+.badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-admin {
+    background-color: #fff4de;
+    color: #ffa800;
+}
+
+.badge-visor {
+    background-color: #e1f0ff;
+    color: #3699ff;
+}
+
+/* Botones de Acciones */
+.btn-action {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-edit:hover {
+    background-color: #f3f6f9;
+}
+
+.btn-delete:hover {
+    background-color: #ffeef3;
+}
+
+.empty-row {
+    text-align: center;
+    color: #b5b5c3;
+    padding: 30px !important;
+}
+
+/* --- ESTILOS DEL MODAL FLOTANTE --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #ffffff;
+    width: 450px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 16px 20px;
+    background-color: #f3f6f9;
+    border-bottom: 1px solid #ebedf3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1e1e2d;
+    font-size: 16px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #b5b5c3;
+}
+
+.close-btn:hover {
+    color: #f64e60;
+}
+
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #464e5f;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ebedf3;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #464e5f;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3699ff;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ebedf3;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-secondary {
+    background: #f3f6f9;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    color: #7e8299;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: #e4e6ef;
+}
+
+.btn-success {
+    background: #1bc5bd;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background: #149b94;
+}
+
+
+/* --- ESTILOS DEL MODAL FLOTANTE --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #ffffff;
+    width: 450px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 16px 20px;
+    background-color: #f3f6f9;
+    border-bottom: 1px solid #ebedf3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1e1e2d;
+    font-size: 16px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #b5b5c3;
+}
+
+.close-btn:hover {
+    color: #f64e60;
+}
+
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #464e5f;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ebedf3;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #464e5f;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3699ff;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ebedf3;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-secondary {
+    background: #f3f6f9;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    color: #7e8299;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: #e4e6ef;
+}
+
+.btn-success {
+    background: #1bc5bd;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background: #149b94;
+}

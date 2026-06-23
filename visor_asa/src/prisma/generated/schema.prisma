@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  // 1. Declaras los esquemas que vas a usar. 'public' para el estándar y 'config' para tus tablas
+  schemas  = ["public", "config"]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/prisma/generated"
+  previewFeatures = ["multiSchema"]
+}
+
+// 3. Mapeas cada modelo agregando el bloque '@@schema("config")' al final de cada uno
+
+model TipoUsuario {
+  id       Int               @id @default(autoincrement())
+  nombre   String            @unique
+  usuarios Usuario[]
+  permisos PermisoPantalla[]
+
+  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+}
+
+model OpcionMenu {
+  id       Int               @id @default(autoincrement())
+  nombre   String
+  ruta     String
+  icono    String?
+  permisos PermisoPantalla[]
+
+  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+}
+
+model PermisoPantalla {
+  id            Int @id @default(autoincrement())
+  tipoUsuarioId Int
+  opcionMenuId  Int
+
+  tipoUsuario TipoUsuario @relation(fields: [tipoUsuarioId], references: [id], onDelete: Cascade)
+  opcionMenu  OpcionMenu  @relation(fields: [opcionMenuId], references: [id], onDelete: Cascade)
+
+  @@unique([tipoUsuarioId, opcionMenuId])
+  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+}
+
+model Usuario {
+  id            Int         @id @default(autoincrement())
+  nombre        String
+  email         String      @unique
+  password      String
+  tipoUsuarioId Int
+  tipoUsuario   TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
+
+  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+}

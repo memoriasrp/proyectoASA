@@ -1,0 +1,87 @@
+<div class="usuarios-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Matriz de Permisos por Pantalla</h2>
+            <p class="page-subtitle">Asignación dinámica de accesos y menús según el rol asignado.</p>
+        </div>
+        <button class="btn-primary" (click)="abrirModalCrear()">+ Asignar Pantalla</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID Asignación</th>
+                    <th>Rol / Tipo Usuario</th>
+                    <th>Pantalla / Menú Permitido</th>
+                    <th>Ruta Interna Asociada</th>
+                    <th style="text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of permisos; track item.id) {
+                <tr>
+                    <td><strong>#{{ item.id }}</strong></td>
+                    <td><span class="badge-rol">{{ item.tipoUsuario?.nombre }}</span></td>
+                    <td>📁 {{ item.opcionMenu?.nombre }}</td>
+                    <td><code>{{ item.opcionMenu?.ruta }}</code></td>
+                    <td style="text-align: center;">
+                        <button class="btn-action btn-edit" title="Editar Relación"
+                            (click)="abrirModalEditar(item)">✏️</button>
+                        <button class="btn-action btn-delete" title="Revocar Acceso"
+                            (click)="eliminarPermiso(item.id)">🗑️</button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="5" class="empty-row">No se han definido relaciones de accesos en el sistema.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (mostrarModal) {
+<div class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>{{ modoEdicion ? 'Modificar Acceso Asignado' : 'Asignar Nueva Pantalla a Rol' }}</h3>
+            <button type="button" class="close-btn" (click)="cerrarModal()">&times;</button>
+        </div>
+
+        <form (submit)="guardarPermiso($event)">
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="tipoUsuarioId">Seleccione el Rol</label>
+                    <select id="tipoUsuarioId" name="tipoUsuarioId" [(ngModel)]="nuevoPermiso.tipoUsuarioId" required>
+                        <option value="" disabled selected>Escoja un rol de usuario...</option>
+                        @for (rol of roles; track rol.id) {
+                        <option [value]="rol.id">{{ rol.nombre }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="opcionMenuId">Seleccione la Pantalla Autorizada</label>
+                    <select id="opcionMenuId" name="opcionMenuId" [(ngModel)]="nuevoPermiso.opcionMenuId" required>
+                        <option value="" disabled selected>Escoja una opción de menú...</option>
+                        @for (menu of menus; track menu.id) {
+                        <option [value]="menu.id">{{ menu.nombre }} ({{ menu.ruta }})</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-success">
+                    {{ modoEdicion ? 'Actualizar Permiso' : 'Conceder Acceso' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

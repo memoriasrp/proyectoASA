@@ -1,0 +1,82 @@
+<div class="usuarios-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Gestión de Menús de la Aplicación</h2>
+            <p class="page-subtitle">Configuración de accesos y rutas dinámicas del sistema de la cooperativa.</p>
+        </div>
+        <button class="btn-primary" (click)="abrirModalCrear()">+ Nuevo Menú</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de Opción</th>
+                    <th>Ruta URL (RouterLink)</th>
+                    <th>Icono Clave</th>
+                    <th style="text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of menus; track item.id) {
+                <tr>
+                    <td><strong>#{{ item.id }}</strong></td>
+                    <td>{{ item.nombre }}</td>
+                    <td><code>{{ item.ruta }}</code></td>
+                    <td><span style="font-size: 16px;">{{ item.icono || '📁' }}</span></td>
+                    <td style="text-align: center;">
+                        <button class="btn-action btn-edit" title="Editar" (click)="abrirModalEditar(item)">✏️</button>
+                        <button class="btn-action btn-delete" title="Eliminar"
+                            (click)="eliminarMenu(item.id)">🗑️</button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="5" class="empty-row">No hay opciones de menú configuradas en la tabla.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (mostrarModal) {
+<div class="modal-backdrop">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>{{ modoEdicion ? 'Modificar Opción de Menú' : 'Registrar Nueva Opción de Menú' }}</h3>
+            <button type="button" class="close-btn" (click)="cerrarModal()">&times;</button>
+        </div>
+
+        <form (submit)="guardarMenu($event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nombre">Nombre de la opción</label>
+                    <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoMenu.nombre" required
+                        placeholder="Ej. Facturación, Reportes">
+                </div>
+
+                <div class="form-group">
+                    <label for="ruta">Ruta de navegación (Angular)</label>
+                    <input type="text" id="ruta" name="ruta" [(ngModel)]="nuevoMenu.ruta" required
+                        placeholder="Ej. /facturas, /reportes">
+                </div>
+
+                <div class="form-group">
+                    <label for="icono">Icono (Emoji o texto CSS)</label>
+                    <input type="text" id="icono" name="icono" [(ngModel)]="nuevoMenu.icono"
+                        placeholder="Ej. 📊, ⚙️, 📄">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-success">
+                    {{ modoEdicion ? 'Actualizar Cambios' : 'Crear Menú' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

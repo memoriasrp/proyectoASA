@@ -1,0 +1,24 @@
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+    <h2>Iniciar Sesión</h2>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Correo Electrónico</label>
+            <input type="email" formControlName="email" placeholder="ejemplo@mail.com"
+                style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Contraseña</label>
+            <input type="password" formControlName="password" placeholder="******"
+                style="width: 100%; padding: 8px; box-sizing: border-box;">
+        </div>
+
+        <p *ngIf="errorMessage" style="color: red; font-size: 14px;">{{ errorMessage }}</p>
+
+        <button type="submit" [disabled]="loginForm.invalid"
+            style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Ingresar
+        </button>
+    </form>
+</div>
