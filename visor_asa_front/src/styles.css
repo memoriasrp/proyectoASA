@@ -1,9 +1,99 @@
-/* You can add global styles to this file, and also import other style files */
-.usuarios-container {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+/* ==========================================================================
+   RESETEO GLOBAL Y TIPOGRAFÍA
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   ESTILOS COMPARTIDOS PARA PÁGINAS INTERNAS (Tablas, Cards, Formularios)
+   ========================================================================== */
+
+/* Contenedor estándar para vistas */
+.view-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Encabezados de páginas internas */
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 16px;
+}
+
+/* Tablas generales optimizadas (Ej: Padrón de Socios, Aportaciones) */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 0.9rem;
+}
+
+.custom-table th {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.custom-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Badges / Etiquetas de Estado (True, False, Null) */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.badge-success {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.badge-warning {
+    background-color: #fef9c3;
+    color: #a16207;
+}
+
+/* utilidades de texto */
+.text-muted {
+    color: #64748b;
+}
+
+.text-right {
+    text-align: right;
 }
 
 .page-header {
@@ -11,393 +101,288 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+    gap: 16px;
 }
 
-.page-title {
-    font-size: 20px;
-    color: #1e1e2d;
-    margin: 0 0 4px 0;
-    font-weight: 600;
+/* ==========================================================================
+   ESTILOS GLOBALES PARA MODALES (Update / Create) - CORREGIDO
+   ========================================================================== */
+
+/* Fondo oscuro / Overlay (Asegura cubrir toda la pantalla uniformemente) */
+.modal-backdrop,
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.75);
+    /* Oscurece el fondo para tapar texto residual */
+    backdrop-filter: blur(4px);
+    z-index: 2000 !important;
+    /* Por encima de cualquier sidebar o navbar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.page-subtitle {
-    font-size: 13px;
-    color: #b5b5c3;
-    margin: 0;
+/* Caja contenedora unificada del Modal */
+.modal-container,
+.modal-dialog {
+    background-color: #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+    width: 90% !important;
+    max-width: 450px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border: none !important;
+    animation: modalScaleIn 0.2s ease-out;
+}
+
+/* Cabecera limpia */
+.modal-header {
+    padding: 18px 24px !important;
+    background-color: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.modal-header h3 {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+}
+
+/* Cuerpo del Formulario (Alinea los labels verticalmente sobre sus inputs) */
+.modal-body {
+    padding: 24px !important;
+    background-color: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+}
+
+/* Cajas de grupo para formularios */
+.form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+}
+
+.form-group label {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    margin-bottom: 6px !important;
+}
+
+/* Inputs de texto limpios */
+.form-control {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    font-size: 0.9rem !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    color: #1e293b !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+
+.form-control:focus {
+    outline: none !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+}
+
+/* Pie del modal (Botones alineados a la derecha de forma horizontal) */
+.modal-footer {
+    padding: 16px 24px !important;
+    background-color: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+}
+
+/* Botones de acción unificados */
+.btn {
+    padding: 10px 18px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    border: none !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.btn-secondary {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e1 !important;
 }
 
 .btn-primary {
-    background-color: #3699ff;
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
 }
 
 .btn-primary:hover {
-    background-color: #187de4;
+    background-color: #0369a1 !important;
 }
 
-/* Tabla Estilos */
+/* Animación de entrada */
+@keyframes modalScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ==========================================================================
+   ESTILOS ADICIONALES PARA LA VISTA DE SOCIOS
+   ========================================================================== */
+
+/* Contenedor principal de la tabla para evitar desbordes */
 .table-responsive {
     width: 100%;
     overflow-x: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-top: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Forzar el comportamiento de la tabla custom */
 .custom-table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
-    font-size: 14px;
+    font-size: 0.875rem;
+}
+
+/* Ajustes finos para las celdas de los Socios */
+.custom-table th,
+.custom-table td {
+    padding: 14px 16px !important;
+    vertical-align: middle;
 }
 
 .custom-table th {
-    background-color: #f3f6f9;
-    color: #b5b5c3;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 12px;
-    padding: 16px;
-    border-bottom: 1px solid #ebedf3;
+    background-color: #f8fafc !important;
+    /* Gris sutil de fondo */
+    color: #475569 !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    white-space: nowrap;
 }
 
-.custom-table td {
-    padding: 16px;
-    color: #464e5f;
-    border-bottom: 1px solid #ebedf3;
+.custom-table tbody tr {
+    transition: background-color 0.15s ease;
 }
 
-.user-cell {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.custom-table tbody tr:hover {
+    background-color: #f1f5f9 !important;
+    /* Efecto hover al pasar el mouse por el socio */
 }
 
-.user-avatar-mini {
-    width: 32px;
-    height: 32px;
-    background-color: #e1f0ff;
-    color: #3699ff;
+/* Buscador Superior (Input de búsqueda de socios) */
+.usuarios-container input[type="text"],
+.usuarios-container .search-input,
+input[placeholder*="Buscar"] {
+    width: 100%;
+    max-width: 500px;
+    /* Para que no ocupe toda la pantalla horizontal */
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    border: 1px solid #cbd5e1;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 12px;
+    background-color: #ffffff;
+    margin-bottom: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-/* Badges de Roles */
-.badge {
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-admin {
-    background-color: #fff4de;
-    color: #ffa800;
-}
-
-.badge-visor {
-    background-color: #e1f0ff;
-    color: #3699ff;
-}
-
-/* Botones de Acciones */
-.btn-action {
-    background: none;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.btn-edit:hover {
-    background-color: #f3f6f9;
-}
-
-.btn-delete:hover {
-    background-color: #ffeef3;
-}
-
-.empty-row {
-    text-align: center;
-    color: #b5b5c3;
-    padding: 30px !important;
-}
-
-/* --- ESTILOS DEL MODAL FLOTANTE --- */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: #ffffff;
-    width: 450px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    padding: 16px 20px;
-    background-color: #f3f6f9;
-    border-bottom: 1px solid #ebedf3;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #1e1e2d;
-    font-size: 16px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: #b5b5c3;
-}
-
-.close-btn:hover {
-    color: #f64e60;
-}
-
-.modal-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #464e5f;
-}
-
-.form-group input,
-.form-group select {
-    padding: 10px;
-    border: 1px solid #ebedf3;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #464e5f;
+.usuarios-container input[type="text"]:focus {
     outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #3699ff;
-}
-
-.modal-footer {
-    padding: 15px 20px;
-    border-top: 1px solid #ebedf3;
+/* ==========================================================================
+   ESTILOS PARA LA PAGINACIÓN (Siguiente, Anterior, Páginas)
+   ========================================================================== */
+.pagination-container,
+div:has(> .btn-pagination),
+.custom-pagination {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-secondary {
-    background: #f3f6f9;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    color: #7e8299;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.btn-secondary:hover {
-    background: #e4e6ef;
-}
-
-.btn-success {
-    background: #1bc5bd;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.btn-success:hover {
-    background: #149b94;
-}
-
-
-/* --- ESTILOS DEL MODAL FLOTANTE --- */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: #ffffff;
-    width: 450px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    padding: 16px 20px;
-    background-color: #f3f6f9;
-    border-bottom: 1px solid #ebedf3;
-    display: flex;
     justify-content: space-between;
-    align-items: center;
+    padding: 16px 4px;
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 12px;
 }
 
-.modal-header h3 {
-    margin: 0;
-    color: #1e1e2d;
-    font-size: 16px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 22px;
+/* Botones de paginación individuales (Anterior, Siguiente, <<, >>) */
+.pagination-container button,
+.btn-pagination,
+button:has(> i.bi-chevron-right),
+.usuarios-container .pagination button {
+    padding: 8px 14px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
     cursor: pointer;
-    color: #b5b5c3;
+    transition: all 0.15s ease;
 }
 
-.close-btn:hover {
-    color: #f64e60;
+.pagination-container button:hover:not(:disabled),
+.btn-pagination:hover:not(:disabled) {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
 }
 
-.modal-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.pagination-container button:disabled,
+.btn-pagination:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f8fafc !important;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+/* ==========================================================================
+   EFECTO INTERCALADO PARA LAS TABLAS (Zebra Striping)
+   ========================================================================== */
+
+/* Pinta las filas pares (2, 4, 6...) con un gris muy sutil */
+.custom-table tbody tr:nth-child(even) {
+    background-color: #f8fafc !important;
 }
 
-.form-group label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #464e5f;
+/* Pinta las filas impares (1, 3, 5...) de color blanco puro */
+.custom-table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
 }
 
-.form-group input,
-.form-group select {
-    padding: 10px;
-    border: 1px solid #ebedf3;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #464e5f;
-    outline: none;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #3699ff;
-}
-
-.modal-footer {
-    padding: 15px 20px;
-    border-top: 1px solid #ebedf3;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.btn-secondary {
-    background: #f3f6f9;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    color: #7e8299;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.btn-secondary:hover {
-    background: #e4e6ef;
-}
-
-.btn-success {
-    background: #1bc5bd;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.btn-success:hover {
-    background: #149b94;
+/* Mantenemos el efecto hover para que resalte la fila al pasar el mouse */
+.custom-table tbody tr:hover {
+    background-color: #f1f5f9 !important;
 }

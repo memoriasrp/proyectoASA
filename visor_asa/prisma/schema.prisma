@@ -1,45 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
-  // 1. Declaras los esquemas que vas a usar. 'public' para el estándar y 'config' para tus tablas
-  schemas  = ["public", "config"] 
+  schemas  = ["config", "consolidado", "ctacte", "public", "sbs"]
 }
-
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
-}
-
-// 3. Mapeas cada modelo agregando el bloque '@@schema("config")' al final de cada uno
 
 model TipoUsuario {
-  id          Int                 @id @default(autoincrement())
-  nombre      String              @unique
-  usuarios    Usuario[]
-  permisos    PermisoPantalla[]
+  id       Int               @id @default(autoincrement())
+  nombre   String            @unique
+  permisos PermisoPantalla[]
+  usuarios Usuario[]
 
-  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+  @@schema("config")
 }
 
 model OpcionMenu {
-  id          Int                 @id @default(autoincrement())
-  nombre      String
-  ruta        String
-  icono       String?
-  permisos    PermisoPantalla[]
+  id       Int               @id @default(autoincrement())
+  nombre   String
+  ruta     String
+  icono    String?
+  orden    Int
+  grupo    GrupoMenu?
+  permisos PermisoPantalla[]
 
-  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+  @@schema("config")
+}
+
+enum GrupoMenu {
+  COMPARACIONES
+  RESULTADOS
+  REPORTES_SBS  @map("REPORTES SBS")
+  CONFIGURACION
+
+  @@schema("config")
 }
 
 model PermisoPantalla {
   id            Int         @id @default(autoincrement())
   tipoUsuarioId Int
   opcionMenuId  Int
-
-  tipoUsuario   TipoUsuario @relation(fields: [tipoUsuarioId], references: [id], onDelete: Cascade)
   opcionMenu    OpcionMenu  @relation(fields: [opcionMenuId], references: [id], onDelete: Cascade)
+  tipoUsuario   TipoUsuario @relation(fields: [tipoUsuarioId], references: [id], onDelete: Cascade)
 
   @@unique([tipoUsuarioId, opcionMenuId])
-  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+  @@schema("config")
 }
 
 model Usuario {
@@ -50,5 +56,1038 @@ model Usuario {
   tipoUsuarioId Int
   tipoUsuario   TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
 
-  @@schema("config") // <-- Obliga a Prisma a crearla dentro de 'config'
+  @@schema("config")
 }
+
+model calendario_periodos {
+  periodo String    @id @db.VarChar(6)
+  fecha   DateTime? @db.Date
+  tc      Decimal?  @db.Decimal
+
+  @@schema("consolidado")
+}
+
+model carterasdpf {
+  per           String    @db.VarChar(6)
+  idcdp         String    @db.VarChar(28)
+  idsocio       String?   @db.VarChar(25)
+  nombre        String?
+  numdoc        String?   @db.VarChar(255)
+  descri        String?   @db.VarChar(255)
+  moneda        String?
+  fechaemi      DateTime? @db.Date
+  cap_original  Decimal?  @db.Decimal(12, 2)
+  saldo_periodo Decimal?  @db.Decimal
+  max           DateTime? @db.Date
+
+  @@id([per, idcdp])
+  @@schema("consolidado")
+}
+
+model carterasprestamos {
+  periodo                   String    @db.VarChar(6)
+  idpagare                  String    @db.VarChar
+  idsocio                   String?   @db.VarChar(25)
+  nombre                    String?
+  numdoc                    String?   @db.VarChar(255)
+  descri                    String?   @db.VarChar(255)
+  moneda                    String?
+  fechades                  DateTime? @db.Date
+  importe_original_prestamo Decimal?  @db.Decimal(12, 2)
+  saldo_periodo             Decimal?  @db.Decimal
+  max                       Decimal?  @db.Decimal
+  castigada                 Decimal?  @db.Decimal(12, 2)
+
+  @@id([periodo, idpagare])
+  @@schema("consolidado")
+}
+
+model mov_softia {
+  tipo     String?
+  idcdp    String?   @db.VarChar
+  fecha    DateTime? @db.Date
+  idsocio  String?   @db.VarChar(25)
+  nombre   String?
+  moneda   String?
+  car_abo  String?
+  capital  Decimal?  @db.Decimal
+  interes  Decimal?  @db.Decimal
+  otros    Decimal?  @db.Decimal
+  total    Decimal?  @db.Decimal
+  idnumope String    @id @db.VarChar
+
+  @@schema("consolidado")
+}
+
+model movimientosahorro {
+  idctaaho     String    @db.VarChar(28)
+  fecha        DateTime  @db.Date
+  idsocio      String?   @db.VarChar(25)
+  nombre       String?
+  numdoc       String?   @db.VarChar(255)
+  descri       String?   @db.VarChar(255)
+  moneda       String?
+  item         Int?
+  car_abo      String?   @db.VarChar(16)
+  capital      Decimal?  @db.Decimal
+  interes      Decimal?  @db.Decimal
+  total        Decimal?  @db.Decimal(12, 2)
+  operacion    String?   @db.VarChar(19)
+  idnumope     String    @db.VarChar(30)
+  idahorro     String?   @db.VarChar(19)
+  cap_original Int?
+  plazo        Int?
+  tasa         Decimal?  @db.Decimal(12, 2)
+  tasaanual    Decimal?  @db.Decimal(12, 2)
+  fechaape     DateTime? @db.Date
+  fecha_ven    DateTime? @db.Date
+  fechacie     DateTime? @db.Date
+  feccan       DateTime? @db.Date
+  tipsoc       Int?
+  natjur       Int?
+  ruc          String?   @db.VarChar(255)
+  sexo         Decimal?  @db.Decimal(12, 2)
+
+  @@id([fecha, idnumope, idctaaho])
+  @@schema("consolidado")
+}
+
+model movimientosaportes {
+  idcdp        String    @db.VarChar(25)
+  fecha        DateTime  @db.Date
+  idsocio      String?   @db.VarChar(25)
+  nombre       String?
+  numdoc       String?   @db.VarChar(255)
+  descri       String?
+  moneda       String?
+  item         Int?
+  car_abo      String?   @db.VarChar(16)
+  capital      Decimal?  @db.Decimal(12, 2)
+  interes      Decimal?  @db.Decimal
+  total        Decimal?  @db.Decimal(12, 2)
+  operacion    String?   @db.VarChar(19)
+  idnumope     String    @db.VarChar(27)
+  idapo        String?   @db.VarChar(25)
+  cap_original Int?
+  plazo        Int?
+  tasa         Int?
+  tasaanual    Int?
+  fecing       DateTime? @db.Date
+  fechaemi     DateTime? @db.Date
+  fecret       DateTime? @db.Date
+  fechacan     DateTime? @db.Date
+  tipsoc       Int?
+  natjur       Int?
+  ruc          String?   @db.VarChar(255)
+  sexo         Decimal?  @db.Decimal(12, 2)
+
+  @@id([fecha, idnumope, idcdp])
+  @@schema("consolidado")
+}
+
+model movimientosdpf {
+  idcdp        String    @db.VarChar(28)
+  fecha        DateTime  @db.Date
+  idsocio      String?   @db.VarChar(25)
+  nombre       String?
+  numdoc       String?   @db.VarChar(255)
+  descri       String?   @db.VarChar(255)
+  moneda       String?
+  item         Int
+  car_abo      String?
+  capital      Decimal?  @db.Decimal(12, 2)
+  interes      Decimal?  @db.Decimal
+  total        Decimal?  @db.Decimal
+  operacion    String?   @db.VarChar(19)
+  idnumope     String    @db.VarChar(30)
+  idahorro     String?   @db.VarChar(19)
+  cap_original Decimal?  @db.Decimal(12, 2)
+  plazo        Int?
+  tasa         Decimal?  @db.Decimal(12, 2)
+  tasaanual    Decimal?  @db.Decimal(12, 2)
+  fecing       DateTime? @db.Date
+  fechaemi     DateTime? @db.Date
+  fechaven     DateTime? @db.Date
+  fechacan     DateTime? @db.Date
+  tipsoc       Int?
+  natjur       Int?
+  ruc          String?   @db.VarChar(255)
+  sexo         Decimal?  @db.Decimal(12, 2)
+
+  @@id([idnumope, fecha, idcdp, item])
+  @@schema("consolidado")
+}
+
+model movimientosprestamos {
+  idpagare  String    @db.VarChar
+  fecha     DateTime  @db.Date
+  idsocio   String?   @db.VarChar(25)
+  nombre    String?
+  numdoc    String?   @db.VarChar(255)
+  descri    String?   @db.VarChar(255)
+  moneda    String?
+  nrocuota  Decimal   @db.Decimal
+  car_abo   String    @db.VarChar
+  capital   Decimal?  @db.Decimal
+  interes   Decimal?  @db.Decimal
+  mora      Decimal?  @db.Decimal
+  seguro    Decimal?  @db.Decimal
+  aporte    Decimal?  @db.Decimal
+  total     Decimal?  @db.Decimal
+  operacion String?   @db.VarChar(19)
+  idnumope  String    @db.VarChar(30)
+  idforma   String?   @db.VarChar(19)
+  importe   Decimal?  @db.Decimal(12, 2)
+  plazo     Int?
+  tasa      Decimal?  @db.Decimal(12, 2)
+  tasa2     Decimal?  @db.Decimal(12, 2)
+  fechades  DateTime? @db.Date
+  f1        DateTime? @db.Date
+  f2        DateTime? @db.Date
+  f3        String?   @db.VarChar(30)
+  tipsoc    Int?
+  natjur    Int?
+  ruc       String?   @db.VarChar(255)
+  sexo      Decimal?  @db.Decimal(12, 2)
+  castigada Decimal?  @db.Decimal(12, 2)
+  castigo   Decimal?  @db.Decimal
+
+  @@id([idnumope, fecha, idpagare, nrocuota, car_abo])
+  @@schema("consolidado")
+}
+
+model periodos {
+  periodo String    @id @db.VarChar(6)
+  fecha   DateTime? @db.Date
+
+  @@schema("consolidado")
+}
+
+model todo_mov_pas {
+  tipo         String
+  idcdp        String    @db.VarChar
+  fecha        DateTime  @db.Date
+  idsocio      String?   @db.VarChar(25)
+  nombre       String?
+  numdoc       String?   @db.VarChar(255)
+  descri       String?   @db.VarChar
+  moneda       String?
+  item         Int
+  car_abo      String?
+  capital      Decimal?  @db.Decimal
+  interes      Decimal?  @db.Decimal
+  total        Decimal?  @db.Decimal
+  operacion    String?   @db.VarChar(19)
+  idnumope     String    @db.VarChar
+  idahorro     String?   @db.VarChar
+  cap_original Decimal?  @db.Decimal
+  plazo        Int?
+  tasa         Decimal?  @db.Decimal
+  tasaanual    Decimal?  @db.Decimal
+  fecing       DateTime? @db.Date
+  fechaemi     DateTime? @db.Date
+  fechaven     DateTime? @db.Date
+  fechacan     DateTime? @db.Date
+  tipsoc       Int?
+  natjur       Int?
+  ruc          String?   @db.VarChar(255)
+  sexo         Decimal?  @db.Decimal(12, 2)
+
+  @@id([tipo, idcdp, fecha, idnumope, item])
+  @@schema("consolidado")
+}
+
+model usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+
+  @@schema("consolidado")
+}
+
+model cctipo {
+  descri            String? @db.VarChar(255)
+  idtipo            String  @id @db.VarChar(255)
+  idmoneda          String? @db.VarChar(255)
+  minimo            String? @db.VarChar(255)
+  tasa_a            String? @db.VarChar(255)
+  tasa_p            String? @db.VarChar(255)
+  idctacbe          String? @db.VarChar(255)
+  idintdeu          String? @db.VarChar(255)
+  idintacr          String? @db.VarChar(255)
+  idforma           String? @db.VarChar(255)
+  inactivo          String? @db.VarChar(255)
+  idusuario         String? @db.VarChar(255)
+  hora              String? @db.VarChar(255)
+  registro_corrupto String? @db.VarChar(255)
+
+  @@schema("ctacte")
+}
+
+model cdp {
+  idcdp             String    @id @db.VarChar(28)
+  idsocio           String?   @db.VarChar(25)
+  idahorro          String?   @db.VarChar(19)
+  capital           Decimal?  @db.Decimal(12, 2)
+  plazo             Int?
+  tasa              Decimal?  @db.Decimal(12, 2)
+  tasaanual         Decimal?  @db.Decimal(12, 2)
+  castigo           Decimal?  @db.Decimal(12, 2)
+  fechaemi          DateTime? @db.Date
+  fechaven          DateTime? @db.Date
+  fechacan          DateTime? @db.Date
+  in_periodo        Int?
+  in_retiro         Int?
+  in_abono          Int?
+  idctaaho          String?   @db.VarChar(255)
+  operacion         String?   @db.VarChar(19)
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(30)
+  idnumope          String?   @db.VarChar(30)
+  intadela          Decimal?  @db.Decimal(12, 2)
+  idnumope1         String?   @db.VarChar(19)
+  soc_yo_1          Decimal?  @db.Decimal(12, 2)
+  idsocio1          String?   @db.VarChar(28)
+  soc_yo_2          Decimal?  @db.Decimal(12, 2)
+  idsocio2          String?   @db.VarChar(255)
+  rep_yo_1          Decimal?  @db.Decimal(12, 2)
+  representa        String?   @db.VarChar(255)
+  rep_yo_2          Decimal?  @db.Decimal(12, 2)
+  represent2        String?   @db.VarChar(255)
+  rep_yo_3          Decimal?  @db.Decimal(12, 2)
+  represent3        String?   @db.VarChar(255)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuariov        String?   @db.VarChar(30)
+  horav             DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(28)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
+model cdptipo {
+  descri            String?   @db.VarChar(255)
+  idahorro          String    @id @db.VarChar(19)
+  idmoneda          String?   @db.VarChar(16)
+  calculo           Int?
+  plazo             Int?
+  tasa              Decimal?  @db.Decimal(12, 2)
+  tasaanual         Decimal?  @db.Decimal(12, 2)
+  idretiro          String?   @db.VarChar(16)
+  idperiodo         String?   @db.VarChar(16)
+  castigo           Decimal?  @db.Decimal(12, 2)
+  tasadscto         String?   @db.VarChar(255)
+  cccapital         String?   @db.VarChar(30)
+  ccinteres         String?   @db.VarChar(30)
+  ccprovisio        String?   @db.VarChar(30)
+  inactivo          String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
+model grupo {
+  descri            String    @db.VarChar(255)
+  idgrupo           String    @db.VarChar(18)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idgrupo, descri])
+  @@schema("ctacte")
+}
+
+model hahorros {
+  idctaaho          String    @db.VarChar(28)
+  idsocio           String?   @db.VarChar(28)
+  idahorro          String?   @db.VarChar(22)
+  fecha             DateTime  @db.Date
+  idnumope          String    @db.VarChar(30)
+  operacion         String?   @db.VarChar(19)
+  glosa             String?   @db.VarChar(255)
+  car_abo           String?   @db.VarChar(16)
+  importe           Decimal?  @db.Decimal(12, 2)
+  saldo_ant         Decimal?  @db.Decimal(12, 2)
+  fecha_ant         DateTime? @db.Date
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(255)
+  contador          String?   @db.VarChar(255)
+  cancela           String?   @db.VarChar(255)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idctaaho, fecha, idnumope])
+  @@schema("ctacte")
+}
+
+model haporext {
+  idsocio           String    @db.VarChar(28)
+  idmoneda          String?   @db.VarChar(19)
+  fecha             DateTime  @db.Date
+  idnumope          String    @db.VarChar(30)
+  operacion         String?   @db.VarChar(19)
+  car_abo           String?   @db.VarChar(16)
+  importe           Decimal?  @db.Decimal(12, 2)
+  glosa             String?   @db.VarChar(255)
+  saldo_ant         String?   @db.VarChar(255)
+  fecha_ant         DateTime? @db.Timestamp(6)
+  trapagare         String?   @db.VarChar(255)
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(255)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(28)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idsocio, fecha, idnumope])
+  @@schema("ctacte")
+}
+
+model haportes {
+  idsocio           String    @db.VarChar(25)
+  idmoneda          String?   @db.VarChar(16)
+  fecha             DateTime  @db.Date
+  idnumope          String    @db.VarChar(27)
+  operacion         String?   @db.VarChar(19)
+  car_abo           String?   @db.VarChar(16)
+  importe           Decimal?  @db.Decimal(12, 2)
+  glosa             String?   @db.VarChar(255)
+  saldo_ant         String?   @db.VarChar(255)
+  fecha_ant         DateTime? @db.Timestamp(6)
+  trapagare         String?   @db.VarChar(255)
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(255)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(22)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idsocio, fecha, idnumope])
+  @@schema("ctacte")
+}
+
+model hcdp {
+  idcdp             String    @db.VarChar(28)
+  fecha             DateTime  @db.Date
+  item              Int
+  capital           Decimal?  @db.Decimal(12, 2)
+  interes           Decimal?  @db.Decimal(12, 2)
+  intadi            String?   @db.VarChar(255)
+  c_pag             String?   @db.VarChar(255)
+  pagcap            Decimal?  @db.Decimal(12, 2)
+  pagint            Decimal?  @db.Decimal(12, 2)
+  idnumope          String    @db.VarChar(30)
+  operacion         String?   @db.VarChar(19)
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(28)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(25)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idcdp, fecha, item, idnumope])
+  @@schema("ctacte")
+}
+
+model hpagares {
+  idpagare          String    @db.VarChar(28)
+  fecha             DateTime  @db.Date
+  fecint            DateTime? @db.Date
+  capital           Decimal?  @db.Decimal(12, 2)
+  interes           Decimal?  @db.Decimal(12, 2)
+  intdev            String?   @db.VarChar(255)
+  mora              Decimal?  @db.Decimal(12, 2)
+  seguro            Decimal?  @db.Decimal(12, 2)
+  aporte            String?   @db.VarChar(24)
+  cxc               String?   @db.VarChar(255)
+  interes_p         Decimal?  @db.Decimal(12, 2)
+  intdev_p          Decimal?  @db.Decimal(12, 2)
+  mora_p            Decimal?  @db.Decimal(12, 2)
+  seguro_p          Decimal?  @db.Decimal(12, 2)
+  saldo_ant         Decimal?  @db.Decimal(12, 2)
+  fecha_ant         DateTime? @db.Date
+  idnumope          String    @db.VarChar(30)
+  operacion         String?   @db.VarChar(19)
+  car_abo           String?   @db.VarChar(16)
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(255)
+  idmercado         String?   @db.VarChar(255)
+  idcobrador        String?   @db.VarChar(255)
+  castigo           Decimal?  @db.Decimal(12, 2)
+  refnumope         String?   @db.VarChar(255)
+  reffecha          DateTime? @db.Timestamp(6)
+  proxvenci         DateTime? @db.Date
+  nrocuota          Decimal   @db.Decimal(12, 2)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, fecha, idnumope, nrocuota])
+  @@schema("ctacte")
+}
+
+model hpagcxc {
+  idpagare          String    @db.VarChar(28)
+  fecha             DateTime  @db.Date
+  idcxc             String    @db.VarChar(16)
+  car_abo           String?   @db.VarChar(16)
+  importe           Decimal?  @db.Decimal(12, 2)
+  idnumope          String    @db.VarChar(30)
+  operacion         String?   @db.VarChar(19)
+  documento         String?   @db.VarChar(255)
+  glosa             String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  cheque            String?   @db.VarChar(255)
+  fecpag            String?   @db.VarChar(255)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(28)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, fecha, idnumope, idcxc])
+  @@schema("ctacte")
+}
+
+model hpagdes {
+  idpagare          String    @db.VarChar(28)
+  idsolicitu        String?   @db.VarChar(255)
+  fecha             DateTime  @db.Date
+  idtipdes          String    @db.VarChar(16)
+  importe           Decimal?  @db.Decimal(12, 2)
+  idnumope          String    @db.VarChar(30)
+  operacion         String?   @db.VarChar(19)
+  documento         String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, fecha, idnumope, idtipdes])
+  @@schema("ctacte")
+}
+
+model hprovisi {
+  idpagare          String    @db.VarChar(28)
+  ano               Int
+  mes               Int
+  importe1          Decimal?  @db.Decimal(12, 2)
+  importe2          Decimal?  @db.Decimal(12, 2)
+  reque1            Decimal?  @db.Decimal(12, 2)
+  const1            String?   @db.VarChar(255)
+  reque2            Decimal?  @db.Decimal(12, 2)
+  const2            String?   @db.VarChar(255)
+  intcob            Decimal?  @db.Decimal(12, 2)
+  intsus            Decimal?  @db.Decimal(12, 2)
+  intcoba           String?   @db.VarChar(255)
+  intsusa           String?   @db.VarChar(255)
+  intadela          Decimal?  @db.Decimal(12, 2)
+  idcartera         String?   @db.VarChar(16)
+  idcartera1        String?   @db.VarChar(16)
+  idinstan          String?   @db.VarChar(16)
+  idinstan1         String?   @db.VarChar(16)
+  conormal          Decimal?  @db.Decimal(12, 2)
+  coprimera         Decimal?  @db.Decimal(12, 2)
+  cosegunda         Decimal?  @db.Decimal(12, 2)
+  cojudicial        Decimal?  @db.Decimal(12, 2)
+  bloqueodef        String?   @db.VarChar(255)
+  idusua_aut        String?   @db.VarChar(255)
+  hora_aut          DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, ano, mes])
+  @@schema("ctacte")
+}
+
+model maahorro {
+  idctaaho          String    @db.VarChar(28)
+  idsocio           String    @db.VarChar(25)
+  idahorro          String    @db.VarChar(19)
+  fechaape          DateTime? @db.Date
+  fechacie          DateTime? @db.Date
+  idnumope          String    @db.VarChar(30)
+  soc_yo_1          Decimal?  @db.Decimal(12, 2)
+  idsocio1          String?   @db.VarChar(28)
+  soc_yo_2          Decimal?  @db.Decimal(12, 2)
+  idsocio2          String?   @db.VarChar(255)
+  rep_yo_1          Decimal?  @db.Decimal(12, 2)
+  representa        String?   @db.VarChar(255)
+  rep_yo_2          Decimal?  @db.Decimal(12, 2)
+  represent2        String?   @db.VarChar(255)
+  rep_yo_3          Decimal?  @db.Decimal(12, 2)
+  represent3        String?   @db.VarChar(255)
+  cobdia            Decimal?  @db.Decimal(12, 2)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusuariov        String?   @db.VarChar(30)
+  horav             DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idctaaho, idsocio, idnumope, idahorro])
+  @@schema("ctacte")
+}
+
+model pagarede {
+  descri            String?   @db.VarChar(255)
+  idtipdes          String    @id @db.VarChar(16)
+  plazoini          Decimal?  @db.Decimal(12, 2)
+  plazoter          Decimal?  @db.Decimal(12, 2)
+  tasa              Decimal?  @db.Decimal(12, 2)
+  importe           Decimal?  @db.Decimal(12, 2)
+  plazoini1         Decimal?  @db.Decimal(12, 2)
+  plazoter1         Decimal?  @db.Decimal(12, 2)
+  tasa1             Decimal?  @db.Decimal(12, 2)
+  importe1          Decimal?  @db.Decimal(12, 2)
+  plazoini2         Decimal?  @db.Decimal(12, 2)
+  plazoter2         Decimal?  @db.Decimal(12, 2)
+  tasa2             Decimal?  @db.Decimal(12, 2)
+  importe2          Decimal?  @db.Decimal(12, 2)
+  plazoini3         Decimal?  @db.Decimal(12, 2)
+  plazoter3         Decimal?  @db.Decimal(12, 2)
+  tasa3             Decimal?  @db.Decimal(12, 2)
+  importe3          Decimal?  @db.Decimal(12, 2)
+  plazoini4         Decimal?  @db.Decimal(12, 2)
+  plazoter4         Decimal?  @db.Decimal(12, 2)
+  tasa4             Decimal?  @db.Decimal(12, 2)
+  importe4          Decimal?  @db.Decimal(12, 2)
+  idctacbe          String?   @db.VarChar(30)
+  idctacbed         String?   @db.VarChar(30)
+  inactivo          String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
+model pagares {
+  idpagare          String    @db.VarChar(30)
+  idsolpre          String?   @db.VarChar(255)
+  numpag            String?   @db.VarChar(255)
+  moneda            Int?
+  idsocio           String?   @db.VarChar(25)
+  fechaemi          DateTime  @db.Date
+  fechades          DateTime? @db.Date
+  fechaini          DateTime? @db.Date
+  gracia            String?   @db.VarChar(21)
+  mesgracia         String?   @db.VarChar(21)
+  porinteres        Decimal?  @db.Decimal(12, 2)
+  nuevo             Decimal?  @db.Decimal(12, 2)
+  idcategori        String?   @db.VarChar(18)
+  idforma           String?   @db.VarChar(19)
+  idlinea           String?   @db.VarChar(255)
+  idfinalida        String?   @db.VarChar(16)
+  idpartida         String?   @db.VarChar(19)
+  importe           Decimal?  @db.Decimal(12, 2)
+  intadela          Decimal?  @db.Decimal(12, 2)
+  plazo             Int?
+  uplazo            Int?
+  tasa              Decimal?  @db.Decimal(12, 2)
+  calculo           Int?
+  tasasobreg        Decimal?  @db.Decimal(12, 2)
+  tasaplan          Decimal?  @db.Decimal(12, 2)
+  tasaseguro        Decimal?  @db.Decimal(12, 2)
+  prevsoc           Decimal?  @db.Decimal(12, 2)
+  noaporte          String?   @db.VarChar(19)
+  nocapital         Decimal?  @db.Decimal(12, 2)
+  refina            Decimal?  @db.Decimal(12, 2)
+  amplia            Decimal?  @db.Decimal(12, 2)
+  union_            Decimal?  @db.Decimal(12, 2)
+  excepciona        String?   @db.VarChar(255)
+  cuota             Decimal?  @db.Decimal(12, 2)
+  aporte            String?   @db.VarChar(24)
+  cuotadia          String?   @db.VarChar(255)
+  aportedia         String?   @db.VarChar(255)
+  diafijo           Decimal?  @db.Decimal(12, 2)
+  formapago         Int?
+  formaplan         Decimal?  @db.Decimal(12, 2)
+  cuotacero         Decimal?  @db.Decimal(12, 2)
+  perpago           Int?
+  plandes           Decimal?  @db.Decimal(12, 2)
+  operacion         String?   @db.VarChar(19)
+  pagado            Decimal?  @db.Decimal(12, 2)
+  cheque            String?   @db.VarChar(255)
+  idbanco           String?   @db.VarChar(255)
+  documento         String?   @db.VarChar(255)
+  idnumope          String?   @db.VarChar(30)
+  idnumord          String?   @db.VarChar(30)
+  cancela           String?   @db.VarChar(30)
+  estado            Decimal?  @db.Decimal(12, 2)
+  idinstan          String?   @db.VarChar(19)
+  idcartera         String?   @db.VarChar(19)
+  idcar_ini         String?   @db.VarChar(19)
+  cambio            DateTime? @db.Date
+  idusua_m          String?   @db.VarChar(28)
+  seguimient        String?   @db.VarChar(18)
+  garante           Decimal?  @db.Decimal(12, 2)
+  idsociogar        String?   @db.VarChar(255)
+  idctaaho          String?   @db.VarChar(255)
+  idusua_rep        String?   @db.VarChar(28)
+  hora_repro        DateTime? @db.Timestamp(6)
+  idusua_re2        String?   @db.VarChar(255)
+  hora_repr2        DateTime? @db.Timestamp(6)
+  fecha_repr        DateTime? @db.Date
+  fecha_rep2        DateTime? @db.Timestamp(6)
+  plazo_repr        Decimal?  @db.Decimal(12, 2)
+  tasa_repro        Decimal?  @db.Decimal(12, 2)
+  importe_re        Decimal?  @db.Decimal(12, 2)
+  adicio_rep        String?   @db.VarChar(255)
+  cuota_repr        Decimal?  @db.Decimal(12, 2)
+  diafijo_re        Decimal?  @db.Decimal(12, 2)
+  congela           DateTime? @db.Date
+  cob_cuotam        Decimal?  @db.Decimal(12, 2)
+  cob_deuda         Decimal?  @db.Decimal(12, 2)
+  cob_aporte        String?   @db.VarChar(19)
+  ene_d             String?   @db.VarChar(255)
+  feb_d             String?   @db.VarChar(255)
+  mar_d             String?   @db.VarChar(255)
+  abr_d             String?   @db.VarChar(255)
+  may_d             String?   @db.VarChar(255)
+  jun_d             String?   @db.VarChar(255)
+  jul_d             String?   @db.VarChar(255)
+  ago_d             String?   @db.VarChar(255)
+  set_d             String?   @db.VarChar(255)
+  oct_d             String?   @db.VarChar(255)
+  nov_d             String?   @db.VarChar(255)
+  dic_d             String?   @db.VarChar(255)
+  dlun              Decimal?  @db.Decimal(12, 2)
+  dmar              Decimal?  @db.Decimal(12, 2)
+  dmie              Decimal?  @db.Decimal(12, 2)
+  djue              Decimal?  @db.Decimal(12, 2)
+  dvie              Decimal?  @db.Decimal(12, 2)
+  dsab              Decimal?  @db.Decimal(12, 2)
+  ddom              Decimal?  @db.Decimal(12, 2)
+  idmercado         String?   @db.VarChar(255)
+  idanalista        String?   @db.VarChar(28)
+  idcobrador        String?   @db.VarChar(255)
+  fac_fechav        DateTime? @db.Timestamp(6)
+  fac_intere        String?   @db.VarChar(255)
+  fac_idlote        String?   @db.VarChar(255)
+  fac_numdoc        String?   @db.VarChar(255)
+  sobregiro         String?   @db.VarChar(255)
+  idpagarean        String?   @db.VarChar(255)
+  glosaant          String?   @db.VarChar(255)
+  desaporte         String?   @db.VarChar(24)
+  desseguro         Decimal?  @db.Decimal(12, 2)
+  idseguro          String?   @db.VarChar(21)
+  leg_ubica         Decimal?  @db.Decimal(12, 2)
+  leg_fecha         DateTime? @db.Date
+  leg_glosa         String?   @db.VarChar(255)
+  leg_idusua        String?   @db.VarChar(19)
+  leg_hora          DateTime? @db.Timestamp(6)
+  leg_inipro        String?   @db.VarChar(255)
+  leg_impdem        String?   @db.VarChar(255)
+  leg_juzgad        String?   @db.VarChar(255)
+  leg_nroexp        String?   @db.VarChar(255)
+  leg_observ        String?   @db.VarChar(255)
+  leg_estado        Decimal?  @db.Decimal(12, 2)
+  leg_tasare        String?   @db.VarChar(255)
+  leg_idusu2        String?   @db.VarChar(255)
+  leg_horam         DateTime? @db.Timestamp(6)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusuariov        String?   @db.VarChar(28)
+  horav             DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(25)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, fechaemi])
+  @@schema("ctacte")
+}
+
+model socios {
+  idsocio           String    @id @db.VarChar(25)
+  idsocant          String?   @db.VarChar(24)
+  idtitular         String?   @db.VarChar(255)
+  idsolicitu        String?   @db.VarChar(255)
+  idgrupo           String?   @db.VarChar(21)
+  idclasesoc        String?   @db.VarChar(16)
+  tipsoc            Int?
+  natjur            Int?
+  paterno           String?   @db.VarChar(255)
+  materno           String?   @db.VarChar(255)
+  nombres           String?   @db.VarChar(255)
+  email             String?   @db.VarChar(255)
+  fecing            DateTime? @db.Date
+  fecret            DateTime? @db.Date
+  fecreing          String?   @db.VarChar(255)
+  idtipoviv         String?   @db.VarChar(19)
+  direccion         String?   @db.VarChar(255)
+  iddistrito        String?   @db.VarChar(27)
+  referencia        String?   @db.VarChar(255)
+  idzona            String?   @db.VarChar(255)
+  idcompania        String?   @db.VarChar(21)
+  idcxp             String?   @db.VarChar(255)
+  tope              String?   @db.VarChar(19)
+  tipo              String?   @db.VarChar(16)
+  registro          String?   @db.VarChar(255)
+  prefijo           String?   @db.VarChar(255)
+  registroun        String?   @db.VarChar(255)
+  fecregi           String?   @db.VarChar(255)
+  codrelac          String?   @db.VarChar(255)
+  fecnac            DateTime? @db.Date
+  telefono          String?   @db.VarChar(255)
+  celular           String?   @db.VarChar(255)
+  tipodoc           String?   @db.VarChar(255)
+  numdoc            String?   @db.VarChar(255)
+  ruc               String?   @db.VarChar(255)
+  sexo              Decimal?  @db.Decimal(12, 2)
+  madre             Decimal?  @db.Decimal(12, 2)
+  padre             Decimal?  @db.Decimal(12, 2)
+  estcivil          Decimal?  @db.Decimal(12, 2)
+  centrotra         String?   @db.VarChar(255)
+  centrotel         String?   @db.VarChar(255)
+  dircentro         String?   @db.VarChar(255)
+  regioncent        String?   @db.VarChar(255)
+  provicentr        String?   @db.VarChar(255)
+  districent        String?   @db.VarChar(255)
+  celcentro         String?   @db.VarChar(255)
+  es_celular        String?   @db.VarChar(255)
+  nomcompani        String?   @db.VarChar(255)
+  centrorubr        String?   @db.VarChar(255)
+  centroruc         String?   @db.VarChar(255)
+  centrocarg        String?   @db.VarChar(255)
+  centroing         Decimal?  @db.Decimal(12, 2)
+  idocupacio        String?   @db.VarChar(19)
+  saldo             String?   @db.VarChar(255)
+  conyuge           Decimal?  @db.Decimal(12, 2)
+  conynomb          String?   @db.VarChar(255)
+  recomienda        String?   @db.VarChar(255)
+  aporte            String?   @db.VarChar(19)
+  ocupacion         String?   @db.VarChar(255)
+  idcartera         String?   @db.VarChar(19)
+  aporte_cob        String?   @db.VarChar(19)
+  repres1           String?   @db.VarChar(255)
+  cargo1            String?   @db.VarChar(30)
+  docide1           String?   @db.VarChar(30)
+  retiro1           Decimal?  @db.Decimal(12, 2)
+  repres2           String?   @db.VarChar(255)
+  cargo2            String?   @db.VarChar(27)
+  docide2           String?   @db.VarChar(30)
+  retiro2           String?   @db.VarChar(255)
+  repres3           String?   @db.VarChar(255)
+  cargo3            String?   @db.VarChar(255)
+  docide3           String?   @db.VarChar(255)
+  retiro3           String?   @db.VarChar(255)
+  yo_o              String?   @db.VarChar(255)
+  situacion         Decimal?  @db.Decimal(12, 2)
+  idmotivo          String?   @db.VarChar(19)
+  directivo         Decimal?  @db.Decimal(12, 2)
+  noprestamo        String?   @db.VarChar(255)
+  bloqueopor        String?   @db.VarChar(255)
+  noprevsoc         String?   @db.VarChar(255)
+  nodesgrav         Decimal?  @db.Decimal(12, 2)
+  idpromotor        String?   @db.VarChar(255)
+  foto              String?   @db.VarChar(255)
+  firma             String?   @db.VarChar(255)
+  fotoruta          String?   @db.VarChar(255)
+  fg_rema           String?   @db.VarChar(255)
+  es_paterno        String?   @db.VarChar(33)
+  es_materno        String?   @db.VarChar(255)
+  es_nombre         String?   @db.VarChar(255)
+  es_centrot        String?   @db.VarChar(255)
+  es_centro2        String?   @db.VarChar(40)
+  es_centrod        String?   @db.VarChar(255)
+  es_docide         String?   @db.VarChar(30)
+  es_fecnac         DateTime? @db.Date
+  es_ocupaci        String?   @db.VarChar(255)
+  es_cargo          String?   @db.VarChar(255)
+  es_ingreso        Decimal?  @db.Decimal(12, 2)
+  es_tipo           String?   @db.VarChar(16)
+  ru_fundo          String?   @db.VarChar(255)
+  ru_tamano         String?   @db.VarChar(255)
+  idmercado         String?   @db.VarChar(255)
+  idsegmen          String?   @db.VarChar(255)
+  categoria         String?   @db.VarChar(255)
+  idcxc1            String?   @db.VarChar(255)
+  impcxc1           String?   @db.VarChar(255)
+  idcxc2            String?   @db.VarChar(255)
+  impcxc2           String?   @db.VarChar(255)
+  idseguro1         String?   @db.VarChar(255)
+  impseguro1        String?   @db.VarChar(255)
+  idseguro2         String?   @db.VarChar(255)
+  impseguro2        String?   @db.VarChar(255)
+  idnumope          String?   @db.VarChar(255)
+  benefnom          String?   @db.VarChar(255)
+  benefdni          String?   @db.VarChar(30)
+  tutor             String?   @db.VarChar(255)
+  card              String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(255)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  idusua_m          String?   @db.VarChar(30)
+  hora_m            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
+model tipoplan {
+  descri            String?   @db.VarChar(31)
+  idtippla          String    @id @db.VarChar(16)
+  idusuario         String?   @db.VarChar(255)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
+model aportaciones_socios {
+  codigo String   @id @db.VarChar(50)
+  socio  String?  @db.VarChar(255)
+  saldo  Decimal? @db.Decimal(15, 2)
+
+  @@schema("sbs")
+}
+
+model inventariopagare {
+  id_inventario  Int       @id
+  idsocio        String?   @db.VarChar
+  npagare        String?   @db.VarChar
+  socio          String?   @db.VarChar
+  f_emision      DateTime? @db.Date
+  moneda         Int?
+  saldo          Decimal?  @db.Decimal
+  saldomn        Decimal?  @db.Decimal
+  rprovi2024     Decimal?  @db.Decimal
+  provision2024  Decimal?  @db.Decimal
+  saldo241231    Decimal?  @db.Decimal
+  provision2025  Decimal?  @db.Decimal
+  saldo251231    Decimal?  @db.Decimal
+  pagare         Int?
+  comentario     String?
+  firma_huella   Int?
+  acuerdo_pagare Int?
+  en_blanco      Int?
+
+  @@schema("sbs")
+}
+
+model saldoahorro {
+  idahorro    Int      @id
+  cuenta      String?  @db.VarChar
+  nombres     String?  @db.VarChar
+  saldo230831 Decimal? @db.Decimal(15, 2)
+  factor2023  Decimal? @db.Decimal(7, 5)
+  interes2023 Decimal? @db.Decimal(12, 5)
+  saldo241231 Decimal? @db.Decimal
+  factor2024  Decimal? @db.Decimal(7, 5)
+  interes2024 Decimal? @db.Decimal(12, 5)
+  saldo251231 Decimal? @db.Decimal
+
+  @@schema("sbs")
+}
+
+model saldoahorrome {
+  idahorrome  Int      @id
+  cuenta      String?  @db.VarChar
+  nombres     String?  @db.VarChar
+  saldo230831 Decimal? @db.Decimal
+  factor23    Decimal? @db.Decimal(12, 5)
+  interes23   Decimal? @db.Decimal(12, 5)
+  saldo241231 Decimal? @db.Decimal
+  factor24    Decimal? @db.Decimal(12, 5)
+  interes24   Decimal? @db.Decimal(12, 5)
+  saldo25     Decimal? @db.Decimal
+
+  @@schema("sbs")
+}
+
+model saldodpfme {
+  iddpfmn     Int      @id
+  cuenta      String?  @db.VarChar
+  nombres     String?  @db.VarChar
+  saldo230831 Decimal? @db.Decimal(15, 2)
+  factor23    Decimal? @db.Decimal(12, 5)
+  interes23   Decimal? @db.Decimal(12, 5)
+  saldo241231 Decimal? @db.Decimal(15, 2)
+  factor24    Decimal? @db.Decimal(12, 5)
+  interes24   Decimal? @db.Decimal(12, 5)
+  saldo251231 Decimal? @db.Decimal(15, 2)
+
+  @@schema("sbs")
+}
+
+model saldodpfmn {
+  iddpfmn     Int      @id
+  cuenta      String?  @db.VarChar
+  nombres     String?  @db.VarChar
+  saldo230831 Decimal? @db.Decimal
+  factor23    Decimal? @db.Decimal(12, 5)
+  interes23   Decimal? @db.Decimal(12, 5)
+  saldo241231 Decimal? @db.Decimal
+  factor24    Decimal? @db.Decimal(12, 5)
+  interes24   Decimal? @db.Decimal(12, 5)
+  saldo251231 Decimal? @db.Decimal
+
+  @@schema("sbs")
+}
+
+model saldoprestamo {
+  idsocio       String?   @db.VarChar
+  idpagare      String    @id @db.VarChar
+  socio         String?   @db.VarChar
+  femision      DateTime? @db.Date
+  moneda        Int?
+  saldo         Decimal?  @db.Decimal
+  saldomn       Decimal?  @db.Decimal
+  rprovi        Decimal?  @db.Decimal
+  provision     Decimal?  @db.Decimal
+  saldo241231   Decimal?  @db.Decimal
+  saldo2025     Decimal?  @db.Decimal
+  provision2025 Decimal?  @db.Decimal
+  saldo251231   Decimal?  @db.Decimal
+
+  @@schema("sbs")
+}
+

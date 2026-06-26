@@ -4,7 +4,7 @@
             <h2 class="page-title">Matriz de Permisos por Pantalla</h2>
             <p class="page-subtitle">Asignación dinámica de accesos y menús según el rol asignado.</p>
         </div>
-        <button class="btn-primary" (click)="abrirModalCrear()">+ Asignar Pantalla</button>
+        <button class="btn btn-primary" (click)="abrirModalCrear()">+ Asignar Pantalla</button>
     </div>
 
     <div class="table-responsive">
@@ -43,11 +43,10 @@
 </div>
 
 @if (mostrarModal) {
-<div class="modal-backdrop">
-    <div class="modal-content">
+<div class="modal-overlay">
+    <div class="modal-container">
         <div class="modal-header">
             <h3>{{ modoEdicion ? 'Modificar Acceso Asignado' : 'Asignar Nueva Pantalla a Rol' }}</h3>
-            <button type="button" class="close-btn" (click)="cerrarModal()">&times;</button>
         </div>
 
         <form (submit)="guardarPermiso($event)">
@@ -76,8 +75,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
-                <button type="submit" class="btn-success">
+                <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
                     {{ modoEdicion ? 'Actualizar Permiso' : 'Conceder Acceso' }}
                 </button>
             </div>

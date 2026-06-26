@@ -1,0 +1,74 @@
+<div class="container">
+    <div class="header-section" style="margin-bottom: 20px;">
+        <h2>Padrón de Socios</h2>
+        <p class="text-muted">Gestión y consulta de los miembros de la cooperativa</p>
+    </div>
+
+    <div class="filter-box">
+        <div class="input-group">
+            <input type="text" placeholder="Buscar por código de socio, nombres, apellidos ,DNI o RUC..."
+                class="form-control" [value]="searchTerm" (input)="onSearch($event)" />
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Código Socio</th>
+                    <th>Apellidos y Nombres</th>
+                    <th>Num Documento</th>
+                    <th>Fecha Ingreso</th>
+                    <th>Fecha Retiro</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let socio of socios">
+                    <td><strong>{{ socio.idsocio }}</strong></td>
+                    <td>
+                        {{ socio.paterno }} {{ socio.materno }}, {{ socio.nombres }}
+                    </td>
+                    <td>
+                        {{ socio.numdoc || socio.ruc || '---' }}
+                    </td>
+                    <td>{{ socio.fecing | date:'dd/MM/yyyy':'UTC' }}</td>
+                    <td>{{ socio.fecret | date:'dd/MM/yyyy':'UTC'}}</td>
+                </tr>
+
+                <tr *ngIf="socios.length === 0">
+                    <td colspan="5" class="text-center" style="padding: 30px; color: #888;">
+                        No se encontraron socios que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container"
+        style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 10px 0;">
+        <div class="pagination-info">
+            <span>Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong></span>
+            <span class="text-muted" style="margin-left: 10px;">(Total: {{ totalRecords }} socios registrados)</span>
+        </div>
+
+        <div class="pagination-buttons" style="display: flex; gap: 5px;">
+            <button [disabled]="currentPage === 1" (click)="changePage(1)" class="btn btn-nav" title="Primera página">
+                ««
+            </button>
+
+            <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" class="btn btn-nav">
+                Anterior
+            </button>
+
+            <button [disabled]="currentPage === totalPages || totalPages === 0" (click)="changePage(currentPage + 1)"
+                class="btn btn-nav">
+                Siguiente
+            </button>
+
+            <button [disabled]="currentPage === totalPages || totalPages === 0" (click)="changePage(totalPages)"
+                class="btn btn-nav" title="Última página">
+                »»
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,50 +1,59 @@
-<div class="layout-wrapper">
+<div class="dashboard-container">
 
-    <aside class="sidebar" [ngClass]="{ 'collapsed': isSidebarOpen }">
+    <aside class="sidebar" [class.open]="isSidebarOpen">
 
         <div class="sidebar-header">
-            <div class="logo-box">
-                <span class="logo-icon">🌐</span>
-                <h2 class="logo-text">Visor ASA</h2>
-            </div>
-            <button class="toggle-btn" (click)="toggleSidebar()">⦗⦘</button>
+            <h2>VISOR ASA</h2>
         </div>
 
-        <div class="sidebar-user">
-            <div class="avatar">SR</div>
-            <div class="user-info">
-                <p class="user-name">{{ usuarioNombre }}</p>
-                <span class="user-role">Panel de Control</span>
-            </div>
-        </div>
+        <div class="sidebar-content">
 
-        <nav class="sidebar-nav">
-            @for (item of menuItems; track item.id) {
-            <a [routerLink]="item.ruta" routerLinkActive="active-link" class="nav-link">
-                <span class="nav-icon">📁</span>
-                <span class="nav-label">{{ item.nombre }}</span>
-            </a>
+            @for (grupo of grupos; track grupo) {
+            <div class="menu-section">
+
+                <h3 class="menu-section-title">{{ grupo }}</h3>
+
+                <ul class="menu-list">
+                    @for (item of menusAgrupados[grupo]; track item.id) {
+                    <li>
+                        <a [routerLink]="item.ruta" routerLinkActive="active-link" class="menu-item">
+                            <i [class]="item.icono || 'bi bi-circle'"></i>
+                            <span>{{ item.nombre }}</span>
+                        </a>
+                    </li>
+                    }
+                </ul>
+
+            </div>
             } @empty {
-            <div class="sidebar-alert">Sin accesos configurados</div>
+            <p class="text-muted" style="padding: 16px;">No tienes opciones asignadas.</p>
             }
-        </nav>
+        </div>
 
         <div class="sidebar-footer">
-            <button class="logout-btn" (click)="onLogout()">
-                <span class="nav-icon">🚪</span>
-                <span class="nav-label">Cerrar Sesión</span>
+            <button (click)="onLogout()" class="logout-btn">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Salir</span>
             </button>
         </div>
+
     </aside>
 
-    <div class="main-container">
+    <main class="main-content">
+
         <header class="top-navbar">
-            <span class="breadcrumb">Cooperativa / Sistema / Visor</span>
+            <button (click)="toggleSidebar()" class="toggle-btn">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="user-profile">
+                <span>{{ usuarioNombre }}</span>
+            </div>
         </header>
 
-        <main class="content-body">
+        <div class="page-container">
             <router-outlet></router-outlet>
-        </main>
-    </div>
+        </div>
+
+    </main>
 
 </div>

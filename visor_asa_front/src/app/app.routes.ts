@@ -7,7 +7,7 @@ import { Menus } from './components/menus/menus';
 import { Usuarios } from './components/usuarios/usuarios';
 import { TipoUsuarios } from './components/tipo-usuarios/tipo-usuarios';
 import { PermisoPantallas } from './components/permiso-pantallas/permiso-pantallas'; // 🆕 Importación de la pantalla de Permisos
-
+import { Socios } from './components/vbcoop/socios/socios';
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },
@@ -22,6 +22,7 @@ export const routes: Routes = [
             { path: 'usuarios', component: Usuarios },
             { path: 'tipo-usuarios', component: TipoUsuarios },
             { path: 'permiso-pantallas', component: PermisoPantallas }, // 🆕 Ruta para la pantalla de Permisos
+            { path: 'socios', component: Socios },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },

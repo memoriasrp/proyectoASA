@@ -7,9 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { MenusModule } from './menus/menus.module';
 import { TipoUsuariosModule } from './tipo-usuarios/tipo-usuarios.module';
 import { PermisoPantallasModule } from './permiso-pantallas/permiso-pantallas.module';
+import { SociosModule } from './socios/socios.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule],
+  imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule, SociosModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -8,6 +8,8 @@ interface MenuTabla {
   nombre: string;
   ruta: string;
   icono: string;
+  orden: number;
+  grupo: string; // Usamos el Enum generado por Prisma
 }
 
 @Component({
@@ -27,13 +29,17 @@ export class Menus implements OnInit {
   nuevoMenu = {
     nombre: '',
     ruta: '',
-    icono: ''
+    icono: '',
+    orden: 0,
+    grupo: ''
   };
-
+  // 🛠️ SOLUCIÓN TS2307: Arreglo local con los valores exactos del Enum de tu Postgres
+  listaGrupos: string[] = [];
   constructor(private menusService: MenusService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.cargarMenusReal();
+    this.cargarGrupos();
   }
 
   cargarMenusReal(): void {
@@ -45,11 +51,20 @@ export class Menus implements OnInit {
       error: (err) => console.error('Error al traer los menús:', err)
     });
   }
-
+  cargarGrupos(): void {
+    this.menusService.getGrupos().subscribe({
+      next: (grupos) => {
+        this.listaGrupos = grupos;
+      },
+      error: (err) => {
+        console.error('Error al cargar los grupos desde el servidor', err);
+      }
+    });
+  }
   abrirModalCrear() {
     this.modoEdicion = false;
     this.menuEditandoId = null;
-    this.nuevoMenu = { nombre: '', ruta: '', icono: '' };
+    this.nuevoMenu = { nombre: '', ruta: '', icono: '', orden: 0, grupo: '' };
     this.mostrarModal = true;
     this.cdr.detectChanges();
   }
@@ -60,17 +75,20 @@ export class Menus implements OnInit {
     this.nuevoMenu = {
       nombre: menu.nombre,
       ruta: menu.ruta,
-      icono: menu.icono
+      icono: menu.icono,
+      orden: menu.orden,
+      grupo: menu.grupo
     };
     this.mostrarModal = true;
     this.cdr.detectChanges();
   }
 
+
   cerrarModal() {
     this.mostrarModal = false;
     this.modoEdicion = false;
     this.menuEditandoId = null;
-    this.nuevoMenu = { nombre: '', ruta: '', icono: '' };
+    this.nuevoMenu = { nombre: '', ruta: '', icono: '', orden: 0, grupo: '' };
     this.cdr.detectChanges();
   }
 

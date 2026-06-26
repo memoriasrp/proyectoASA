@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { MenusService } from './menus.service';
+import { GrupoMenu } from '@prisma/client';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 
@@ -17,6 +18,12 @@ export class MenusController {
     return this.menusService.findAll();
   }
 
+  @Get('grupos')
+  getGrupos(): string[] {
+    // Convertimos los valores del Enum de Prisma en un arreglo plano de strings
+    // Retorna: ["COMPARACIONES", "RESULTADOS", "REPORTES_SBS", "CONFIGURACION"]
+    return Object.values(GrupoMenu);
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.menusService.findOne(+id);
@@ -31,4 +38,5 @@ export class MenusController {
   async remove(@Param('id') id: string) {
     return this.menusService.remove(Number(id));
   }
+
 }

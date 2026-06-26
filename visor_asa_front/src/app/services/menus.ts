@@ -33,4 +33,8 @@ export class MenusService {
   deleteMenu(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+
+  getGrupos(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/grupos`, { headers: this.getHeaders() });
+  }
 }

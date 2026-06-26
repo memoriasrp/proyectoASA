@@ -1,199 +1,219 @@
-/* Estructura Base del Layout */
-.layout-wrapper {
+/* ==========================================================================
+   LAYOUT PRINCIPAL (Estructura de la Pantalla)
+   ========================================================================== */
+.dashboard-container {
     display: flex;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8fafc;
+    /* Fondo gris claro para el contenido */
 }
 
-/* --- SIDEBAR ESTILOS --- */
+/* ==========================================================================
+   BARRA LATERAL (Sidebar - Franja Izquierda)
+   ========================================================================== */
 .sidebar {
     width: 260px;
     height: 100%;
-    background-color: #1a1a27;
-    color: #9899ac;
+    background-color: #0f172a;
+    /* Azul oscuro pizarra */
+    color: #f8fafc;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
     z-index: 100;
 }
 
+/* Control de apertura/cierre (si usas la lógica toggle) */
+.sidebar.closed {
+    width: 0;
+    overflow: hidden;
+}
+
+/* Encabezado del Sidebar */
 .sidebar-header {
-    height: 70px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #1e293b;
+}
+
+.sidebar-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: #38bdf8;
+    /* Celeste brillante para el logo */
+    letter-spacing: 0.05em;
+}
+
+/* Cuerpo deslizable del menú */
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0;
+}
+
+/* Ocultar barra de scroll visualmente en el menú */
+.sidebar-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 2px;
+}
+
+/* Pie del Sidebar (Botón Salir) */
+.sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #1e293b;
+    background-color: #0b0f19;
+}
+
+/* ==========================================================================
+   SECCIONES Y ELEMENTOS DEL MENÚ DINÁMICO (@for)
+   ========================================================================== */
+.menu-section {
+    margin-bottom: 20px;
+}
+
+/* Títulos de los Grupos (COMPARACIONES, RESULTADOS, etc.) */
+.menu-section-title {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    /* Gris apagado elegante */
+    padding: 0 24px;
+    margin: 10px 0 6px 0;
+    font-weight: 700;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Enlaces individuales del menú */
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 24px;
+    color: #cbd5e1;
+    /* Texto gris claro */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.menu-item i {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+/* Efectos Hover y Activo */
+.menu-item:hover {
+    background-color: #1e293b;
+    color: #ffffff;
+}
+
+.menu-item:hover i {
+    color: #38bdf8;
+}
+
+.menu-item.active-link {
+    background-color: #1e293b;
+    color: #38bdf8;
+    font-weight: 600;
+    border-left: 4px solid #38bdf8;
+    padding-left: 20px;
+    /* Compensa el borde */
+}
+
+.menu-item.active-link i {
+    color: #38bdf8;
+}
+
+/* Botón de Cerrar Sesión */
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.2s ease;
+}
+
+.logout-btn:hover {
+    color: #ef4444;
+    /* Rojo para el Logout */
+}
+
+/* ==========================================================================
+   CONTENIDO PRINCIPAL (Main Content - Lado Derecho)
+   ========================================================================== */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Navbar superior fija */
+.top-navbar {
+    height: 60px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
-    background-color: #151521;
-}
-
-.logo-box {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo-text {
-    color: #ffffff;
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-    white-space: nowrap;
+    padding: 0 24px;
+    flex-shrink: 0;
 }
 
 .toggle-btn {
     background: none;
     border: none;
-    color: #464e5f;
+    font-size: 1.5rem;
+    color: #334155;
     cursor: pointer;
-    font-size: 16px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: background 0.2s;
 }
 
 .toggle-btn:hover {
-    color: #3699ff;
+    background-color: #f1f5f9;
 }
 
-/* Bloque de Usuario */
-.sidebar-user {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    gap: 12px;
-    background: linear-gradient(to right, #1b1b29, #151521);
-}
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    background-color: #3699ff;
-    color: white;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    flex-shrink: 0;
-}
-
-.user-info {
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.user-name {
-    color: #ffffff;
+.user-profile {
+    font-size: 0.9rem;
     font-weight: 600;
-    margin: 0;
-    font-size: 14px;
-}
-
-.user-role {
-    font-size: 11px;
-    color: #474763;
-}
-
-/* Enlaces del menú */
-.sidebar-nav {
-    flex: 1;
-    padding: 20px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    overflow-y: auto;
-}
-
-.nav-link {
+    color: #334155;
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 12px 15px;
-    color: #a2a3b7;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s, color 0.2s;
+    gap: 8px;
 }
 
-.nav-link:hover {
-    background-color: #212130;
-    color: #ffffff;
-}
-
-/* Clase activa inyectada por Angular automáticamente */
-.active-link {
-    background-color: #212130 !important;
-    color: #3699ff !important;
-    border-left: 4px solid #3699ff;
-}
-
-.sidebar-footer {
-    padding: 15px 12px;
-    background-color: #151521;
-}
-
-.logout-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 12px 15px;
-    background: none;
-    border: none;
-    color: #f64e60;
-    cursor: pointer;
-    text-align: left;
-    font-size: 14px;
-    border-radius: 6px;
-}
-
-.logout-btn:hover {
-    background-color: #2c1a24;
-}
-
-/* --- ESTADO COLAPSADO (Cerrado Parcial) --- */
-.sidebar.collapsed {
-    width: 70px;
-}
-
-.sidebar.collapsed .logo-text,
-.sidebar.collapsed .user-info,
-.sidebar.collapsed .nav-label {
-    display: none;
-    /* Oculta los textos para que solo queden los iconos */
-}
-
-.sidebar.collapsed .sidebar-user {
-    justify-content: center;
-    padding: 15px 0;
-}
-
-/* --- SECCIÓN CONTENEDORA DERECHA --- */
-.main-container {
+/* Contenedor donde se inyectan las páginas internas (Vistas de Angular) */
+.page-container {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #f3f6f9;
-}
-
-.top-navbar {
-    height: 70px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ebedf3;
-    display: flex;
-    align-items: center;
-    padding: 0 30px;
-}
-
-.breadcrumb {
-    color: #b5b5c3;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.content-body {
-    flex: 1;
-    padding: 30px;
+    padding: 24px;
     overflow-y: auto;
 }

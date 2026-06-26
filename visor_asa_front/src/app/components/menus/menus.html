@@ -4,7 +4,7 @@
             <h2 class="page-title">Gestión de Menús de la Aplicación</h2>
             <p class="page-subtitle">Configuración de accesos y rutas dinámicas del sistema de la cooperativa.</p>
         </div>
-        <button class="btn-primary" (click)="abrirModalCrear()">+ Nuevo Menú</button>
+        <button class="btn btn-primary" (click)="abrirModalCrear()">+ Nuevo Menú</button>
     </div>
 
     <div class="table-responsive">
@@ -41,38 +41,59 @@
     </div>
 </div>
 
+
 @if (mostrarModal) {
-<div class="modal-backdrop">
-    <div class="modal-content">
+<div class="modal-overlay">
+    <div class="modal-container">
         <div class="modal-header">
             <h3>{{ modoEdicion ? 'Modificar Opción de Menú' : 'Registrar Nueva Opción de Menú' }}</h3>
-            <button type="button" class="close-btn" (click)="cerrarModal()">&times;</button>
+
         </div>
 
         <form (submit)="guardarMenu($event)">
             <div class="modal-body">
                 <div class="form-group">
                     <label for="nombre">Nombre de la opción</label>
-                    <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoMenu.nombre" required
-                        placeholder="Ej. Facturación, Reportes">
+                    <input type="text" id="nombre" name="nombre" class="form-control" [(ngModel)]="nuevoMenu.nombre"
+                        required placeholder="Ej. Facturación, Reportes">
                 </div>
 
                 <div class="form-group">
                     <label for="ruta">Ruta de navegación (Angular)</label>
-                    <input type="text" id="ruta" name="ruta" [(ngModel)]="nuevoMenu.ruta" required
+                    <input type="text" id="ruta" name="ruta" class="form-control" [(ngModel)]="nuevoMenu.ruta" required
                         placeholder="Ej. /facturas, /reportes">
                 </div>
 
                 <div class="form-group">
                     <label for="icono">Icono (Emoji o texto CSS)</label>
-                    <input type="text" id="icono" name="icono" [(ngModel)]="nuevoMenu.icono"
+                    <input type="text" id="icono" name="icono" class="form-control" [(ngModel)]="nuevoMenu.icono"
                         placeholder="Ej. 📊, ⚙️, 📄">
+                </div>
+                <div class="form-group">
+                    <label for="grupo">Grupo / Sección del Menú</label>
+                    <select id="grupo" name="grupo" class="form-control" [(ngModel)]="nuevoMenu.grupo" required>
+                        <option value="" disabled selected>-- Seleccione un Grupo --</option>
+
+                        @for (grupo of listaGrupos; track grupo) {
+                        <option [value]="grupo">
+                            {{ grupo.replace('_', ' ') }}
+                        </option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="orden">Orden de aparición</label>
+                    <select id="orden" name="orden" class="form-control" [(ngModel)]="nuevoMenu.orden" required>
+                        @for (num of [0,1,2,3,4,5,6,7,8,9,10]; track num) {
+                        <option [value]="num">Posición {{ num }}</option>
+                        }
+                    </select>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
-                <button type="submit" class="btn-success">
+                <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
                     {{ modoEdicion ? 'Actualizar Cambios' : 'Crear Menú' }}
                 </button>
             </div>
