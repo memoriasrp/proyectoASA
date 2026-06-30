@@ -49,4 +49,30 @@ export class SociosService {
             },
         };
     }
+    async AllExport(filters: GetSociosFilterDto) {
+        const search = filters.search;
+
+        const where: any = {};
+
+        if (search) {
+            const words = search.trim().replace(/\s+/g, ' ').split(' ');
+
+            // 2. Cada palabra introducida debe coincidir con AL MENOS uno de los campos principales
+            where.AND = words.map(word => ({
+                OR: [
+                    { idsocio: { contains: word, mode: 'insensitive' } },
+                    { nombres: { contains: word, mode: 'insensitive' } },
+                    { paterno: { contains: word, mode: 'insensitive' } },
+                    { materno: { contains: word, mode: 'insensitive' } },
+                    { numdoc: { contains: word, mode: 'insensitive' } },
+                    { ruc: { contains: word, mode: 'insensitive' } },
+                ]
+            }));
+        }
+
+        return this.prisma.socios.findMany({
+            where,
+            orderBy: { idsocio: 'asc' }, // Mantiene el orden por código de socio
+        });
+    }
 }

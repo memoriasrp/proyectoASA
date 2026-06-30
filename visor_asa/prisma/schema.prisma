@@ -21,18 +21,9 @@ model OpcionMenu {
   nombre   String
   ruta     String
   icono    String?
-  orden    Int
+  orden    Int?              @default(0)
   grupo    GrupoMenu?
   permisos PermisoPantalla[]
-
-  @@schema("config")
-}
-
-enum GrupoMenu {
-  COMPARACIONES
-  RESULTADOS
-  REPORTES_SBS  @map("REPORTES SBS")
-  CONFIGURACION
 
   @@schema("config")
 }
@@ -983,9 +974,10 @@ model tipoplan {
 }
 
 model aportaciones_socios {
-  codigo String   @id @db.VarChar(50)
-  socio  String?  @db.VarChar(255)
-  saldo  Decimal? @db.Decimal(15, 2)
+  codigo   String   @id @db.VarChar(50)
+  socio    String?  @db.VarChar(255)
+  saldo    Decimal? @db.Decimal(15, 2)
+  idsocioc String?  @db.VarChar(50)
 
   @@schema("sbs")
 }
@@ -1009,6 +1001,7 @@ model inventariopagare {
   firma_huella   Int?
   acuerdo_pagare Int?
   en_blanco      Int?
+  idsocioc       String?   @db.VarChar(50)
 
   @@schema("sbs")
 }
@@ -1024,6 +1017,7 @@ model saldoahorro {
   factor2024  Decimal? @db.Decimal(7, 5)
   interes2024 Decimal? @db.Decimal(12, 5)
   saldo251231 Decimal? @db.Decimal
+  idsocioc    String?  @db.VarChar(50)
 
   @@schema("sbs")
 }
@@ -1039,6 +1033,7 @@ model saldoahorrome {
   factor24    Decimal? @db.Decimal(12, 5)
   interes24   Decimal? @db.Decimal(12, 5)
   saldo25     Decimal? @db.Decimal
+  idsocioc    String?  @db.VarChar(50)
 
   @@schema("sbs")
 }
@@ -1054,6 +1049,7 @@ model saldodpfme {
   factor24    Decimal? @db.Decimal(12, 5)
   interes24   Decimal? @db.Decimal(12, 5)
   saldo251231 Decimal? @db.Decimal(15, 2)
+  idsocioc    String?  @db.VarChar(50)
 
   @@schema("sbs")
 }
@@ -1069,6 +1065,7 @@ model saldodpfmn {
   factor24    Decimal? @db.Decimal(12, 5)
   interes24   Decimal? @db.Decimal(12, 5)
   saldo251231 Decimal? @db.Decimal
+  idsocioc    String?  @db.VarChar(50)
 
   @@schema("sbs")
 }
@@ -1087,7 +1084,16 @@ model saldoprestamo {
   saldo2025     Decimal?  @db.Decimal
   provision2025 Decimal?  @db.Decimal
   saldo251231   Decimal?  @db.Decimal
+  idsocioc      String?   @db.VarChar(50)
 
   @@schema("sbs")
 }
 
+enum GrupoMenu {
+  COMPARACIONES
+  RESULTADOS
+  REPORTES_SBS  @map("REPORTES SBS")
+  CONFIGURACION
+
+  @@schema("config")
+}

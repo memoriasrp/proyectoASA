@@ -12,4 +12,9 @@ export class SociosController {
     findAll(@Query() filterDto: GetSociosFilterDto) {
         return this.sociosService.findAll(filterDto);
     }
+    @Get('exportar')
+    @UsePipes(new ValidationPipe({ transform: true }))
+    exportar(@Query() filterDto: GetSociosFilterDto) {
+        return this.sociosService.AllExport(filterDto);
+    }
 }

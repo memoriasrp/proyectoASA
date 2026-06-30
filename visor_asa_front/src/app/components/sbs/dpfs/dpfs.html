@@ -1,0 +1,84 @@
+<div class="usuarios-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Reporte de DPF's SBS</h2>
+            <p class="page-subtitle">Consulta de saldos de ahorros.</p>
+        </div>
+        <button class="btn btn-excel" (click)="exportarExcel()">📄 Exportar a Excel</button>
+    </div>
+    <div class="filter-box">
+        <div class="search-filters-row" style="display: flex; gap: 12px; margin-bottom: 15px; width: 100%;">
+
+            <div class="input-group" style="flex: 1; min-width: 250px;">
+                <input type="text" placeholder="Buscar por código de socio, nombres, apellidos , idsocio, idprestamo"
+                    class="form-control" [value]="searchTerm" (input)="onSearch($event)" />
+            </div>
+
+            <div class="input-group" style="width: 200px; flex-shrink: 0;">
+                <select class="form-control" [(ngModel)]="monedaSeleccionada" (change)="cargarTabla()">
+                    <option value="">Todas las monedas</option>
+                    <option value="1">S/.</option>
+                    <option value="2">$</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Cuenta</th>
+                        <th>IdSocio</th>
+                        <th>Socio</th>
+                        <th>Moneda</th>
+                        <th style="text-align: right;">Saldo 23.08.31</th>
+                        <th style="text-align: right;">Saldo 24.12.31</th>
+                        <th style="text-align: right;">Saldo 25.12.31</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of dpfs; track item.cuenta) {
+                    <tr>
+                        <td>{{ item.cuenta }}</td>
+                        <td>{{ item.idsocioc }}</td>
+                        <td>{{ item.nombres}}</td>
+                        <td>
+                            @if (item.moneda == 1) {
+                            <span>S/.</span>
+                            } @else {
+                            <span>$</span>
+                            }
+                        </td>
+                        <td style="text-align: right; font-weight: 600;">{{ item.saldo230831 | number:'1.2-2' }}</td>
+                        <td style="text-align: right; font-weight: 600;">{{ item.saldo241231 | number:'1.2-2' }}</td>
+                        <td style="text-align: right; font-weight: 600;">{{ item.saldo251231 | number:'1.2-2' }}</td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="10" class="empty-row">No se encontraron créditos registrados.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-container"
+            style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 10px 0;">
+            <div class="pagination-info">
+                <span>Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong></span>
+                <span class="text-muted" style="margin-left: 10px;">(Total: {{ totalRecords }} registros)</span>
+            </div>
+            <div class="pagination-buttons" style="display: flex; gap: 5px;">
+                <button [disabled]="currentPage === 1" (click)="changePage(1)" class="btn btn-nav"
+                    title="Primera página">««</button>
+                <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"
+                    class="btn btn-nav">Anterior</button>
+                <button [disabled]="currentPage === totalPages || totalPages === 0"
+                    (click)="changePage(currentPage + 1)" class="btn btn-nav">Siguiente</button>
+                <button [disabled]="currentPage === totalPages || totalPages === 0" (click)="changePage(totalPages)"
+                    class="btn btn-nav" title="Última página">»»</button>
+            </div>
+        </div>
+    </div>
+</div>
