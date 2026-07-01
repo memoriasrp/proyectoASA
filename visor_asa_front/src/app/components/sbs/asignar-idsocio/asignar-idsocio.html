@@ -1,0 +1,213 @@
+<div class="dashboard-container" style="padding: 20px;">
+    <div class="page-header" style="margin-bottom: 25px;">
+        <h2 class="page-title" style="margin: 0; color: #2c3e50;">Asignación de ID Socio</h2>
+        <p class="page-subtitle" style="color: #7f8c8d; margin: 5px 0 0 0;">Control de registros pendientes de
+            vinculación SBS.</p>
+    </div>
+
+    @if (loading) {
+    <div class="loading-box" style="padding: 40px; text-align: center; font-weight: bold;">
+        Cargando estadísticas de la cooperativa...
+    </div>
+    } @else {
+    <div class="buttons-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px;">
+
+        <div class="dash-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span class="btn-title"
+                style="font-size: 1.1rem; font-weight: bold; color: #34495e; margin-bottom: 10px;">Aportes</span>
+            <span class="badge-count" [style.background-color]="resumen.aportes > 0 ? '#e74c3c' : '#2ecc71'"
+                style="color: white; padding: 6px 14px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                {{ resumen.aportes }} nulos
+            </span>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                @if (resumen.aportes > 0) {
+                <button (click)="irAModulo('aportes')"
+                    style="flex: 1; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    Conciliar
+                </button>
+                <button (click)="verSocios('aportes')"
+                    style="padding: 10px 14px; background-color: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;"
+                    title="Ver Socios">
+                    👁️ Ver
+                </button>
+                }
+            </div>
+        </div>
+
+        <div class="dash-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span class="btn-title"
+                style="font-size: 1.1rem; font-weight: bold; color: #34495e; margin-bottom: 10px;">Ahorros MN</span>
+            <span class="badge-count" [style.background-color]="resumen.ahorrosMN > 0 ? '#e74c3c' : '#2ecc71'"
+                style="color: white; padding: 6px 14px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                {{ resumen.ahorrosMN }} nulos
+            </span>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+
+                @if (resumen.ahorrosMN > 0) {
+                <button (click)="irAModulo('ahorrosMN')"
+                    style="flex: 1; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    Conciliar
+                </button>
+                <button (click)="verSocios('ahorrosMN')"
+                    style="padding: 10px 14px; background-color: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;"
+                    title="Ver Socios">
+                    👁️ Ver
+                </button>
+                }
+            </div>
+        </div>
+        <div class="dash-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span class="btn-title"
+                style="font-size: 1.1rem; font-weight: bold; color: #34495e; margin-bottom: 10px;">Ahorros ME</span>
+            <span class="badge-count" [style.background-color]="resumen.ahorrosME > 0 ? '#e74c3c' : '#2ecc71'"
+                style="color: white; padding: 6px 14px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                {{ resumen.ahorrosME }} nulos
+            </span>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                @if (resumen.ahorrosME > 0) {
+                <button (click)="irAModulo('ahorrosME')"
+                    style="flex: 1; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    Conciliar
+                </button>
+                <button (click)="verSocios('ahorrosME')"
+                    style="padding: 10px 14px; background-color: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;"
+                    title="Ver Socios">
+                    👁️ Ver
+                </button>
+                }
+            </div>
+        </div>
+        <div class="dash-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span class="btn-title"
+                style="font-size: 1.1rem; font-weight: bold; color: #34495e; margin-bottom: 10px;">DPF MN</span>
+            <span class="badge-count" [style.background-color]="resumen.dpfMN > 0 ? '#e74c3c' : '#2ecc71'"
+                style="color: white; padding: 6px 14px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                {{ resumen.dpfMN }} nulos
+            </span>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                @if (resumen.dpfMN > 0) {
+                <button (click)="irAModulo('dpf')"
+                    style="flex: 1; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    Conciliar
+                </button>
+                <button (click)="verSocios('dpfMN')"
+                    style="padding: 10px 14px; background-color: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;"
+                    title="Ver Socios">
+                    👁️ Ver
+                </button>
+                }
+            </div>
+        </div>
+        <div class="dash-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span class="btn-title"
+                style="font-size: 1.1rem; font-weight: bold; color: #34495e; margin-bottom: 10px;">DPF ME</span>
+            <span class="badge-count" [style.background-color]="resumen.dpfME > 0 ? '#e74c3c' : '#2ecc71'"
+                style="color: white; padding: 6px 14px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                {{ resumen.dpfME }} nulos
+            </span>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                @if (resumen.dpfME > 0) {
+                <button (click)="irAModulo('dpfME')"
+                    style="flex: 1; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    Conciliar
+                </button>
+                <button (click)="verSocios('dpfME')"
+                    style="padding: 10px 14px; background-color: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;"
+                    title="Ver Socios">
+                    👁️ Ver
+                </button>
+                }
+            </div>
+        </div>
+        <div class="dash-card"
+            style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 1px solid #e0e0e0; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <span class="btn-title"
+                style="font-size: 1.1rem; font-weight: bold; color: #34495e; margin-bottom: 10px;">Préstamos</span>
+            <span class="badge-count" [style.background-color]="resumen.prestamos > 0 ? '#e74c3c' : '#2ecc71'"
+                style="color: white; padding: 6px 14px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+                {{ resumen.prestamos }} nulos
+            </span>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                @if (resumen.prestamos > 0) {
+                <button (click)="irAModulo('prestamos')"
+                    style="flex: 1; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                    Conciliar
+                </button>
+                <button (click)="verSocios('prestamos')"
+                    style="padding: 10px 14px; background-color: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;"
+                    title="Ver Socios">
+                    👁️ Ver
+                </button>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    @if (moduloActivoVisualizar) {
+    <div class="detalle-nulos-box"
+        style="border: 1px solid #f1c40f; background: #fffdf0; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f9e79f; padding-bottom: 10px;">
+            <h3 style="margin: 0; color: #b7950b; font-size: 1.2rem;">Socios pendientes en Módulo: <span
+                    style="text-transform: uppercase; font-weight: bold;">{{ moduloActivoVisualizar }}</span></h3>
+            <button (click)="moduloActivoVisualizar = null"
+                style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #95a5a6; font-weight: bold;">✕</button>
+        </div>
+
+        @if (loadingDetalle) {
+        <div style="padding: 15px; text-align: center; font-weight: 500; color: #7f8c8d;">Buscando nombres en las
+            tablas...</div>
+        } @else {
+        <div style="max-height: 350px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; background: white;">
+                <thead>
+                    <tr
+                        style="background: #f4d03f; color: #2c3e50; font-weight: bold; border-bottom: 2px solid #f1c40f;">
+                        <th style="padding: 10px 12px;">Identificador / Cuenta</th>
+                        <th style="padding: 10px 12px;">Nombre Completo en Sistema SBS</th>
+                        <th style="padding: 10px 12px;">Saldo</th>
+                        @if (moduloActivoVisualizar === 'ahorros') { <th style="padding: 10px 12px;">Tipo de Cuenta</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (socio of sociosPendientes; track $index) {
+                    <tr style="border-bottom: 1px solid #f2f4f4;">
+                        <td style="padding: 10px 12px; font-weight: bold; color: #7f8c8d;">{{ socio.cuenta || socio.id
+                            || '---' }}</td>
+                        <td style="padding: 10px 12px; color: #2c3e50; text-transform: uppercase;">{{
+                            socio.nombre_completo || 'SIN NOMBRE REGISTRADO' }}</td>
+                        <td style="padding: 10px 12px; color: #2c3e50; text-align: right;">
+                            {{ socio.saldo | number:'1.2-2' }}
+                        </td>
+                        @if (moduloActivoVisualizar === 'ahorros') {
+                        <td style="padding: 10px 12px;">
+                            <span
+                                style="font-size: 0.85rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; background: #e8f4f8; color: #2980b9;">
+                                {{ socio.subtipo }}
+                            </span>
+                        </td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+    }
+    }
+</div>

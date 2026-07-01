@@ -12,9 +12,11 @@ import { AportacionesModule } from './sbs/aportaciones/aportaciones.module';
 import { CreditosModule } from './sbs/creditos/creditos.module';
 import { AhorrosModule } from './sbs/ahorros/ahorros.module';
 import { DpfModule } from './sbs/dpf/dpf.module';
+import { AsignarIdsocioModule } from './sbs/asignar_idsocio/asignar_idsocio.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule, SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule],
+  imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule,
+    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule],
   controllers: [AppController],
   providers: [AppService],
 })

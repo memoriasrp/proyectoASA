@@ -12,6 +12,7 @@ import { Aportaciones } from './components/sbs/aportaciones/aportaciones';
 import { Creditos } from './components/sbs/creditos/creditos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { Ahorros } from './components/sbs/ahorros/ahorros'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { Dpfs } from './components/sbs/dpfs/dpfs'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { AsignarIdsocio } from './components/sbs/asignar-idsocio/asignar-idsocio'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,7 +32,7 @@ export const routes: Routes = [
             { path: 'aportaciones', component: Aportaciones },
             { path: 'ahorros', component: Ahorros },
             { path: 'dpfs', component: Dpfs },
-
+            { path: 'asignar-id-socio', component: AsignarIdsocio },
             { path: 'creditos', component: Creditos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
