@@ -24,16 +24,41 @@ export const routes: Routes = [
             // Aquí irás metiendo las pantallas internas de tu visor más adelante
             { path: 'inicio', component: Inicio },
             { path: 'mapa', component: Mapa },
+
+            { path: 'socios', component: Socios },
+            { path: '', redirectTo: 'inicio', pathMatch: 'full' }
+        ]
+    },
+    {
+        path: 'sbs',
+        component: Dashboard, // Usa el mismo componente base para mantener el sidebar/diseño
+        children: [
+            { path: 'aportaciones', component: Aportaciones },
+            { path: 'ahorros', component: Ahorros },
+            { path: 'dpfs', component: Dpfs },
+            { path: 'creditos', component: Creditos },
+            { path: 'asignar-id-socio', component: AsignarIdsocio }, // 👈 Tu nueva pantalla de nulos
+            { path: '', redirectTo: 'ahorros', pathMatch: 'full' } // Redirección interna por defecto
+        ]
+    },
+    {
+        path: 'vbcoop',
+        component: Dashboard, // Sigue heredando tu plantilla o sidebar maestro
+        children: [
+            // Aquí irás metiendo los componentes específicos de VBCOOP en el futuro
+            // { path: 'reportes', component: ReportesVbcoop },
+            // { path: 'configuracion', component: ConfigVbcoop },
+            { path: '', redirectTo: 'inicio', pathMatch: 'full' }
+        ]
+    },
+    {
+        path: 'configuracion',
+        component: Dashboard, // Sigue heredando tu plantilla o sidebar maestro
+        children: [
             { path: 'menus', component: Menus },
             { path: 'usuarios', component: Usuarios },
             { path: 'tipo-usuarios', component: TipoUsuarios },
             { path: 'permiso-pantallas', component: PermisoPantallas },
-            { path: 'socios', component: Socios },
-            { path: 'aportaciones', component: Aportaciones },
-            { path: 'ahorros', component: Ahorros },
-            { path: 'dpfs', component: Dpfs },
-            { path: 'asignar-id-socio', component: AsignarIdsocio },
-            { path: 'creditos', component: Creditos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },
