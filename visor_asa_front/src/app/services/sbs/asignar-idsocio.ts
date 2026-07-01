@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-//import { environment } from 'src/environments/environment';
 
+import { environment } from '../../../environments/environment';
 export interface ResumenNulos {
   aportes: number;
   ahorrosMN: number;
@@ -17,8 +17,8 @@ export interface ResumenNulos {
   providedIn: 'root',
 })
 export class AsignarIdsocioService {
-  //private apiUrl = `${environment.apiUrl}/sbs/asignar-idsocio`;
-  private apiUrl = `http://localhost:3000/sbs/asignar-idsocio`;
+  private apiUrl = `${environment.apiUrl}/sbs/asignar-idsocio`;
+
 
   constructor(private http: HttpClient) { }
 

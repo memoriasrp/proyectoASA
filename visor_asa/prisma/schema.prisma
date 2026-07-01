@@ -1094,6 +1094,6 @@ enum GrupoMenu {
   RESULTADOS
   REPORTES_SBS  @map("REPORTES SBS")
   CONFIGURACION
-
+  REPORTES VBCOOP
   @@schema("config")
 }

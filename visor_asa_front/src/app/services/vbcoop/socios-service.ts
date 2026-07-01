@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class SociosService {
   private http = inject(HttpClient);
   // Ajusta el puerto o URL según manejes tu entorno local
-  private apiUrl = 'http://localhost:3000/socios';
+  private apiUrl = environment.apiUrl + '/socios';
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token'); // O donde guardes tu token del visor
     return new HttpHeaders({
