@@ -386,3 +386,222 @@ button:has(> i.bi-chevron-right),
 .custom-table tbody tr:hover {
     background-color: #f1f5f9 !important;
 }
+
+/* ==========================================================================
+   EFECTO PARA EL SIDEBAR (COLAPSABLE / RESPONSIVE) - VISOR ASA
+   ========================================================================== */
+
+/* --- LAYOUT BASE --- */
+.dashboard-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- SIDEBAR COMPORTAMIENTO (ESCRITORIO) --- */
+.sidebar {
+    width: 260px;
+    background: #2c3e50;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+/* Estilo base del logo en el header */
+.sidebar-header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Alinea el logo a la izquierda y el botón a la derecha */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-header h2.logo-text {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3498db;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    /* Evita saltos de línea molestos */
+}
+
+/* Botón de hamburguesa dentro del sidebar para Escritorio */
+.sidebar-header .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.sidebar-header .toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 🟢 Cuando el menú se cierra en Escritorio, se encoge a 70px */
+.dashboard-container.collapsed .sidebar {
+    width: 70px;
+}
+
+/* Acomodo del header del menú al colapsar */
+.dashboard-container.collapsed .sidebar-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 0;
+    justify-content: center;
+}
+
+/* 🟢 CORRECCIÓN CRÍTICA: Desaparición absoluta de textos e impedimento de desborde vertical */
+.dashboard-container.collapsed .menu-section-title,
+.dashboard-container.collapsed .menu-item span,
+.dashboard-container.collapsed .menu-text {
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+/* Ajuste de márgenes de los grupos al colapsar */
+.dashboard-container.collapsed .menu-section {
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+/* Centrar iconos en modo colapsado */
+.dashboard-container.collapsed .menu-item {
+    justify-content: center;
+    padding: 12px 0;
+    width: 100%;
+}
+
+.dashboard-container.collapsed .menu-item i {
+    font-size: 1.4rem;
+    /* Iconos legibles individuales */
+    margin: 0 !important;
+}
+
+/* Centrar el botón de salir inferior en modo colapsado */
+.dashboard-container.collapsed .logout-btn {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.dashboard-container.collapsed .logout-btn i {
+    font-size: 1.4rem;
+    margin: 0 !important;
+}
+
+/* Botón flotante móvil oculto por defecto en PC */
+.mobile-hamburger-btn {
+    display: none;
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Barra superior limpia donde va el nombre del usuario */
+.top-navbar {
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* ==========================================================================
+   📱 RESPONSIVO: PANTALLAS PEQUEÑAS (Móviles y Tablets)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* 🟢 Botón flotante fijo en la esquina superior izquierda de la pantalla */
+    .mobile-hamburger-btn {
+        display: block;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        background: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* El sidebar pasa a ser un menú flotante de pantalla completa hacia la izquierda */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px !important;
+        /* Forzamos el ancho completo en móvil */
+        z-index: 1000;
+        transform: translateX(-100%);
+        /* Oculto fuera de pantalla por defecto */
+        transition: transform 0.3s ease;
+    }
+
+    /* 🟢 Cuando isSidebarOpen sea true en móvil, se desliza hacia adentro */
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Forzamos que todos los textos, títulos e íconos revivan al abrirse en móvil */
+    .sidebar.open .logo-text,
+    .sidebar.open .menu-text,
+    .sidebar.open .menu-item span,
+    .sidebar.open .menu-section-title {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: auto !important;
+        height: auto !important;
+    }
+
+    .sidebar.open .menu-section-title {
+        margin: 15px 16px 5px !important;
+        padding: 0 !important;
+    }
+
+    .sidebar.open .menu-item {
+        justify-content: flex-start !important;
+        padding: 10px 16px !important;
+    }
+
+    .sidebar.open .menu-item i {
+        margin-right: 10px !important;
+    }
+
+    /* Agregamos padding al navbar para que el nombre de Silvia no se pegue con el botón flotante */
+    .top-navbar {
+        padding-left: 65px;
+    }
+}

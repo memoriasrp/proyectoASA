@@ -12,7 +12,9 @@ import { Aportaciones } from './components/sbs/aportaciones/aportaciones';
 import { Creditos } from './components/sbs/creditos/creditos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { Ahorros } from './components/sbs/ahorros/ahorros'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { Dpfs } from './components/sbs/dpfs/dpfs'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { AsignarIdsocio } from './components/sbs/asignar-idsocio/asignar-idsocio'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { AsignarIdsocio } from './components/sbs/asignar-idsocio/asignar-idsocio';
+import { Periodos } from './components/configuracion/periodos/periodos';
+import { Movpasivos } from './components/vbcoop/movpasivos/movpasivos';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -48,6 +50,7 @@ export const routes: Routes = [
             // Aquí irás metiendo los componentes específicos de VBCOOP en el futuro
             // { path: 'reportes', component: ReportesVbcoop },
             // { path: 'configuracion', component: ConfigVbcoop },
+            { path: 'movpasivos', component: Movpasivos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },
@@ -59,6 +62,7 @@ export const routes: Routes = [
             { path: 'usuarios', component: Usuarios },
             { path: 'tipo-usuarios', component: TipoUsuarios },
             { path: 'permiso-pantallas', component: PermisoPantallas },
+            { path: 'periodos', component: Periodos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },

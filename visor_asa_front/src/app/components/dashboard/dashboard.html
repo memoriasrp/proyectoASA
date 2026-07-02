@@ -1,9 +1,26 @@
-<div class="dashboard-container">
+<!-- 🟢 CORRECCIÓN: Se eliminó la llave '}' que rompía la condición del colapso -->
+<div class="dashboard-container" [class.collapsed]="!isSidebarOpen && !isMobile">
 
-    <aside class="sidebar" [class.open]="isSidebarOpen">
+    <!-- BOTÓN FLOTANTE MÓVIL -->
+    <button (click)="toggleSidebar()" class="mobile-hamburger-btn">
+        <i class="bi bi-list"></i>
+    </button>
 
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="sidebar" [class.open]="isSidebarOpen && isMobile">
+
+        <!-- CABECERA DEL SIDEBAR -->
         <div class="sidebar-header">
-            <h2>VISOR ASA</h2>
+            <h2 class="logo-text">
+                {{ (isSidebarOpen || isMobile) ? 'VISOR ASA' : 'VA' }}
+            </h2>
+
+            <!-- BOTÓN DE CONTROL PARA ESCRITORIO -->
+
+            <button (click)="toggleSidebar()" class="toggle-btn" title="Alternar menú">
+                <i class="bi bi-list" style="color: white; font-size: 1.5rem;">_</i>
+            </button>
+
         </div>
 
         <div class="sidebar-content">
@@ -41,19 +58,17 @@
 
     <main class="main-content">
 
+        <!-- CABECERA SUPERIOR (TOP NAVBAR) -->
         <header class="top-navbar">
-            <button (click)="toggleSidebar()" class="toggle-btn">
-                <i class="bi bi-list"></i>
-            </button>
-            <div class="user-profile">
+            <div class="user-profile" style="margin-left: auto;">
                 <span>{{ usuarioNombre }}</span>
             </div>
         </header>
 
-        <div class="page-container">
+        <!-- CONTENEDOR DINÁMICO DE PÁGINAS -->
+        <div class="page-container" style="flex: 1; padding: 20px; overflow-y: auto; background-color: #f8f9fa;">
             <router-outlet></router-outlet>
         </div>
 
     </main>
-
 </div>

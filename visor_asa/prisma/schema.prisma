@@ -54,6 +54,7 @@ model calendario_periodos {
   periodo String    @id @db.VarChar(6)
   fecha   DateTime? @db.Date
   tc      Decimal?  @db.Decimal
+  activo  Boolean   @default(false)
 
   @@schema("consolidado")
 }
@@ -138,6 +139,7 @@ model movimientosahorro {
   natjur       Int?
   ruc          String?   @db.VarChar(255)
   sexo         Decimal?  @db.Decimal(12, 2)
+  idusuario    String?   @db.VarChar(30)
 
   @@id([fecha, idnumope, idctaaho])
   @@schema("consolidado")
@@ -171,6 +173,7 @@ model movimientosaportes {
   natjur       Int?
   ruc          String?   @db.VarChar(255)
   sexo         Decimal?  @db.Decimal(12, 2)
+  idusuario    String?   @db.VarChar(30)
 
   @@id([fecha, idnumope, idcdp])
   @@schema("consolidado")
@@ -204,6 +207,7 @@ model movimientosdpf {
   natjur       Int?
   ruc          String?   @db.VarChar(255)
   sexo         Decimal?  @db.Decimal(12, 2)
+  idusuario    String?   @db.VarChar(30)
 
   @@id([idnumope, fecha, idcdp, item])
   @@schema("consolidado")
@@ -283,6 +287,7 @@ model todo_mov_pas {
   natjur       Int?
   ruc          String?   @db.VarChar(255)
   sexo         Decimal?  @db.Decimal(12, 2)
+  idusuario    String?   @db.VarChar(30)
 
   @@id([tipo, idcdp, fecha, idnumope, item])
   @@schema("consolidado")
@@ -1089,11 +1094,29 @@ model saldoprestamo {
   @@schema("sbs")
 }
 
+model ahorros {
+  descri            String?   @db.VarChar(255)
+  idahorro          String    @id @db.VarChar(19)
+  tasa              Decimal?  @db.Decimal(12, 2)
+  tasaanual         Decimal?  @db.Decimal(12, 2)
+  moneda            Int?
+  minimo            Decimal?  @db.Decimal(12, 2)
+  idctacbe          String?   @db.VarChar(30)
+  idctaint          String?   @db.VarChar(30)
+  inactivo          String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
 enum GrupoMenu {
   COMPARACIONES
   RESULTADOS
-  REPORTES_SBS  @map("REPORTES SBS")
+  REPORTES_SBS    @map("REPORTES SBS")
   CONFIGURACION
-  REPORTES VBCOOP
+  REPORTES_VBCOOP
+
   @@schema("config")
 }

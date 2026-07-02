@@ -23,7 +23,7 @@ export class MenusService {
     return this.prisma.opcionMenu.findMany({
       orderBy: [
         { grupo: 'asc' },  // 1° Agrupa los menús del mismo tipo juntos
-        { ruta: 'asc' }   // 2° Los ordena numéricamente: 0, 1, 2, 3...
+        { orden: 'asc' }   // 2° Los ordena numéricamente: 0, 1, 2, 3...
       ] as any,
     });
   }

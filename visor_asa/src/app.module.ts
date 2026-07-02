@@ -13,10 +13,12 @@ import { CreditosModule } from './sbs/creditos/creditos.module';
 import { AhorrosModule } from './sbs/ahorros/ahorros.module';
 import { DpfModule } from './sbs/dpf/dpf.module';
 import { AsignarIdsocioModule } from './sbs/asignar_idsocio/asignar_idsocio.module';
+import { PeriodosModule } from './configuracion/periodos/periodos.module';
+import { MovpasivosModule } from './vbcoop/movpasivos/movpasivos.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule,
-    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule],
+    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule],
   controllers: [AppController],
   providers: [AppService],
 })
