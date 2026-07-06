@@ -59,10 +59,8 @@ export class Dashboard implements OnInit {
         const jsonPayload = decodeURIComponent(
           window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
         );
-
         const payload = JSON.parse(jsonPayload);
         this.usuarioNombre = payload.nombre || 'Usuario';
-
       } catch (error) {
         this.usuarioNombre = 'Usuario';
       }

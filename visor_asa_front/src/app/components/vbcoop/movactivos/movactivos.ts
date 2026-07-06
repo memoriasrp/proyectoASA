@@ -1,20 +1,22 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
-import { MovpasivosService } from '../../../services/vbcoop/movpasivos-service';
+import { MovactivosService } from '../../../services/vbcoop/movactivos-service';
+
 @Component({
-  selector: 'app-movpasivos',
+  selector: 'app-movactivos',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './movpasivos.html',
-  styleUrl: './movpasivos.css',
+  templateUrl: './movactivos.html',
+  styleUrl: './movactivos.css',
 })
-export class Movpasivos implements OnInit {
-  movPasivos: any[] = [];
+export class Movactivos implements OnInit {
+  movActivos: any[] = [];
+  productos$!: Observable<string[]>;
   currentPage: number = 1;
   totalPages: number = 1;
   totalRecords: number = 0;
@@ -26,17 +28,18 @@ export class Movpasivos implements OnInit {
   fechaDesde: string = '';
   fechaHasta: string = '';
 
+
   // Nueva variable de control para saber si ya buscaron al menos una vez
   busquedaRealizada: boolean = false;
   loading: boolean = false;
-
   constructor(
-    private movpasivosService: MovpasivosService,
+    private movactivosService: MovactivosService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    // Initialization logic here
+    this.productos$ = this.movactivosService.getProductosUnicos();
   }
+
 
   ejecutarBusqueda(): void {
     this.currentPage = 1; // Reseteamos a la primera página en cada nueva búsqueda
@@ -44,7 +47,6 @@ export class Movpasivos implements OnInit {
     this.cargarTabla();
   }
 
-  // Modificado para usar directamente el estado actual de las variables del componente
   cargarTabla(): void {
     this.loading = true;
     this.cdr.detectChanges();
@@ -52,7 +54,7 @@ export class Movpasivos implements OnInit {
     const desdeDate = this.fechaDesde ? new Date(this.fechaDesde) : undefined;
     const hastaDate = this.fechaHasta ? new Date(this.fechaHasta) : undefined;
 
-    this.movpasivosService.getMovpasivosPaginados(
+    this.movactivosService.getMovactivosPaginados(
       this.currentPage,
       20,
       this.searchTerm,
@@ -62,7 +64,7 @@ export class Movpasivos implements OnInit {
       hastaDate
     ).subscribe({
       next: (res) => {
-        this.movPasivos = res.data || [];
+        this.movActivos = res.data || [];
         this.totalPages = res.meta?.totalPages || 1;
         this.totalRecords = res.meta?.total || 0;
         this.loading = false;
@@ -90,7 +92,7 @@ export class Movpasivos implements OnInit {
     this.productoSeleccionado = '';
     this.fechaDesde = '';
     this.fechaHasta = '';
-    this.movPasivos = [];
+    this.movActivos = [];
     this.currentPage = 1;
     this.totalPages = 1;
     this.totalRecords = 0;
@@ -100,7 +102,7 @@ export class Movpasivos implements OnInit {
 
   // Función de Exportación a Excel nativa
   exportarAExcel(): void {
-    if (this.movPasivos.length === 0) {
+    if (this.movActivos.length === 0) {
       alert('No hay datos en la tabla para exportar.');
       return;
     }
@@ -117,33 +119,27 @@ export class Movpasivos implements OnInit {
       return `${dia}/${mes}/${anio}`; // Formato limpio DD/MM/YYYY que Excel lee perfecto
     };
     // Mapeamos las columnas para que salgan con nombres limpios en el reporte de la cooperativa
-    const datosExportar = this.movPasivos.map(item => ({
+    const datosExportar = this.movActivos.map(item => ({
       'ID Socio': item.idsocio,
       'Socio': item.nombre,
       'Documento': item.numdoc,
       'Moneda': item.moneda === 'S' ? 'Soles' : 'Dólares',
-      'Tipo': item.tipo,
-      'Cuenta': item.idcdp,
+      'Cuenta': item.idpagare,
       'Producto': item.descri,
       'Fecha': formatearFecha(item.fecha),
       'Operación': item.operacion,
       'Movimiento': item.car_abo === 'C' ? 'Cargo' : 'Abono',
       'Capital': item.capital * (1),
       'Interes': item.interes * (1),
+      'Mora': item.mora * (1),
+      'Seguro': item.seguro * (1),
+      'Aporte': item.aporte * (1),
       'Total': item.car_abo === 'C' ? item.total * (-1) : item.total * (1),
       'NumOperacion': item.idnumope,
       'Usuario': item.idusuario,
-      'Plazo': item.plazo,
       'tasa': item.tasa,
-      'tasa Anual': item.tasaanual,
-      'F. Ingreso': formatearFecha(item.fecing),
-      'F. Emision': formatearFecha(item.fechaemi),
-      'F. Vencimiento': formatearFecha(item.fechaven),
-      'F. Cancelacion': formatearFecha(item.fechacan),
-
-
-
-
+      'Plazo': item.plazo,
+      'F. Desembolso': formatearFecha(item.fechades)
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(datosExportar);
@@ -159,6 +155,7 @@ export class Movpasivos implements OnInit {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimientos Pasivos');
 
     // Descarga el Excel
-    XLSX.writeFile(workbook, `Reporte_MovPasivos_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    XLSX.writeFile(workbook, `Reporte_MovPrestamos_${new Date().toISOString().slice(0, 10)}.xlsx`);
   }
+
 }

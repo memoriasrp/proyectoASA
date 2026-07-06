@@ -15,6 +15,7 @@ import { Dpfs } from './components/sbs/dpfs/dpfs'; // Asegúrate de que la ruta 
 import { AsignarIdsocio } from './components/sbs/asignar-idsocio/asignar-idsocio';
 import { Periodos } from './components/configuracion/periodos/periodos';
 import { Movpasivos } from './components/vbcoop/movpasivos/movpasivos';
+import { Movactivos } from './components/vbcoop/movactivos/movactivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -51,6 +52,7 @@ export const routes: Routes = [
             // { path: 'reportes', component: ReportesVbcoop },
             // { path: 'configuracion', component: ConfigVbcoop },
             { path: 'movpasivos', component: Movpasivos },
+            { path: 'movactivos', component: Movactivos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },
