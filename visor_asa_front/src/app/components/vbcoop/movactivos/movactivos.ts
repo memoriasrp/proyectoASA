@@ -132,7 +132,7 @@ export class Movactivos implements OnInit {
       'Moneda': item.moneda === 'S' ? 'Soles' : 'Dólares',
       'Cuenta': item.idpagare,
       'Producto': item.descri,
-      'Fecha': formatearFecha(item.fecha), // 🟢 Aplicado
+      'Fecha': formatearFecha(item.fecha),
       'Operación': item.operacion,
       'Movimiento': item.car_abo === 'C' ? 'Cargo' : 'Abono',
       'Capital': item.capital * (1),
@@ -145,7 +145,7 @@ export class Movactivos implements OnInit {
       'Usuario': item.idusuario,
       'tasa': item.tasa,
       'Plazo': item.plazo,
-      'F. Desembolso': formatearFecha(item.fechades) // 🟢 Aplicado
+      'F. Desembolso': formatearFecha(item.fechades)
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(datosExportar);

@@ -106,15 +106,21 @@ export class Movpasivos implements OnInit {
     }
     const formatearFecha = (fechaInput: any): string => {
       if (!fechaInput) return '';
-      const f = new Date(fechaInput);
-      if (isNaN(f.getTime())) return '';
 
-      // Extraemos día, mes y año basándonos estrictamente en el huso horario local de la PC
-      const dia = String(f.getDate()).padStart(2, '0');
-      const mes = String(f.getMonth() + 1).padStart(2, '0'); // Los meses van de 0 a 11
-      const anio = f.getFullYear();
+      // Si el backend lo manda como Date u objeto, lo pasamos a string ISO
+      const fechaStr = typeof fechaInput === 'string'
+        ? fechaInput
+        : new Date(fechaInput).toISOString();
 
-      return `${dia}/${mes}/${anio}`; // Formato limpio DD/MM/YYYY que Excel lee perfecto
+      // fechaStr suele venir como "YYYY-MM-DD..." (ej: "2010-05-27T00:00:00.000Z")
+      if (fechaStr.length >= 10) {
+        const partes = fechaStr.slice(0, 10).split('-'); // Rompe en ['YYYY', 'MM', 'DD']
+        if (partes.length === 3) {
+          return `${partes[2]}/${partes[1]}/${partes[0]}`; // Retorna "DD/MM/YYYY" exactamente
+        }
+      }
+
+      return '';
     };
     // Mapeamos las columnas para que salgan con nombres limpios en el reporte de la cooperativa
     const datosExportar = this.movPasivos.map(item => ({
