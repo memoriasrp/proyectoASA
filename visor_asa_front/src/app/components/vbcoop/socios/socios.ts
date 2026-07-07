@@ -6,10 +6,13 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
+import { RouterModule } from '@angular/router';
+
+
 @Component({
   selector: 'app-socios',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './socios.html',
   styleUrl: './socios.css',
 })

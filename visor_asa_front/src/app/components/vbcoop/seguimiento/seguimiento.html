@@ -1,0 +1,102 @@
+<div class="container-fluid mt-4">
+
+    <div class="formulario-container">
+
+        <div class="formulario-header">
+            <h5>Registrar Nueva Gestión de Seguimiento</h5>
+            <span class="text-white-50">Socio Código: <strong>{{ idsocio }}</strong></span>
+        </div>
+
+        <div class="formulario-body">
+            <form (ngSubmit)="guardar()">
+
+                <div class="row mb-4 align-items-end" style="margin-bottom: 1.5rem;">
+
+                    <div class="col-md-3">
+                        <label class="label-estilizado">1. Categoría de Gestión</label>
+                        <select class="input-estilizado" [(ngModel)]="tipoSeleccionado" name="tipoProducto"
+                            (change)="onTipoChange()">
+                            <option *ngFor="let tipo of tiposUnicos" [value]="tipo">
+                                {{ tipo }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-9">
+                        <label class="label-estilizado">2. Vincular a Cuenta / Documento</label>
+                        <select class="input-estilizado" [(ngModel)]="cuentaSeleccionada" name="cuentaProducto"
+                            [disabled]="tipoSeleccionado === 'GENERAL'">
+
+                            <option *ngIf="tipoSeleccionado === 'GENERAL'" [ngValue]="null">GENERAL</option>
+                            <option *ngIf="tipoSeleccionado !== 'GENERAL'" [ngValue]="null">GENERAL (Toda la cartera de
+                                {{ tipoSeleccionado }})</option>
+
+                            <option *ngFor="let prod of cuentasFiltradas" [ngValue]="prod">
+                                Nº {{ prod.idcdp }} - {{ prod.descri }} &bull;{{ prod.condicion }}&bull; S/.{{
+                                prod.saldo | number:'1.2-2' }}
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="mb-4" style="margin-bottom: 1.5rem;">
+                    <label class="label-estilizado">Detalle de la Bitácora <span class="text-danger">*</span></label>
+                    <textarea class="input-estilizado textarea-detalle" [(ngModel)]="detalle" name="detalle"
+                        placeholder="Escriba aquí de forma clara los acuerdos, llamadas telefónicas o compromisos asumidos..."></textarea>
+                </div>
+
+                <div class="mb-4" style="margin-bottom: 1.5rem;">
+                    <label class="label-estilizado">Adjuntar Documentos Sustentatorios (Opcional)</label>
+
+                    <input type="file" class="input-estilizado" (change)="onFilesSelected($event)" multiple
+                        accept=".pdf,.xlsx,.xls,.docx,.doc,.jpg,.png,.jpeg">
+
+                    <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 0.25rem;">
+                        Formatos admitidos: PDF, hojas de cálculo, imágenes o documentos de texto. Máx 10MB por archivo.
+                    </small>
+
+                    <div *ngIf="archivosSeleccionados.length > 0" class="mt-3 p-3 bg-white rounded border">
+                        <span class="text-secondary fw-bold d-block mb-2" style="font-size: 0.85rem;">
+                            Archivos listos para subir ({{ archivosSeleccionados.length }}):
+                        </span>
+
+                        <ul class="list-unstyled mb-0" style="font-size: 0.85rem; color: #475569;">
+                            <li *ngFor="let file of archivosSeleccionados; let idx = index"
+                                class="d-flex justify-content-between align-items-center py-2 px-3 mb-1 rounded"
+                                style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+
+                                <span>
+                                    <span class="me-2">📄</span>
+                                    <strong>{{ file.name }}</strong>
+                                    <small class="text-muted ms-2">({{ (file.size / 1024 / 1024) | number:'1.2-2' }}
+                                        MB)</small>
+                                </span>
+
+                                <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2"
+                                    style="font-size: 0.75rem; border-radius: 4px;" (click)="removerArchivo(idx)">
+                                    Quitar
+                                </button>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="botonera-section">
+                    <button type="button" class="btn-personalizado btn-cancelar"
+                        [routerLink]="['/vbcoop/seguimiento-historial', idsocio]">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-personalizado btn-guardar" [disabled]="cargando">
+                        <span *ngIf="cargando" class="spinner-border spinner-border-sm"
+                            style="margin-right: 0.5rem;"></span>
+                        Guardar Registro
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>

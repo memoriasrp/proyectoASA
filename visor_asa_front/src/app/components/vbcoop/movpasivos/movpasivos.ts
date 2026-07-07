@@ -134,7 +134,7 @@ export class Movpasivos implements OnInit {
       'Fecha': formatearFecha(item.fecha),
       'Operación': item.operacion,
       'Movimiento': item.car_abo === 'C' ? 'Cargo' : 'Abono',
-      'Capital': item.capital * (1),
+      'Capital': item.car_abo === 'C' ? item.capital * (-1) : item.capital * (1),
       'Interes': item.interes * (1),
       'Total': item.car_abo === 'C' ? item.total * (-1) : item.total * (1),
       'NumOperacion': item.idnumope,

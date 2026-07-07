@@ -135,7 +135,7 @@ export class Movactivos implements OnInit {
       'Fecha': formatearFecha(item.fecha),
       'Operación': item.operacion,
       'Movimiento': item.car_abo === 'C' ? 'Cargo' : 'Abono',
-      'Capital': item.capital * (1),
+      'Capital': item.car_abo === 'C' ? item.capital * (-1) : item.capital * (1),
       'Interes': item.interes * (1),
       'Mora': item.mora * (1),
       'Seguro': item.seguro * (1),

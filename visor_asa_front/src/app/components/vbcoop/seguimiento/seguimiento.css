@@ -1,0 +1,121 @@
+/* Contenedor principal de la tarjeta */
+.formulario-container {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    overflow: hidden;
+}
+
+/* Encabezado institucional */
+.formulario-header {
+    background-color: #1e293b;
+    /* Gris oscuro elegante */
+    color: #ffffff;
+    padding: 1.5rem;
+    border-bottom: 1px solid #334155;
+}
+
+.formulario-header h5 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+/* Cuerpo del formulario */
+.formulario-body {
+    padding: 2rem;
+    background-color: #f8fafc;
+    /* Fondo gris claro limpio */
+}
+
+/* Etiquetas de los campos */
+.label-estilizado {
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Estilo para los inputs, selects y textarea */
+.input-estilizado {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #1e293b;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    box-sizing: border-box;
+}
+
+.input-estilizado:focus {
+    border-color: #0284c7;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.input-estilizado:disabled {
+    background-color: #e2e8f0;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+/* Caja de texto del detalle largo */
+.textarea-detalle {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.6;
+}
+
+/* Sección inferior de botones */
+.botonera-section {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Botones personalizados */
+.btn-personalizado {
+    padding: 0.625rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    border: none;
+}
+
+.btn-cancelar {
+    background-color: #94a3b8;
+    color: #ffffff;
+}
+
+.btn-cancelar:hover {
+    background-color: #64748b;
+}
+
+.btn-guardar {
+    background-color: #16a34a;
+    /* Verde éxito */
+    color: #ffffff;
+}
+
+.btn-guardar:hover {
+    background-color: #15803d;
+}
+
+.btn-guardar:disabled {
+    background-color: #86efac;
+    cursor: not-allowed;
+}

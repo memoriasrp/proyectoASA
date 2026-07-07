@@ -16,6 +16,8 @@ import { AsignarIdsocio } from './components/sbs/asignar-idsocio/asignar-idsocio
 import { Periodos } from './components/configuracion/periodos/periodos';
 import { Movpasivos } from './components/vbcoop/movpasivos/movpasivos';
 import { Movactivos } from './components/vbcoop/movactivos/movactivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { Seguimiento } from './components/vbcoop/seguimiento/seguimiento'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { SeguimientoHistorial } from './components/vbcoop/seguimiento-historial/seguimiento-historial'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -53,6 +55,8 @@ export const routes: Routes = [
             // { path: 'configuracion', component: ConfigVbcoop },
             { path: 'movpasivos', component: Movpasivos },
             { path: 'movactivos', component: Movactivos },
+            { path: 'seguimiento-historial/:idsocio', component: SeguimientoHistorial },
+            { path: 'seguimiento-nuevo/:idsocio', component: Seguimiento },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },

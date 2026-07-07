@@ -22,6 +22,7 @@
                     <th>Num Documento</th>
                     <th>Fecha Ingreso</th>
                     <th>Fecha Retiro</th>
+                    <th>Seguimiento</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,6 +36,14 @@
                     </td>
                     <td>{{ socio.fecing | date:'dd/MM/yyyy':'UTC' }}</td>
                     <td>{{ socio.fecret | date:'dd/MM/yyyy':'UTC'}}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info text-white"
+                            [routerLink]="['/vbcoop/seguimiento-historial', socio.idsocio]"
+                            [queryParams]="{ nombre: socio.nombres +' '+ socio.paterno +' '+ socio.materno }"
+                            title="Ver Historial de Seguimientos">
+                            <i class="bi bi-eye-fill"></i> 👁️
+                        </button>
+                    </td>
                 </tr>
 
                 <tr *ngIf="socios.length === 0">
@@ -42,6 +51,7 @@
                         No se encontraron socios que coincidan con la búsqueda.
                     </td>
                 </tr>
+
             </tbody>
         </table>
     </div>

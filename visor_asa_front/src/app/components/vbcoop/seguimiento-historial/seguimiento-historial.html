@@ -1,0 +1,83 @@
+<div class="container historial-container mt-4">
+
+    <div class="header-section d-flex justify-content-between align-items-center w-100 style-header">
+        <div>
+            <h4 class="mb-1 text-dark fw-bold">Historial de Seguimientos</h4>
+            <p class="text-muted mb-0">
+                Socio: <span class="text-primary fw-bold">{{ idsocio }}</span> &bull; {{ nombreSocio }}
+            </p>
+        </div>
+
+        <button class="btn btn-success shadow-sm px-3 text-nowrap"
+            [routerLink]="['/vbcoop/seguimiento-nuevo', idsocio]">
+            + Agregar Seguimiento
+        </button>
+    </div>
+
+    <div *ngIf="cargando" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Estructurando información...</p>
+    </div>
+
+    <div *ngIf="!cargando && productosAgrupados.length === 0" class="alert alert-info text-center shadow-sm">
+        No se han registrado seguimientos ni bitácoras para este socio todavía.
+    </div>
+
+    <div *ngIf="!cargando && productosAgrupados.length > 0">
+
+        <div class="categoria-bloque" *ngFor="let grupo of productosAgrupados">
+
+            <div class="categoria-header">
+                <span class="categoria-badge">{{ grupo.lista.length }}</span>
+                <span class="categoria-titulo">CATEGORÍA: {{ grupo.tipo }}</span>
+            </div>
+
+            <div class="categoria-body">
+
+                <div class="gestion-card shadow-sm" *ngFor="let item of grupo.lista">
+
+                    <div class="gestion-meta">
+                        <div class="meta-info">
+                            <span class="meta-fecha">📅 {{ item.fecha | date:'dd/MM/yyyy hh:mm a' }}</span>
+                            <span *ngIf="item.idproducto" class="meta-cuenta">Cuenta: {{ item.idproducto }}</span>
+                        </div>
+                        <span class="meta-usuario">
+                            Registrado por: <strong>{{ item.usuario?.nombre || 'Sistema' }}</strong>
+                        </span>
+                    </div>
+
+                    <div class="gestion-detalle">
+                        {{ item.detalle }}
+                    </div>
+
+                    <div class="adjunto-section" *ngIf="item.adjuntos?.length > 0">
+                        <div class="d-flex flex-column align-items-end gap-3 mt-3">
+
+                            <ng-container *ngIf="item.adjuntos && item.adjuntos.length > 0">
+                                <div *ngFor="let adj of item.adjuntos" class="w-auto">
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-danger px-3 py-2 d-flex align-items-center"
+                                        style="min-width: 280px; max-width: 450px; border-radius: 6px;"
+                                        (click)="verAdjunto(adj)">
+                                        <span class="me-2">📎</span>
+                                        <span class="text-truncate">Ver Adjunto: {{ adj.nombre_original }}</span>
+                                    </button>
+                                </div>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+        <button class="btn btn-secondary px-4" [routerLink]="['/dashboard/socios']">
+            Volver a Lista de Socios
+        </button>
+    </div>
+
+</div>
