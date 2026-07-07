@@ -40,12 +40,14 @@ model PermisoPantalla {
 }
 
 model Usuario {
-  id            Int         @id @default(autoincrement())
-  nombre        String
-  email         String      @unique
-  password      String
-  tipoUsuarioId Int
-  tipoUsuario   TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  nombre              String
+  email               String                @unique
+  password            String
+  tipoUsuarioId       Int
+  tipoUsuario         TipoUsuario           @relation(fields: [tipoUsuarioId], references: [id])
+  seguimiento         seguimiento[]
+  seguimiento_adjunto seguimiento_adjunto[]
 
   @@schema("config")
 }
@@ -1158,6 +1160,37 @@ model formptmo {
 
   @@id([descri, idforma, idmoneda])
   @@schema("ctacte")
+}
+
+model seguimiento {
+  id                  Int                   @id @default(autoincrement())
+  idsocio             String?               @db.VarChar(25)
+  tipoproducto        String?               @db.VarChar(10)
+  idproducto          String?               @db.VarChar(28)
+  fecha               DateTime              @default(now()) @db.Timestamp(6)
+  detalle             String
+  idusuario           Int
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  Usuario             Usuario               @relation(fields: [idusuario], references: [id], map: "fk_seguimiento_usuario")
+  seguimiento_adjunto seguimiento_adjunto[]
+
+  @@schema("consolidado")
+}
+
+model seguimiento_adjunto {
+  id                Int         @id @default(autoincrement())
+  id_seguimiento    Int
+  nombre_original   String
+  nombre_almacenado String
+  ruta_archivo      String
+  extension         String?     @db.VarChar(10)
+  tamano_bytes      Int?
+  idusuario_sube    Int
+  created_at        DateTime?   @default(now()) @db.Timestamp(6)
+  seguimiento       seguimiento @relation(fields: [id_seguimiento], references: [id], onDelete: Cascade, map: "fk_adjunto_seguimiento")
+  Usuario           Usuario     @relation(fields: [idusuario_sube], references: [id], map: "fk_adjunto_usuario")
+
+  @@schema("consolidado")
 }
 
 enum GrupoMenu {
