@@ -5,18 +5,22 @@ import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
-import { MovactivosService } from '../../../services/vbcoop/movactivos-service';
+import { CateraPasivosService } from '../../../services/vbcoop/catera-pasivos-service';
 
 @Component({
-  selector: 'app-movactivos',
+  selector: 'app-cartera-pasivos',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './movactivos.html',
-  styleUrl: './movactivos.css',
+  templateUrl: './cartera-pasivos.html',
+  styleUrl: './cartera-pasivos.css',
 })
-export class Movactivos implements OnInit {
-  movActivos: any[] = [];
-  productos$!: Observable<string[]>;
+export class CarteraPasivos implements OnInit {
+  carteraPasivos: any[] = [];
+
+  listaPeriodos: any[] = [];
+  periodoSeleccionado: string = '';
+
+  periodos$!: Observable<string[]>;
   currentPage: number = 1;
   totalPages: number = 1;
   totalRecords: number = 0;
@@ -25,22 +29,36 @@ export class Movactivos implements OnInit {
   searchTerm: string = '';
   monedaSeleccionada: string = '';
   productoSeleccionado: string = '';
-  fechaDesde: string = '';
-  fechaHasta: string = '';
+  condicionSeleccionado: string = '';
+  periodo: string = '';
 
 
   // Nueva variable de control para saber si ya buscaron al menos una vez
   busquedaRealizada: boolean = false;
   loading: boolean = false;
   constructor(
-    private movactivosService: MovactivosService,
+    private carteraPasivosService: CateraPasivosService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.productos$ = this.movactivosService.getProductosUnicos();
+    this.cargarCombos();
+
   }
 
-
+  cargarCombos(): void {
+    //    this.periodos$ = this.carteraPasivosService.getPeriodosDisponibles();
+    this.carteraPasivosService.getPeriodosDisponibles().subscribe({
+      next: (data) => {
+        this.listaPeriodos = data || [];
+        const periodoActivo = this.listaPeriodos.find(p => p.activo === true);
+        this.periodoSeleccionado = periodoActivo.periodo;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar periodos:', err);
+      }
+    });
+  }
   ejecutarBusqueda(): void {
     this.currentPage = 1; // Reseteamos a la primera página en cada nueva búsqueda
     this.busquedaRealizada = true;
@@ -50,28 +68,24 @@ export class Movactivos implements OnInit {
   cargarTabla(): void {
     this.loading = true;
     this.cdr.detectChanges();
-    // Convertimos las strings de fecha a objetos Date solo si tienen valor
-    const desdeDate = this.fechaDesde ? new Date(this.fechaDesde) : undefined;
-    const hastaDate = this.fechaHasta ? new Date(this.fechaHasta) : undefined;
-
-    this.movactivosService.getMovactivosPaginados(
+    this.carteraPasivosService.getCarteraPasivosPaginados(
       this.currentPage,
       20,
       this.searchTerm,
       this.monedaSeleccionada,
       this.productoSeleccionado,
-      desdeDate,
-      hastaDate
+      this.periodoSeleccionado,
+      this.condicionSeleccionado
     ).subscribe({
       next: (res) => {
-        this.movActivos = res.data || [];
+        this.carteraPasivos = res.data || [];
         this.totalPages = res.meta?.totalPages || 1;
         this.totalRecords = res.meta?.total || 0;
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al consultar movimientos activos:', err);
+        console.error('Error al consultar movimientos pasivos:', err);
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -90,9 +104,9 @@ export class Movactivos implements OnInit {
     this.searchTerm = '';
     this.monedaSeleccionada = '';
     this.productoSeleccionado = '';
-    this.fechaDesde = '';
-    this.fechaHasta = '';
-    this.movActivos = [];
+    this.periodo = '';
+    this.condicionSeleccionado = '';
+    this.carteraPasivos = [];
     this.currentPage = 1;
     this.totalPages = 1;
     this.totalRecords = 0;
@@ -102,14 +116,11 @@ export class Movactivos implements OnInit {
 
   // Función de Exportación a Excel nativa
   exportarAExcel(): void {
-    const desdeDate = this.fechaDesde ? new Date(this.fechaDesde) : undefined;
-    const hastaDate = this.fechaHasta ? new Date(this.fechaHasta) : undefined;
-
-    this.movactivosService.getMovactivosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, desdeDate, hastaDate)
+    this.carteraPasivosService.getCarteraPasivosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, this.periodoSeleccionado, this.condicionSeleccionado)
       .subscribe({
         next: (res) => {
           if (!res || res.length === 0) return;
-          if (this.movActivos.length === 0) {
+          if (this.carteraPasivos.length === 0) {
             alert('No hay datos en la tabla para exportar.');
             return;
           }
@@ -132,27 +143,30 @@ export class Movactivos implements OnInit {
             return '';
           };
           // Mapeamos las columnas para que salgan con nombres limpios en el reporte de la cooperativa
+          //	"totalitem"	"totalmov"	"fecdeposito"	"fecultmov"	"condicion"
+
           const datosExportar = res.map(item => ({
+            'Tipo': item.tipo,
+            'Cuenta': item.idcdp,
             'ID Socio': item.idsocio,
             'Socio': item.nombre,
             'Documento': item.numdoc,
-            'Moneda': item.moneda === 'S' ? 'Soles' : 'Dólares',
-            'Cuenta': item.idpagare,
             'Producto': item.descri,
-            'Fecha': formatearFecha(item.fecha),
-            'Operación': item.operacion,
-            'Movimiento': item.car_abo === 'C' ? 'Cargo' : 'Abono',
-            'Capital': item.car_abo === 'C' ? item.capital * (-1) : item.capital * (1),
-            'Interes': item.interes * (1),
-            'Mora': item.mora * (1),
-            'Seguro': item.seguro * (1),
-            'Aporte': item.aporte * (1),
-            'Total': item.car_abo === 'C' ? item.total * (-1) : item.total * (1),
-            'NumOperacion': item.idnumope,
-            'Usuario': item.idusuario,
+            'Moneda': item.moneda === 'S' ? 'Soles' : 'Dólares',
+            'Fecha': formatearFecha(item.fecing),
+            'Capital MO': item.cap_originalmo * (1),
+            'Capital MN': item.cap_originalmn * (1),
+            'pagointeres_periodomo': item.pagointeres_periodomo * (1),
+            'pagointeres_periodomn': item.pagointeres_periodomn * (1),
+            'saldo_periodomo': item.saldo_periodomo * (1),
+            'saldo_periodomn': item.saldo_periodomn * (1),
+            'plazo': item.plazo,
             'tasa': item.tasa,
-            'Plazo': item.plazo,
-            'F. Desembolso': formatearFecha(item.fechades)
+            'tasa Anual': item.tasaanual,
+            'item': item.totalitem,
+            '# Movimientos': item.totalmov,
+            'Fec Ult Movimiento': formatearFecha(item.fecultmov),
+            'Condicion': item.condicion
           }));
 
           const worksheet = XLSX.utils.json_to_sheet(datosExportar);
@@ -168,10 +182,11 @@ export class Movactivos implements OnInit {
           XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimientos Pasivos');
 
           // Descarga el Excel
-          XLSX.writeFile(workbook, `Reporte_MovPrestamos_${new Date().toISOString().slice(0, 10)}.xlsx`);
-        },
+          XLSX.writeFile(workbook, `Reporte_carteraPasivos_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        }
+        ,
         error: (err) => console.error('Error al exportar ahorros SBS', err)
       });
   }
-
 }
+

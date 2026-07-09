@@ -18,6 +18,7 @@ import { Movpasivos } from './components/vbcoop/movpasivos/movpasivos';
 import { Movactivos } from './components/vbcoop/movactivos/movactivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { Seguimiento } from './components/vbcoop/seguimiento/seguimiento'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { SeguimientoHistorial } from './components/vbcoop/seguimiento-historial/seguimiento-historial'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { CarteraPasivos } from './components/vbcoop/cartera-pasivos/cartera-pasivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,6 +44,14 @@ export const routes: Routes = [
             { path: 'dpfs', component: Dpfs },
             { path: 'creditos', component: Creditos },
             { path: 'asignar-id-socio', component: AsignarIdsocio }, // 👈 Tu nueva pantalla de nulos
+            { path: '', redirectTo: 'ahorros', pathMatch: 'full' } // Redirección interna por defecto
+        ]
+    },
+    {
+        path: 'resultados',
+        component: Dashboard, // Usa el mismo componente base para mantener el sidebar/diseño
+        children: [
+            { path: 'carterapasivos', component: CarteraPasivos },
             { path: '', redirectTo: 'ahorros', pathMatch: 'full' } // Redirección interna por defecto
         ]
     },

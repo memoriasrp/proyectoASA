@@ -1193,6 +1193,37 @@ model seguimiento_adjunto {
   @@schema("consolidado")
 }
 
+model carteraxperiodo_pasivo {
+  periodo               String    @db.VarChar(6)
+  tc                    Decimal?  @db.Decimal
+  fecha_corte           DateTime? @db.Date
+  tipo                  String
+  idcdp                 String    @db.VarChar
+  idsocio               String    @db.VarChar(25)
+  nombre                String?
+  numdoc                String?   @db.VarChar(255)
+  descri                String?   @db.VarChar
+  moneda                String
+  cap_originalmo        Decimal?  @db.Decimal
+  cap_originalmn        Decimal?  @db.Decimal
+  plazo                 Int?
+  tasa                  Decimal?  @db.Decimal
+  tasaanual             Decimal?  @db.Decimal
+  fecing                DateTime? @db.Date
+  totalitem             Int?
+  totalmov              Int?
+  saldo_periodomo       Decimal?  @db.Decimal
+  saldo_periodomn       Decimal?  @db.Decimal
+  pagointeres_periodomo Decimal?  @db.Decimal
+  pagointeres_periodomn Decimal?  @db.Decimal
+  fecdeposito           DateTime? @db.Date
+  fecultmov             DateTime? @db.Date
+  condicion             String?
+
+  @@id([periodo, tipo, idcdp, idsocio, moneda])
+  @@schema("consolidado")
+}
+
 enum GrupoMenu {
   COMPARACIONES
   RESULTADOS
