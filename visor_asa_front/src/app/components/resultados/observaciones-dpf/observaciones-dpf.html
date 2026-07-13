@@ -1,0 +1,74 @@
+<div class="usuarios-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Reporte de Diferencias en DPF's</h2>
+            <p class="page-subtitle">Consulta de diferencias entre saldos.</p>
+        </div>
+    </div>
+    @if (loading) {
+    <div style="text-align: center; padding: 40px; font-weight: bold; color: #7f8c8d;">Consultando base de datos
+        consolidada...</div>
+    }
+
+    @else {
+    <div class="filter-box">
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Origen</th>
+                        <th>IdSocio</th>
+                        <th>Socio</th>
+                        <th>Moneda</th>
+                        <th>Cuenta</th>
+                        <th style="text-align: right;">Diferencia</th>
+                        <th>Observacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of observacionesDpf; track item.cuenta) {
+                    <tr>
+                        <td>{{ item.origen }}</td>
+                        <td>{{ item.idsocio }}</td>
+                        <td>{{ item.nombre }}</td>
+                        <td>
+                            @if (item.moneda == 1) {
+                            <span>S/.</span>
+                            } @else {
+                            <span>$</span>
+                            }
+                        </td>
+                        <td>{{ item.cuenta }}</td>
+                        <td style="text-align: right; font-weight: 600;">{{ item.diferencia_saldo | number:'1.2-2' }}
+                        </td>
+                        <td>{{ item.estado_conciliacion }}</td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="10" class="empty-row">No se encontraron créditos registrados.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-container"
+            style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 10px 0;">
+            <div class="pagination-info">
+                <span>Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong></span>
+                <span class="text-muted" style="margin-left: 10px;">(Total: {{ totalRecords }} registros)</span>
+            </div>
+            <div class="pagination-buttons" style="display: flex; gap: 5px;">
+                <button [disabled]="currentPage === 1" (click)="changePage(1)" class="btn btn-nav"
+                    title="Primera página">««</button>
+                <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"
+                    class="btn btn-nav">Anterior</button>
+                <button [disabled]="currentPage === totalPages || totalPages === 0"
+                    (click)="changePage(currentPage + 1)" class="btn btn-nav">Siguiente</button>
+                <button [disabled]="currentPage === totalPages || totalPages === 0" (click)="changePage(totalPages)"
+                    class="btn btn-nav" title="Última página">»»</button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

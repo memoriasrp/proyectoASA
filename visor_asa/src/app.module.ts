@@ -19,10 +19,12 @@ import { MovactivosModule } from './vbcoop/movactivos/movactivos.module';
 import { SeguimientoModule } from './vbcoop/seguimiento/seguimiento.module';
 import { CarterapasivosModule } from './vbcoop/carterapasivos/carterapasivos.module';
 import { CarteraprestamosModule } from './vbcoop/carteraprestamos/carteraprestamos.module';
+import { CarteradpfModule } from './resultados/carteradpf/carteradpf.module';
+import { ObservacionesAhorroModule } from './resultados/observaciones-ahorro/observaciones-ahorro.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule,
-    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule],
+    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule, CarteradpfModule, ObservacionesAhorroModule],
   controllers: [AppController],
   providers: [AppService],
 })

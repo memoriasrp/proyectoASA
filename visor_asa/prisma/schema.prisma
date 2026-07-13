@@ -1058,6 +1058,7 @@ model saldodpfme {
   interes24   Decimal? @db.Decimal(12, 5)
   saldo251231 Decimal? @db.Decimal(15, 2)
   idsocioc    String?  @db.VarChar(50)
+  idcdp       String?  @db.VarChar
 
   @@schema("sbs")
 }
@@ -1074,6 +1075,7 @@ model saldodpfmn {
   interes24   Decimal? @db.Decimal(12, 5)
   saldo251231 Decimal? @db.Decimal
   idsocioc    String?  @db.VarChar(50)
+  idcdp       String?  @db.VarChar
 
   @@schema("sbs")
 }
