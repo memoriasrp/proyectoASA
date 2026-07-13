@@ -1026,6 +1026,7 @@ model saldoahorro {
   interes2024 Decimal? @db.Decimal(12, 5)
   saldo251231 Decimal? @db.Decimal
   idsocioc    String?  @db.VarChar(50)
+  idcdp       String?  @db.VarChar
 
   @@schema("sbs")
 }
@@ -1042,6 +1043,7 @@ model saldoahorrome {
   interes24   Decimal? @db.Decimal(12, 5)
   saldo25     Decimal? @db.Decimal
   idsocioc    String?  @db.VarChar(50)
+  idcdp       String?  @db.VarChar
 
   @@schema("sbs")
 }

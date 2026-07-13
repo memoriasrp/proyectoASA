@@ -21,6 +21,7 @@ import { SeguimientoHistorial } from './components/vbcoop/seguimiento-historial/
 import { CarteraPasivos } from './components/vbcoop/cartera-pasivos/cartera-pasivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { CarteraPrestamos } from './components/vbcoop/cartera-prestamos/cartera-prestamos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesDpf } from './components/resultados/observaciones-dpf/observaciones-dpf'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { ObservacionesAhorro } from './components/resultados/observaciones-ahorro/observaciones-ahorro'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -46,7 +47,7 @@ export const routes: Routes = [
             { path: 'dpfs', component: Dpfs },
             { path: 'creditos', component: Creditos },
             { path: 'asignar-id-socio', component: AsignarIdsocio }, // 👈 Tu nueva pantalla de nulos
-            { path: '', redirectTo: 'ahorros', pathMatch: 'full' } // Redirección interna por defecto
+            { path: '', redirectTo: 'inicio', pathMatch: 'full' } // Redirección interna por defecto
         ]
     },
     {
@@ -56,7 +57,8 @@ export const routes: Routes = [
             { path: 'carterapasivos', component: CarteraPasivos },
             { path: 'carteraprestamos', component: CarteraPrestamos },
             { path: 'observaciones-dpf', component: ObservacionesDpf },
-            { path: '', redirectTo: 'ahorros', pathMatch: 'full' } // Redirección interna por defecto
+            { path: 'observaciones-ahorros', component: ObservacionesAhorro },
+            { path: '', redirectTo: 'inicio', pathMatch: 'full' } // Redirección interna por defecto
         ]
     },
     {
