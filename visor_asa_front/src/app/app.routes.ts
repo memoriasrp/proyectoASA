@@ -19,6 +19,7 @@ import { Movactivos } from './components/vbcoop/movactivos/movactivos'; // Aseg�
 import { Seguimiento } from './components/vbcoop/seguimiento/seguimiento'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { SeguimientoHistorial } from './components/vbcoop/seguimiento-historial/seguimiento-historial'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { CarteraPasivos } from './components/vbcoop/cartera-pasivos/cartera-pasivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { CarteraPrestamos } from './components/vbcoop/cartera-prestamos/cartera-prestamos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -52,6 +53,7 @@ export const routes: Routes = [
         component: Dashboard, // Usa el mismo componente base para mantener el sidebar/diseño
         children: [
             { path: 'carterapasivos', component: CarteraPasivos },
+            { path: 'carteraprestamos', component: CarteraPrestamos },
             { path: '', redirectTo: 'ahorros', pathMatch: 'full' } // Redirección interna por defecto
         ]
     },

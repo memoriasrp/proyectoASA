@@ -1224,6 +1224,42 @@ model carteraxperiodo_pasivo {
   @@schema("consolidado")
 }
 
+model consolidado_carteraxperiodo_prestamo {
+  periodo          String    @db.VarChar(6)
+  tc               Decimal?  @db.Decimal
+  fecha_corte      DateTime? @db.Date
+  idpagare         String    @db.VarChar
+  idsocio          String    @db.VarChar(25)
+  nombre           String?
+  numdoc           String?   @db.VarChar(255)
+  descri           String?   @db.VarChar(255)
+  moneda           String?
+  desembolso       Decimal?  @db.Decimal(12, 2)
+  plazo            Int?
+  tasa             Decimal?  @db.Decimal(12, 2)
+  fechades         DateTime? @db.Date
+  cuotas_pagadas   Decimal?  @db.Decimal
+  totalmov         Int?
+  saldocapitalmo   Decimal?  @db.Decimal
+  saldocapitalmn   Decimal?  @db.Decimal
+  pagointeresmo    Decimal?  @db.Decimal
+  pagointeresmn    Decimal?  @db.Decimal
+  pagomoramo       Decimal?  @db.Decimal
+  pagomoramn       Decimal?  @db.Decimal
+  pagoseguromo     Decimal?  @db.Decimal
+  pagoseguromn     Decimal?  @db.Decimal
+  pagoaportemo     Decimal?  @db.Decimal
+  pagoaportemn     Decimal?  @db.Decimal
+  totalpagomo      Decimal?  @db.Decimal
+  totalpagomn      Decimal?  @db.Decimal
+  condicion        String?
+  fecultmovimiento DateTime? @db.Date
+
+  @@id([periodo, idpagare, idsocio])
+  @@map("carteraxperiodo_prestamo")
+  @@schema("consolidado")
+}
+
 enum GrupoMenu {
   COMPARACIONES
   RESULTADOS
