@@ -1,8 +1,8 @@
 import {
     Controller, Post, Body,
     UseInterceptors, UploadedFiles, Param,
-    Get, UploadedFile, ParseFilePipe,
-    BadRequestException, NotFoundException, Res
+    Get, UploadedFile, ParseFilePipe, UseGuards,
+    BadRequestException, NotFoundException, Res, Req
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -10,6 +10,8 @@ import { extname, resolve } from 'path';
 import { SeguimientoService } from './seguimiento.service';
 import { existsSync, mkdirSync } from 'fs';
 import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import * as fs from 'fs';
 
 const UPLOAD_DIR = 'C:/visor-asa-storage/adjuntos';
@@ -23,10 +25,11 @@ export class SeguimientoController {
     constructor(private readonly seguimientoService: SeguimientoService) { }
 
     @Post()
+    @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(
-        FilesInterceptor('file', 20, { // 🟢 3. Permitimos hasta 20 archivos bajo la clave 'file'
+        FilesInterceptor('file', 20, {
             storage: diskStorage({
-                destination: UPLOAD_DIR, // 📁 Carpeta física en la raíz del backend donde se guardarán
+                destination: UPLOAD_DIR,
                 filename: (req, file, callback) => {
                     // Generamos un nombre único usando un código aleatorio + la extensión original
                     const randomName = Array(32)
@@ -40,20 +43,23 @@ export class SeguimientoController {
     )
     async guardarSeguimiento(
         @UploadedFiles() files: Array<Express.Multer.File>,
-        @Body() body: any
+        @Body() body: any,
+        @Req() req: Request
     ) {
         if (!body.idsocio || !body.detalle) {
             throw new BadRequestException('El código de socio y el detalle son obligatorios.');
         }
-
-        const idusuario = body.idusuario ? parseInt(body.idusuario, 10) : 1;
-
+        console.log('======= INSPECCIÓN DE SESIÓN =======');
+        console.log('Usuario autenticado (req.user):', req.user);
+        console.log('====================================');
+        const usuario = req.user as any;
+        const idUsuarioReal = usuario?.id || 1; // Si no viene, por defecto usa 1 (aquí es donde se puede estar quedando trabado)s
         return this.seguimientoService.crearSeguimientoConAdjuntos({
             idsocio: body.idsocio.trim(),
             tipoproducto: body.tipoproducto ? body.tipoproducto.trim().toUpperCase() : 'GENERAL',
             idproducto: body.idproducto ? body.idproducto.trim() : '',
             detalle: body.detalle,
-            idusuario: idusuario,
+            idusuario: idUsuarioReal,
             files: files || []
         });
     }
