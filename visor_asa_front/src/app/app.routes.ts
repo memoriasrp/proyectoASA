@@ -23,6 +23,7 @@ import { CarteraPrestamos } from './components/vbcoop/cartera-prestamos/cartera-
 import { ObservacionesDpf } from './components/resultados/observaciones-dpf/observaciones-dpf'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesAhorro } from './components/resultados/observaciones-ahorro/observaciones-ahorro'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesPrestamo } from './components/resultados/observaciones-prestamo/observaciones-prestamo'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { ObservacionesAportes } from './components/resultados/observaciones-aportes/observaciones-aportes'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -60,6 +61,7 @@ export const routes: Routes = [
             { path: 'observaciones-dpf', component: ObservacionesDpf },
             { path: 'observaciones-ahorros', component: ObservacionesAhorro },
             { path: 'observaciones-prestamos', component: ObservacionesPrestamo },
+            { path: 'observaciones-aportes', component: ObservacionesAportes },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' } // Redirección interna por defecto
         ]
     },
