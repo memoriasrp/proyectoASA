@@ -1,173 +1,173 @@
-/* 🟢 Forzamos a Angular a romper el encapsulamiento solo para la impresión de esta pantalla */
-::ng-deep @media print {
+ @media print {
 
-    /* 1. Forzar diseño horizontal y ajustar márgenes de la hoja */
-    @page {
-        size: landscape;
-        margin: 8mm 8mm 8mm 8mm;
-    }
+     /* 1. Forzar diseño horizontal y ajustar márgenes de la hoja */
+     @page {
+         size: landscape;
+         margin: 8mm 8mm 8mm 8mm;
+     }
 
-    /* 2. Ocultar el layout del Visor (Menú Lateral, Cabecera Global) */
-    body,
-    .app-container,
-    .main-content {
-        display: block !important;
-        background: white !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
+     /* 2. Ocultar el layout del Visor (Menú Lateral, Cabecera Global) */
+     /* Las etiquetas globales no necesitan ::ng-deep */
+     body,
+     .app-container,
+     .main-content {
+         display: block !important;
+         background: white !important;
+         padding: 0 !important;
+         margin: 0 !important;
+         width: 100% !important;
+     }
 
-    /* Ocultamos físicamente la barra lateral */
-    .sidebar,
-    aside,
-    nav,
-    .header-app,
-    .navbar,
-    .filter-card,
-    .btn-group,
-    .pagination-bar {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        width: 0 !important;
-    }
+     /* Usamos ::ng-deep únicamente para los selectores de componentes de Angular */
+     ::ng-deep .sidebar,
+     ::ng-deep aside,
+     ::ng-deep nav,
+     ::ng-deep .header-app,
+     ::ng-deep .navbar,
+     ::ng-deep .filter-card,
+     ::ng-deep .btn-group,
+     ::ng-deep .pagination-bar {
+         display: none !important;
+         visibility: hidden !important;
+         height: 0 !important;
+         width: 0 !important;
+     }
 
-    /* 3. Ocultar todo el contenido por defecto */
-    body * {
-        visibility: hidden;
-    }
+     /* 3. Ocultar todo el contenido por defecto */
+     body * {
+         visibility: hidden;
+     }
 
-    /* 4. Mostrar únicamente nuestra sección de la tabla de cartera */
-    #area-impresion,
-    #area-impresion * {
-        visibility: visible !important;
-    }
+     /* 4. Mostrar únicamente nuestra sección de la tabla de cartera */
+     #area-impresion,
+     #area-impresion * {
+         visibility: visible !important;
+     }
 
-    #area-impresion {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-        background: white !important;
-    }
+     #area-impresion {
+         position: absolute !important;
+         left: 0 !important;
+         top: 0 !important;
+         width: 100% !important;
+         max-width: 100% !important;
+         margin: 0 !important;
+         padding: 0 !important;
+         display: block !important;
+         background: white !important;
+     }
 
-    /* 5. Ajustes de escala de la tabla */
-    table {
-        width: 100% !important;
-        max-width: 100% !important;
-        table-layout: fixed;
-        border-collapse: collapse;
-        font-size: 8.5pt !important;
-        margin-top: 10px;
-    }
+     /* 5. Ajustes de escala de la tabla */
+     table {
+         width: 100% !important;
+         max-width: 100% !important;
+         table-layout: fixed;
+         border-collapse: collapse;
+         font-size: 8.5pt !important;
+         margin-top: 10px;
+     }
 
-    /* Definición proporcional de tus 10 columnas en horizontal */
-    th:nth-child(1),
-    td:nth-child(1) {
-        width: 9%;
-    }
+     /* Definición proporcional de tus 10 columnas en horizontal */
+     th:nth-child(1),
+     td:nth-child(1) {
+         width: 9%;
+     }
 
-    /* ID Socio */
-    th:nth-child(2),
-    td:nth-child(2) {
-        width: 20%;
-    }
+     /* ID Socio */
+     th:nth-child(2),
+     td:nth-child(2) {
+         width: 20%;
+     }
 
-    /* Socio / Razón Social */
-    th:nth-child(3),
-    td:nth-child(3) {
-        width: 6%;
-    }
+     /* Socio / Razón Social */
+     th:nth-child(3),
+     td:nth-child(3) {
+         width: 6%;
+     }
 
-    /* Moneda */
-    th:nth-child(4),
-    td:nth-child(4) {
-        width: 10%;
-    }
+     /* Moneda */
+     th:nth-child(4),
+     td:nth-child(4) {
+         width: 10%;
+     }
 
-    /* Cuenta */
-    th:nth-child(5),
-    td:nth-child(5) {
-        width: 15%;
-    }
+     /* Cuenta */
+     th:nth-child(5),
+     td:nth-child(5) {
+         width: 15%;
+     }
 
-    /* Producto */
-    th:nth-child(6),
-    td:nth-child(6) {
-        width: 10%;
-    }
+     /* Producto */
+     th:nth-child(6),
+     td:nth-child(6) {
+         width: 10%;
+     }
 
-    /* Fec Desembolso */
-    th:nth-child(7),
-    td:nth-child(7) {
-        width: 9%;
-    }
+     /* Fec Desembolso */
+     th:nth-child(7),
+     td:nth-child(7) {
+         width: 9%;
+     }
 
-    /* Saldo MO */
-    th:nth-child(8),
-    td:nth-child(8) {
-        width: 9%;
-    }
+     /* Saldo MO */
+     th:nth-child(8),
+     td:nth-child(8) {
+         width: 9%;
+     }
 
-    /* Saldo MN */
-    th:nth-child(9),
-    td:nth-child(9) {
-        width: 10%;
-    }
+     /* Saldo MN */
+     th:nth-child(9),
+     td:nth-child(9) {
+         width: 10%;
+     }
 
-    /* Fec UltMovimiento */
-    th:nth-child(10),
-    td:nth-child(10) {
-        width: 12%;
-    }
+     /* Fec UltMovimiento */
+     th:nth-child(10),
+     td:nth-child(10) {
+         width: 12%;
+     }
 
-    /* Avance (Barra) */
+     /* Avance (Barra) */
 
-    th,
-    td {
-        padding: 5px 3px !important;
-        word-wrap: break-word;
-        font-size: 8pt !important;
-        border: 1px solid #000000 !important;
-        color: #000000 !important;
-    }
+     th,
+     td {
+         padding: 5px 3px !important;
+         word-wrap: break-word;
+         font-size: 8pt !important;
+         border: 1px solid #000000 !important;
+         color: #000000 !important;
+     }
 
-    th {
-        background-color: #f2f4f4 !important;
-        font-weight: bold !important;
-        text-align: center;
-    }
+     th {
+         background-color: #f2f4f4 !important;
+         font-weight: bold !important;
+         text-align: center;
+     }
 
-    td:nth-child(7),
-    td:nth-child(8) {
-        text-align: right !important;
-    }
+     td:nth-child(7),
+     td:nth-child(8) {
+         text-align: right !important;
+     }
 
-    /* Evitar que se corten filas a la mitad en saltos de página */
-    tr {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
+     /* Evitar que se corten filas a la mitad en saltos de página */
+     tr {
+         page-break-inside: avoid !important;
+         break-inside: avoid !important;
+     }
 
-    /* Forzar color de progreso */
-    .progress {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        background-color: #e9ecef !important;
-        height: 6px !important;
-        display: block !important;
-    }
+     /* Forzar color de progreso */
+     .progress {
+         -webkit-print-color-adjust: exact !important;
+         print-color-adjust: exact !important;
+         background-color: #e9ecef !important;
+         height: 6px !important;
+         display: block !important;
+     }
 
-    .progress-bar {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        background-color: #198754 !important;
-        height: 100% !important;
-        display: block !important;
-    }
-}
+     .progress-bar {
+         -webkit-print-color-adjust: exact !important;
+         print-color-adjust: exact !important;
+         background-color: #198754 !important;
+         height: 100% !important;
+         display: block !important;
+     }
+ }
