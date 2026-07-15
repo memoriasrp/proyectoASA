@@ -6,7 +6,7 @@ import { GetObservacionesPrestamoFilterDto } from './dto/get-observacionespresta
 @Injectable()
 export class ObservacionesPrestamoService {
     constructor(private prisma: PrismaService) { }
-    private buildWhereCondition(search?: string, moneda?: string) {
+    private buildWhereCondition(search?: string, moneda?: string, excluirCastigados?: string, excluirFalsificados?: string) {
         const where: any = {};
         if (search) {
             where.OR = [
@@ -17,6 +17,12 @@ export class ObservacionesPrestamoService {
         }
         if (moneda && moneda.trim() !== '') {
             where.moneda = (moneda);
+        }
+        if (excluirCastigados == "true") {
+            where.descri = 'Castigados';
+        }
+        if (excluirFalsificados == 'true') {
+            where.descriFalsificado = 'Falsificados';
         }
         return where;
     }
@@ -39,7 +45,14 @@ export class ObservacionesPrestamoService {
         if (where.moneda !== undefined) {
             sqlConditions += ` AND moneda = '${where.moneda}'`;
         }
+        if (where.descri != undefined) {
+            sqlConditions += ` AND descri NOT ILIKE '%${where.descri}%'`;
 
+        }
+        if (where.descriFalsificado != undefined) {
+            sqlConditions += ` AND descri NOT ILIKE '%${where.descriFalsificado}%'`;
+
+        }
         return sqlConditions;
     }
     async findAll(filters: GetObservacionesPrestamoFilterDto) {
@@ -47,7 +60,7 @@ export class ObservacionesPrestamoService {
         const limit = Number(filters.limit) || 20;
         const skip = (page - 1) * limit;
 
-        const whereObject = this.buildWhereCondition(filters.search, filters.moneda);
+        const whereObject = this.buildWhereCondition(filters.search, filters.moneda, filters.excluirCastigados, filters.excluirFalsificados);
 
         const sqlWhereClause = this.translateWhereToSql(whereObject);
 
@@ -56,13 +69,13 @@ export class ObservacionesPrestamoService {
                Select * from (
                 select vbcoop.idpagare,  vbcoop.idsocio,  vbcoop. nombre , descri, 
                 vbcoop.moneda,desembolso,fechades, saldocapitalmo, coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as saldosbs,
-                saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as diferencia
+                abs(saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
                 where periodo = '202605'  AND condicion='VIGENTE' 
                 and saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
                         ${sqlWhereClause}                      
-                order by idpagare, idsocio
+                order by diferencia desc
               LIMIT ${limit} OFFSET ${skip};`;
 
         const countQuery = `
@@ -70,7 +83,7 @@ export class ObservacionesPrestamoService {
               FROM (                
                 select vbcoop.idpagare,  vbcoop.idsocio,  vbcoop. nombre , descri, 
                 vbcoop.moneda,desembolso,fechades, saldocapitalmo, coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as saldosbs,
-                saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as diferencia
+                abs(saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
                 where periodo = '202605'  AND condicion='VIGENTE' 
@@ -94,20 +107,20 @@ export class ObservacionesPrestamoService {
     }
 
     async findParaExportar(filters: GetObservacionesPrestamoFilterDto) {
-        const whereObject = this.buildWhereCondition(filters.search, filters.moneda);
+        const whereObject = this.buildWhereCondition(filters.search, filters.moneda, filters.excluirCastigados, filters.excluirFalsificados);
         const sqlWhereClause = this.translateWhereToSql(whereObject);
 
         const exportQuery = `
               Select * from (
                 select vbcoop.idpagare,  vbcoop.idsocio,  vbcoop. nombre , descri, 
                 vbcoop.moneda,desembolso,fechades, saldocapitalmo, coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as saldosbs,
-                saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as diferencia
+                abs(saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
                 where periodo = '202605'  AND condicion='VIGENTE' 
                 and saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
                         ${sqlWhereClause}                      
-                order by idpagare, idsocio
+                order by diferencia desc
             `;
 
         return this.prisma.$queryRawUnsafe<any[]>(exportQuery);

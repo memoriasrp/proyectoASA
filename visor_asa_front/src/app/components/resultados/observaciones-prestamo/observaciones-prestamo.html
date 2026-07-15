@@ -7,15 +7,42 @@
         <!-- <button class="btn btn-excel" (click)="exportarExcel()">📄 Exportar a Excel</button> -->
     </div>
     <div class="filter-box">
-        <div class="search-filters-row" style="display: flex; gap: 12px; margin-bottom: 15px; width: 100%;">
+        <div class="search-filters-row"
+            style="display: flex; gap: 15px; margin-bottom: 15px; width: 100%; align-items: center;">
 
             <div class="input-group" style="flex: 1; min-width: 250px;">
-                <input type="text" placeholder="Buscar por código de socio, nombres, apellidos , idsocio, idprestamo"
+                <input type="text" placeholder="Buscar por código de socio, nombres, apellidos, idsocio, idprestamo"
                     class="form-control" [value]="searchTerm" (input)="onSearch($event)" />
             </div>
 
-            <div class="input-group" style="width: 200px; flex-shrink: 0;">
-                <select class="form-control" [(ngModel)]="monedaSeleccionada" (change)="cargarTabla()">
+            <div class="checkbox-filters-group"
+                style="display: flex; gap: 18px; align-items: center; user-select: none;">
+
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" id="chkExcluirCastigados" [(ngModel)]="excluirCastigados"
+                        (change)="currentPage = 1; cargarTabla();"
+                        style="width: 18px; height: 18px; cursor: pointer; accent-color: #27ae60; margin: 0;">
+                    <label for="chkExcluirCastigados"
+                        style="font-size: 0.9rem; font-weight: bold; color: #34495e; cursor: pointer; margin: 0; white-space: nowrap;">
+                        Excluir castigados
+                    </label>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" id="chkExcluirFalsificados" [(ngModel)]="excluirFalsificados"
+                        (change)="currentPage = 1; cargarTabla();"
+                        style="width: 18px; height: 18px; cursor: pointer; accent-color: #27ae60; margin: 0;">
+                    <label for="chkExcluirFalsificados"
+                        style="font-size: 0.9rem; font-weight: bold; color: #34495e; cursor: pointer; margin: 0; white-space: nowrap;">
+                        Excluir Falsificados
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="input-group" style="width: 180px; flex-shrink: 0;">
+                <select class="form-control" [(ngModel)]="monedaSeleccionada" (change)="cargarTabla()"
+                    style="margin: 0;">
                     <option value="">Todas las monedas</option>
                     <option value="S">S/.</option>
                     <option value="D">$</option>

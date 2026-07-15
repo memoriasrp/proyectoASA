@@ -21,4 +21,14 @@ export class GetObservacionesPrestamoFilterDto {
     @IsOptional()
     @IsString()
     moneda?: string;
+
+
+    @IsOptional()
+    @IsString()
+    excluirCastigados?: string;
+
+
+    @IsOptional()
+    @IsString()
+    excluirFalsificados?: string;
 }

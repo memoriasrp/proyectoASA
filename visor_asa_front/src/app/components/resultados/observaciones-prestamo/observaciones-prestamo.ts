@@ -21,6 +21,8 @@ export class ObservacionesPrestamo implements OnInit {
   totalRecords: number = 0;
   private searchSubject = new Subject<string>();
   monedaSeleccionada: string = '';
+  excluirCastigados: boolean = true; //
+  excluirFalsificados: boolean = true; //
 
   constructor(
     private observacionesPrestamoService: ObservacionesPrestamoService,
@@ -51,7 +53,7 @@ export class ObservacionesPrestamo implements OnInit {
   }
 
   cargarTabla() {
-    this.observacionesPrestamoService.getPrestamosPaginados(this.currentPage, 20, this.searchTerm, this.monedaSeleccionada)
+    this.observacionesPrestamoService.getPrestamosPaginados(this.currentPage, 20, this.searchTerm, this.monedaSeleccionada, this.excluirCastigados, this.excluirFalsificados)
       .subscribe({
         next: (res) => {
           this.prestamos = res.data;
@@ -65,7 +67,7 @@ export class ObservacionesPrestamo implements OnInit {
   }
 
   exportarExcel(): void {
-    this.observacionesPrestamoService.getPrestamosParaExportar(this.searchTerm, this.monedaSeleccionada)
+    this.observacionesPrestamoService.getPrestamosParaExportar(this.searchTerm, this.monedaSeleccionada, this.excluirCastigados, this.excluirFalsificados)
       .subscribe({
         next: (res) => {
           if (!res || res.length === 0) return;
