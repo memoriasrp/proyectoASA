@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 
 import { CateraPrestamosService } from '../../../services/vbcoop/catera-prestamos-service';
 @Component({
@@ -58,6 +58,56 @@ export class CarteraPrestamos implements OnInit {
 
     this.condicionSeleccionado = 'VIGENTE';
   }
+  // En tu archivo cartera-prestamos.component.ts
+
+  imprimirTabla(): void {
+    this.loading = true;
+    this.cdr.detectChanges();
+
+    // 1. Pedimos al API TODOS los registros acumulados en una sola página
+    this.carteraPrestamosService.getCarteraPrestamosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, this.periodoSeleccionado, this.condicionSeleccionado)
+      .subscribe({
+        next: (res) => {
+          // Guardamos la página de 20 registros que el usuario estaba viendo actualmente
+          const paginaOriginalRespaldada = [...this.carteraPrestamos];
+
+          // Mapeamos todos los registros recibidos (calculando los porcentajes)
+          const todosLosRegistros = (res || []).map((item: any) => {
+            const desembolsado = Number(item.desembolso) || 0;
+            const saldo = Number(item.saldocapitalmo) || 0;
+            let pctPagado = 0;
+            if (desembolsado > 0) {
+              pctPagado = Math.min(Math.max(((desembolsado - saldo) / desembolsado) * 100, 0), 100);
+            }
+            return {
+              ...item,
+              porcentajePagado: pctPagado,
+              porcentajeFaltante: 100 - pctPagado
+            };
+          });
+
+          // 2. Reemplazamos temporalmente la lista en pantalla por el universo completo
+          this.carteraPrestamos = todosLosRegistros;
+          this.loading = false;
+          this.cdr.detectChanges();
+
+          // 3. Esperamos un instante a que Angular dibuje todas las filas y abrimos la impresión
+          setTimeout(() => {
+            window.print();
+
+            // 4. Al cerrar el cuadro de diálogo, restauramos la vista de 20 registros al instante
+            this.carteraPrestamos = paginaOriginalRespaldada;
+            this.cdr.detectChanges();
+          }, 350);
+        },
+        error: (err) => {
+          console.error('Error al descargar data completa para impresión:', err);
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
   ejecutarBusqueda(): void {
     this.currentPage = 1; // Reseteamos a la primera página en cada nueva búsqueda
     this.busquedaRealizada = true;
@@ -133,76 +183,152 @@ export class CarteraPrestamos implements OnInit {
 
   // Función de Exportación a Excel nativa
   exportarAExcel(): void {
-    this.carteraPrestamosService.getCarteraPrestamosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, this.periodoSeleccionado, this.condicionSeleccionado)
-      .subscribe({
-        next: (res) => {
-          if (!res || res.length === 0) return;
-          if (this.carteraPrestamos.length === 0) {
-            alert('No hay datos en la tabla para exportar.');
-            return;
-          }
-          const formatearFecha = (fechaInput: any): string => {
-            if (!fechaInput) return '';
+    this.carteraPrestamosService.getCarteraPrestamosParaExportar(
+      this.searchTerm,
+      this.monedaSeleccionada,
+      this.productoSeleccionado,
+      this.periodoSeleccionado,
+      this.condicionSeleccionado
+    ).subscribe({
+      next: (res) => {
+        if (!res || res.length === 0) return;
+        if (this.carteraPrestamos.length === 0) {
+          alert('No hay datos en la tabla para exportar.');
+          return;
+        }
 
-            // Si el backend lo manda como Date u objeto, lo pasamos a string ISO
-            const fechaStr = typeof fechaInput === 'string'
-              ? fechaInput
-              : new Date(fechaInput).toISOString();
+        const formatearFecha = (fechaInput: any): string => {
+          if (!fechaInput) return '';
+          const fechaStr = typeof fechaInput === 'string'
+            ? fechaInput
+            : new Date(fechaInput).toISOString();
 
-            // fechaStr suele venir como "YYYY-MM-DD..." (ej: "2010-05-27T00:00:00.000Z")
-            if (fechaStr.length >= 10) {
-              const partes = fechaStr.slice(0, 10).split('-'); // Rompe en ['YYYY', 'MM', 'DD']
-              if (partes.length === 3) {
-                return `${partes[2]}/${partes[1]}/${partes[0]}`; // Retorna "DD/MM/YYYY" exactamente
-              }
+          if (fechaStr.length >= 10) {
+            const partes = fechaStr.slice(0, 10).split('-');
+            if (partes.length === 3) {
+              return `${partes[2]}/${partes[1]}/${partes[0]}`;
             }
+          }
+          return '';
+        };
 
-            return '';
-          };
-          // Mapeamos las columnas para que salgan con nombres limpios en el reporte de la cooperativa
-          //	"totalitem"	"totalmov"	"fecdeposito"	"fecultmov"	"condicion"
+        // 1. Mapeamos los datos garantizando tipos numéricos reales
+        const datosExportar = res.map(item => {
+          const desembolso = Number(item.desembolso) || 0;
+          const saldoCapitalMo = Number(item.saldocapitalmo) || 0;
 
-          const datosExportar = res.map(item => ({
-            'Tipo': item.tipo,
-            'Cuenta': item.idcdp,
+          let pctPagadoDecimal = 0;
+          if (desembolso > 0) {
+            pctPagadoDecimal = (desembolso - saldoCapitalMo) / desembolso;
+          }
+
+          return {
+            'Pagare': item.idpagare,
             'ID Socio': item.idsocio,
             'Socio': item.nombre,
             'Documento': item.numdoc,
             'Producto': item.descri,
-            'Moneda': item.moneda === 'S' ? 'Soles' : 'Dólares',
-            'Fecha': formatearFecha(item.fecing),
-            'Capital MO': item.cap_originalmo * (1),
-            'Capital MN': item.cap_originalmn * (1),
-            'pagointeres_periodomo': item.pagointeres_periodomo * (1),
-            'pagointeres_periodomn': item.pagointeres_periodomn * (1),
-            'saldo_periodomo': item.saldo_periodomo * (1),
-            'saldo_periodomn': item.saldo_periodomn * (1),
-            'plazo': item.plazo,
-            'tasa': item.tasa,
-            'tasa Anual': item.tasaanual,
-            'item': item.totalitem,
-            '# Movimientos': item.totalmov,
-            'Fec Ult Movimiento': formatearFecha(item.fecultmov),
+            'MN': item.moneda === 'S' ? 'S/.' : '$',
+            'F.Desem': formatearFecha(item.fechades),
+            'F.Ult.Mov': formatearFecha(item.fecultmovimiento),
+            'Desembolso MO': desembolso,
+            'Cuotas': `${item.cuotas_pagadas || 0} de ${item.plazo || 0}`,
+            'P.Interes mo': Number(item.pagointeresmo) || 0,
+            'P.Interes mn': Number(item.pagointeresmn) || 0,
+            'P.Mora mo': Number(item.pagomoramo) || 0,
+            'P.Mora mn': Number(item.pagomoramn) || 0,
+            'P.Seguro mo': Number(item.pagoseguromn) || 0,
+            'P.Seguro mn': Number(item.pagoseguromn) || 0,
+            'saldo_periodomo': saldoCapitalMo,
+            'saldo_periodomn': Number(item.saldocapitalmn) || 0,
+            '% de pago': pctPagadoDecimal,
+            'tasa': Number(item.tasa) || 0,
+            '# Mov.': Number(item.totalmov) || 0,
             'Condicion': item.condicion
-          }));
+          };
+        });
 
-          const worksheet = XLSX.utils.json_to_sheet(datosExportar);
-          worksheet['!cols'] = [
-            { wch: 15 }, { wch: 50 }, { wch: 15 }, { wch: 10 },
-            { wch: 10 }, { wch: 15 }, { wch: 20 }, { wch: 15 },
-            { wch: 10 }, { wch: 10 }, { wch: 15 }, { wch: 15 }
-            , { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-            { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-            { wch: 15 }, { wch: 15 }
-          ];
-          const workbook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimientos Prestamos');
+        // Generamos la hoja de cálculo inicial
+        const worksheet = XLSX.utils.json_to_sheet(datosExportar);
 
-          // Descarga el Excel
-          XLSX.writeFile(workbook, `Reporte_carteraPrestamos_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        // 2. 🟢 DEFINICIÓN DE ESTILOS DE EXCEL
+        const bordeDelgado = {
+          top: { style: 'thin', color: { rgb: '000000' } },
+          bottom: { style: 'thin', color: { rgb: '000000' } },
+          left: { style: 'thin', color: { rgb: '000000' } },
+          right: { style: 'thin', color: { rgb: '000000' } }
+        };
+
+        const estiloCabecera = {
+          font: { bold: true, color: { rgb: 'FFFFFF' }, size: 10 },
+          fill: { fgColor: { rgb: '27AE60' } }, // Color verde corporativo de fondo
+          alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+          border: bordeDelgado
+        };
+
+        const columnasMoneda = ['I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
+        const columnaPorcentaje = 'S';
+        const columnaTasa = 'T';
+
+        // 3. 🟢 RECORRER Y ESTILIZAR TODAS LAS CELDAS
+        for (const cellAddress in worksheet) {
+          if (cellAddress[0] === '!') continue; // Saltar metadata de la hoja
+
+          const celda = worksheet[cellAddress];
+          const columna = cellAddress.replace(/[0-9]/g, '');
+          const fila = parseInt(cellAddress.replace(/[^0-9]/g, ''), 10);
+
+          // Inicializamos el objeto de estilos en la celda
+          celda.s = {
+            border: bordeDelgado, // Bordes negros finos para todas las celdas
+            font: { size: 9 },
+            alignment: { vertical: 'center' }
+          };
+
+          if (fila === 1) {
+            // A. Si es la fila 1, aplicamos el diseño de cabecera en negrita
+            celda.s = estiloCabecera;
+          } else {
+            // B. Si es fila de datos, aplicamos los formatos numéricos y alineaciones correspondientes
+            if (celda.t === 'n') {
+              if (columnasMoneda.includes(columna)) {
+                celda.z = '#,##0.00';
+                celda.s.alignment = { horizontal: 'right' }; // Números a la derecha
+              } else if (columna === columnaPorcentaje) {
+                celda.z = '0.00%';
+                celda.s.alignment = { horizontal: 'right' };
+              } else if (columna === columnaTasa) {
+                celda.z = '0.00';
+                celda.s.alignment = { horizontal: 'right' };
+              }
+            } else {
+              // Textos alineados a la izquierda o centro
+              if (['A', 'B', 'D', 'F', 'G', 'H', 'J', 'U', 'V'].includes(columna)) {
+                celda.s.alignment = { horizontal: 'center' };
+              } else {
+                celda.s.alignment = { horizontal: 'left' };
+              }
+            }
+          }
         }
-        ,
-        error: (err) => console.error('Error al exportar ahorros SBS', err)
-      });
+
+        // Configuración de anchos de columnas
+        worksheet['!cols'] = [
+          { wch: 12 }, { wch: 10 }, { wch: 40 }, { wch: 10 },
+          { wch: 40 }, { wch: 5 }, { wch: 10 }, { wch: 10 },
+          { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 15 },
+          { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+          { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 8 },
+          { wch: 8 }, { wch: 12 }
+        ];
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimientos Prestamos');
+
+        // Descarga el Excel con estilos
+        XLSX.writeFile(workbook, `Reporte_carteraPrestamos_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      },
+      error: (err) => console.error('Error al exportar cartera de préstamos:', err)
+    });
   }
 } 
