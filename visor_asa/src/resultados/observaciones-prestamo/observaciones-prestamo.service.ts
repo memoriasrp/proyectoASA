@@ -69,11 +69,11 @@ export class ObservacionesPrestamoService {
                Select * from (
                 select vbcoop.idpagare,  vbcoop.idsocio,  vbcoop. nombre , descri, 
                 vbcoop.moneda,desembolso,fechades, saldocapitalmo, coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as saldosbs,
-                abs(saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
+                abs(saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
-                where periodo = '202605'  AND condicion='VIGENTE' 
-                and saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
+                where periodo = '202605'  AND condicion='VIGENTE' and saldocapitalmo>0
+                and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
                         ${sqlWhereClause}                      
                 order by diferencia desc
               LIMIT ${limit} OFFSET ${skip};`;
@@ -83,11 +83,11 @@ export class ObservacionesPrestamoService {
               FROM (                
                 select vbcoop.idpagare,  vbcoop.idsocio,  vbcoop. nombre , descri, 
                 vbcoop.moneda,desembolso,fechades, saldocapitalmo, coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as saldosbs,
-                abs(saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
+                abs(saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
                 where periodo = '202605'  AND condicion='VIGENTE' 
-                and saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0  
+                and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0  
               ) AS unificado
               ${sqlWhereClause};  
             `;
@@ -114,11 +114,11 @@ export class ObservacionesPrestamoService {
               Select * from (
                 select vbcoop.idpagare,  vbcoop.idsocio,  vbcoop. nombre , descri, 
                 vbcoop.moneda,desembolso,fechades, saldocapitalmo, coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))) as saldosbs,
-                abs(saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
+                abs(saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
                 where periodo = '202605'  AND condicion='VIGENTE' 
-                and saldocapitalmo- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
+                and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
                         ${sqlWhereClause}                      
                 order by diferencia desc
             `;

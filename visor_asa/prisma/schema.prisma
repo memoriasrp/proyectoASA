@@ -1270,6 +1270,11 @@ enum GrupoMenu {
   REPORTES_SBS    @map("REPORTES SBS")
   CONFIGURACION
   REPORTES_VBCOOP
+  PRESTAMOS
+  AHORROS
+  DPF
+  APORTES
+  GENERAL
 
   @@schema("config")
 }

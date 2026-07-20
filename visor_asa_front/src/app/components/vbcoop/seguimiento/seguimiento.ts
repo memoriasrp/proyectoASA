@@ -130,7 +130,6 @@ export class Seguimiento implements OnInit {
 
     formData.append('idsocio', this.idsocio);
     formData.append('detalle', this.detalle);
-    formData.append('idusuario', localStorage.getItem('idusuario') || '1');
     formData.append('tipoproducto', this.tipoSeleccionado);
 
     const idUsuarioLogeado = localStorage.getItem('idusuario') || '1';
@@ -142,7 +141,6 @@ export class Seguimiento implements OnInit {
       formData.append('idproducto', '');
     }
 
-    // 🟢 LA CLAVE MULTI-ARCHIVO: Adjuntamos todos los archivos en un ciclo
     if (this.archivosSeleccionados.length > 0) {
       this.archivosSeleccionados.forEach((archivo) => {
         // Usamos exactamente el mismo nombre de campo 'file' que espera el Backend
