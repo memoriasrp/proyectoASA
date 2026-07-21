@@ -6,6 +6,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx-js-style';
 
 import { CateraPrestamosService } from '../../../services/vbcoop/catera-prestamos-service';
+import { SeguimientoHistorialService } from '../../../services/vbcoop/seguimiento-historial-service';
+
 @Component({
   selector: 'app-cartera-prestamos',
   standalone: true,
@@ -36,7 +38,15 @@ export class CarteraPrestamos implements OnInit {
   busquedaRealizada: boolean = false;
   loading: boolean = false;
 
+  mostrarModal = false;
+  socioSeleccionado: any = null;
+  detalle: string = '';
+  archivoSeleccionado: File | null = null;
+  cargando: boolean = false;
+  archivosSeleccionados: File[] = [];
+
   constructor(private carteraPrestamosService: CateraPrestamosService,
+    private seguimientoHistorialService: SeguimientoHistorialService,
     private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -116,6 +126,7 @@ export class CarteraPrestamos implements OnInit {
   cargarTabla(): void {
     this.loading = true;
     this.cdr.detectChanges();
+
     this.carteraPrestamosService.getCarteraPrestamosPaginados(
       this.currentPage,
       20,
@@ -125,18 +136,17 @@ export class CarteraPrestamos implements OnInit {
       this.periodoSeleccionado,
       this.condicionSeleccionado
     ).subscribe({
-      next: (res) => {
-        this.carteraPrestamos = res.data || [];
-        const dataCruda = res.data || [];
+      next: (res: any) => {
+        // 🟢 DETECCION FLEXIBLE: Si 'res' es directamente el array o viene en 'res.data'
+        const dataCruda = Array.isArray(res) ? res : (res.data || []);
+
         this.carteraPrestamos = dataCruda.map((item: any) => {
-          // Asegúrate de que estos nombres coincidan exactamente con las columnas de tu BD (ej: monto_desembolsado, saldo_capital)
           const desembolsado = Number(item.desembolso) || 0;
           const saldo = Number(item.saldocapitalmo) || 0;
           let pctPagado = 0;
+
           if (desembolsado > 0) {
-            // Fórmula: ((Desembolsado - Saldo) / Desembolsado) * 100
             pctPagado = ((desembolsado - saldo) / desembolsado) * 100;
-            // Forzamos límites seguros entre 0% y 100% para evitar desbordes visuales
             pctPagado = Math.min(Math.max(pctPagado, 0), 100);
           }
 
@@ -146,8 +156,10 @@ export class CarteraPrestamos implements OnInit {
             porcentajeFaltante: 100 - pctPagado
           };
         });
+
         this.totalPages = res.meta?.totalPages || 1;
-        this.totalRecords = res.meta?.total || 0;
+        this.totalRecords = res.meta?.total || dataCruda.length;
+
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -158,7 +170,6 @@ export class CarteraPrestamos implements OnInit {
       }
     });
   }
-
   // Cambiar de página respetando los filtros actuales
   cambiarPagina(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
@@ -330,5 +341,75 @@ export class CarteraPrestamos implements OnInit {
       },
       error: (err) => console.error('Error al exportar cartera de préstamos:', err)
     });
+  }
+
+
+  abrirModalSeguimiento(item: any) {
+    this.socioSeleccionado = item;
+    this.mostrarModal = true;
+    this.cdr.detectChanges();
+  }
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.socioSeleccionado = null;
+    this.cdr.detectChanges();
+  }
+  guardarSeguimiento() {
+    if (!this.detalle.trim()) {
+      alert('Debe ingresar el detalle de la gestión.');
+      return;
+    }
+    this.cargando = true;
+    const formData = new FormData();
+    formData.append('idsocio', this.socioSeleccionado.idsocio);
+    formData.append('detalle', this.detalle);
+    const idUsuarioLogeado = localStorage.getItem('idusuario') || '1';
+    formData.append('idusuario', idUsuarioLogeado);
+    formData.append('tipoproducto', this.socioSeleccionado.tipo);
+    formData.append('idproducto', this.socioSeleccionado.cuenta);
+
+    if (this.archivosSeleccionados.length > 0) {
+      this.archivosSeleccionados.forEach((archivo) => {
+        // Usamos exactamente el mismo nombre de campo 'file' que espera el Backend
+        formData.append('file', archivo, archivo.name);
+      });
+    }
+    this.seguimientoHistorialService.guardarSeguimiento(formData).subscribe({
+      next: () => {
+        alert('Seguimiento y adjuntos registrados con éxito.');
+        this.cerrarModal();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al guardar el registro.');
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+
+  }
+  removerArchivo(index: number): void {
+    this.archivosSeleccionados.splice(index, 1);
+    this.cdr.detectChanges();
+  }
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Validación individual de tamaño (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`El archivo "${file.name}" supera los 10MB permitidos y no será agregado.`);
+          continue;
+        }
+
+        // Evitamos duplicar si el usuario selecciona el mismo archivo de nuevo
+        if (!this.archivosSeleccionados.some(f => f.name === file.name && f.size === file.size)) {
+          this.archivosSeleccionados.push(file);
+        }
+      }
+    }
+    this.cdr.detectChanges(); // Forzar dibujo de la lista de adjuntos
   }
 } 

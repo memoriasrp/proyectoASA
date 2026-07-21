@@ -62,6 +62,10 @@
                 <button (click)="limpiarFiltros()"
                     style="padding: 10px 15px; background: #95a5a6; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Limpiar</button>
                 @if (carteraPasivos.length > 0) {
+                <button (click)="imprimirTabla()"
+                    style="padding: 10px 15px; background: #7f8c8d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    🖨️ Imprimir
+                </button>
                 <button (click)="exportarAExcel()"
                     style="padding: 10px 15px; background: #2980b9; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">📥
                     Excel</button>
@@ -85,7 +89,7 @@
     </div>
     }
     @else {
-    <div class="table-container"
+    <div class="table-container" id="area-impresion"
         style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
@@ -101,6 +105,7 @@
                     <th style="padding: 12px; text-align: right;">Saldo MO</th>
                     <th style="padding: 12px; text-align: right;">Saldo MN</th>
                     <th style="padding: 12px;">Fec UltMovimiento</th>
+                    <th>📝</th>
                 </tr>
             </thead>
             <tbody>
@@ -117,7 +122,7 @@
                     <td style="padding: 12px; font-weight: bold; color: #7f8c8d;">{{ item.descri }}</td>
 
 
-                    <td style="padding: 12px;">{{ item.fecing | date:'dd/MM/yyyy':'UTC' }}</td>
+                    <td style="padding: 12px;">{{ item.fecing | date:'yyyy/MM/dd':'UTC' }}</td>
 
                     <td [style.color]="item.saldo_periodomo >0 ? '#2c3e50' : '#2E7D32'"
                         style="padding: 12px; text-align: right; font-weight: bold;">
@@ -131,7 +136,11 @@
                         {{ item.saldo_periodomn | number:'1.2-2' }}
 
                     </td>
-                    <td style="padding: 12px;">{{ item.fecultmov | date:'dd/MM/yyyy':'UTC' }}</td>
+                    <td style="padding: 12px;">{{ item.fecultmov | date:'yyyy/MM/dd':'UTC' }}</td>
+                    <td><button style="background: none; border: none; cursor: pointer; font-size: 1.2rem;"
+                            title="Registrar Seguimiento" (click)="abrirModalSeguimiento(item)">
+                            📝
+                        </button></td>
                 </tr>
                 } @empty {
                 <tr>
@@ -160,3 +169,110 @@
     </div>
     }
 </div>
+@if (mostrarModal) {
+<div class="modal-backdrop ">
+    <div class="modal-container modal-lg ">
+        <!-- Un poco más ancho para albergar el formulario -->
+
+        <!-- 1. CABECERA DEL MODAL -->
+        <div class="modal-header"
+            style="display: flex; flex-direction: column; align-items: flex-start !important; position: relative; padding: 20px 24px !important; gap: 4px;">
+
+            <!-- Botón de cerrar (X) rojo en la esquina derecha -->
+            <button type="button" class="btn-close-modal-red" (click)="cerrarModal()" title="Cerrar">
+                &times;
+            </button>
+
+            <!-- Título Principal: Socio -->
+            <h3 style="margin: 0 !important; font-size: 1.3rem !important; font-weight:
+                 700 !important; color: #0f172a !important; padding-right: 40px; text-transform: uppercase;
+                 text-align: center;">
+                <span style="color: #0284c7;">REGISTRO DE SEGUIMIENTO</span>
+            </h3>
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong> SOCIO : </strong> <span style="color: #0284c7;"> {{ socioSeleccionado?.nombre }}</span>
+            </p>
+
+            <!-- Subtítulo abajo -->
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong> {{ socioSeleccionado?.tipo }}:</strong> {{ socioSeleccionado?.idcdp
+                }}-{{socioSeleccionado?.descri }}
+            </p>
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong>SALDO:</strong>{{ socioSeleccionado?.saldo_periodomo | currency:(socioSeleccionado?.moneda ===
+                'S' ? 'PEN' : 'USD'):'symbol':'1.2-2':'es-PE' }}
+            </p>
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong>Fec. apertura:</strong>{{ socioSeleccionado.fecing | date:'yyyy/MM/dd':'UTC' }}
+            </p>
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong>Fec. Ultimo Movimiento:</strong>{{ socioSeleccionado.fecultmov | date:'yyyy/MM/dd':'UTC' }}
+            </p>
+        </div>
+
+        <!-- 2. CUERPO DEL MODAL (Aquí está el espacio para tu formulario) -->
+        <div class="modal-body" style="padding: 24px !important;">
+
+            <!-- Formulario de Seguimiento -->
+            <form (ngSubmit)="guardarSeguimiento()">
+
+                <!-- Ejemplo de campo para la Bitácora / Observaciones -->
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                        Nueva Observación de Seguimiento
+                    </label>
+                    <textarea class="form-control" rows="4" [(ngModel)]="detalle" name="detalle"
+                        placeholder="Escribe aquí los compromisos de pago, llamadas o acuerdos con el socio..."></textarea>
+                </div>
+                <div class="mb-4" style="margin-bottom: 1.5rem;">
+                    <label class="label-estilizado">Adjuntar Documentos Sustentatorios (Opcional)</label>
+
+                    <input type="file" class="input-estilizado" (change)="onFilesSelected($event)" multiple
+                        accept=".pdf,.xlsx,.xls,.docx,.doc,.jpg,.png,.jpeg">
+
+                    <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 0.25rem;">
+                        Formatos admitidos: PDF, hojas de cálculo, imágenes o documentos de texto. Máx 10MB por archivo.
+                    </small>
+
+                    <div *ngIf="archivosSeleccionados.length > 0" class="mt-3 p-3 bg-white rounded border">
+                        <span class="text-secondary fw-bold d-block mb-2" style="font-size: 0.85rem;">
+                            Archivos listos para subir ({{ archivosSeleccionados.length }}):
+                        </span>
+
+                        <ul class="list-unstyled mb-0" style="font-size: 0.85rem; color: #475569;">
+                            <li *ngFor="let file of archivosSeleccionados; let idx = index"
+                                class="d-flex justify-content-between align-items-center py-2 px-3 mb-1 rounded"
+                                style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+
+                                <span>
+                                    <span class="me-2">📄</span>
+                                    <strong>{{ file.name }}</strong>
+                                    <small class="text-muted ms-2">({{ (file.size / 1024 / 1024) | number:'1.2-2' }}
+                                        MB)</small>
+                                </span>
+
+                                <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2"
+                                    style="font-size: 0.75rem; border-radius: 4px;" (click)="removerArchivo(idx)">
+                                    Quitar
+                                </button>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Botones de Acción inferiores del Formulario -->
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #27ae60 !important;">
+                        Guardar Registro
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+}

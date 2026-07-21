@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import { ActivatedRoute } from '@angular/router';
 
 import { CateraPasivosService } from '../../../services/vbcoop/catera-pasivos-service';
+import { SeguimientoHistorialService } from '../../../services/vbcoop/seguimiento-historial-service';
 
 @Component({
   selector: 'app-cartera-pasivos',
@@ -30,15 +31,24 @@ export class CarteraPasivos implements OnInit {
   searchTerm: string = '';
   monedaSeleccionada: string = '';
   productoSeleccionado: string = 'TODOS';
-  condicionSeleccionado: string = '';
+  condicionSeleccionado: string = 'VIGENTE';
   periodo: string = '';
 
 
   // Nueva variable de control para saber si ya buscaron al menos una vez
   busquedaRealizada: boolean = false;
   loading: boolean = false;
+
+
+  mostrarModal = false;
+  socioSeleccionado: any = null;
+  detalle: string = '';
+  archivoSeleccionado: File | null = null;
+  cargando: boolean = false;
+  archivosSeleccionados: File[] = [];
   constructor(
     private carteraPasivosService: CateraPasivosService,
+    private seguimientoHistorialService: SeguimientoHistorialService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute) { }
 
@@ -75,6 +85,7 @@ export class CarteraPasivos implements OnInit {
   cargarTabla(): void {
     this.loading = true;
     this.cdr.detectChanges();
+
     this.carteraPasivosService.getCarteraPasivosPaginados(
       this.currentPage,
       20,
@@ -84,10 +95,12 @@ export class CarteraPasivos implements OnInit {
       this.periodoSeleccionado,
       this.condicionSeleccionado
     ).subscribe({
-      next: (res) => {
-        this.carteraPasivos = res.data || [];
+      next: (res: any) => {
+        this.carteraPasivos = Array.isArray(res) ? res : (res.data || []);
+
         this.totalPages = res.meta?.totalPages || 1;
-        this.totalRecords = res.meta?.total || 0;
+        this.totalRecords = res.meta?.total || this.carteraPasivos.length;
+
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -194,6 +207,112 @@ export class CarteraPasivos implements OnInit {
         ,
         error: (err) => console.error('Error al exportar ahorros SBS', err)
       });
+  }
+
+  imprimirTabla(): void {
+    this.loading = true;
+    this.cdr.detectChanges();
+    this.carteraPasivosService.getCarteraPasivosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, this.periodoSeleccionado, this.condicionSeleccionado)
+      .subscribe({
+        next: (res) => {
+          // Guardamos la página de 20 registros que el usuario estaba viendo actualmente
+          const paginaOriginalRespaldada = [...this.carteraPasivos];
+
+          // Mapeamos todos los registros recibidos (calculando los porcentajes)
+          const todosLosRegistros = (res || []).map((item: any) => {
+            return { ...item };
+          });
+
+          // 2. Reemplazamos temporalmente la lista en pantalla por el universo completo
+          this.carteraPasivos = todosLosRegistros;
+          this.loading = false;
+          this.cdr.detectChanges();
+
+          // 3. Esperamos un instante a que Angular dibuje todas las filas y abrimos la impresión
+          setTimeout(() => {
+            window.print();
+
+            // 4. Al cerrar el cuadro de diálogo, restauramos la vista de 20 registros al instante
+            this.carteraPasivos = paginaOriginalRespaldada;
+            this.cdr.detectChanges();
+          }, 350);
+        },
+        error: (err) => {
+          console.error('Error al descargar data completa para impresión:', err);
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+
+  abrirModalSeguimiento(item: any) {
+    this.socioSeleccionado = item;
+    this.mostrarModal = true;
+    this.cdr.detectChanges();
+  }
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.socioSeleccionado = null;
+    this.cdr.detectChanges();
+  }
+  guardarSeguimiento() {
+    if (!this.detalle.trim()) {
+      alert('Debe ingresar el detalle de la gestión.');
+      return;
+    }
+    this.cargando = true;
+    const formData = new FormData();
+    formData.append('idsocio', this.socioSeleccionado.idsocio);
+    formData.append('detalle', this.detalle);
+    const idUsuarioLogeado = localStorage.getItem('idusuario') || '1';
+    formData.append('idusuario', idUsuarioLogeado);
+    formData.append('tipoproducto', this.socioSeleccionado.tipo);
+    formData.append('idproducto', this.socioSeleccionado.cuenta);
+
+    if (this.archivosSeleccionados.length > 0) {
+      this.archivosSeleccionados.forEach((archivo) => {
+        // Usamos exactamente el mismo nombre de campo 'file' que espera el Backend
+        formData.append('file', archivo, archivo.name);
+      });
+    }
+    this.seguimientoHistorialService.guardarSeguimiento(formData).subscribe({
+      next: () => {
+        alert('Seguimiento y adjuntos registrados con éxito.');
+        this.cerrarModal();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al guardar el registro.');
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+
+  }
+  removerArchivo(index: number): void {
+    this.archivosSeleccionados.splice(index, 1);
+    this.cdr.detectChanges();
+  }
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Validación individual de tamaño (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`El archivo "${file.name}" supera los 10MB permitidos y no será agregado.`);
+          continue;
+        }
+
+        // Evitamos duplicar si el usuario selecciona el mismo archivo de nuevo
+        if (!this.archivosSeleccionados.some(f => f.name === file.name && f.size === file.size)) {
+          this.archivosSeleccionados.push(file);
+        }
+      }
+    }
+    this.cdr.detectChanges(); // Forzar dibujo de la lista de adjuntos
   }
 }
 

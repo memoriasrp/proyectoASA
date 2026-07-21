@@ -1,0 +1,202 @@
+@media print {
+
+    /* 1. Configuración de página */
+    @page {
+        size: landscape;
+        margin: 8mm;
+    }
+
+    /* 2. Formato del contenedor principal */
+    body,
+    .app-container,
+    .main-content {
+        display: block !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Ocultar navegación, menú lateral y paginación */
+    ::ng-deep .sidebar,
+    ::ng-deep aside,
+    ::ng-deep nav,
+    ::ng-deep .header-app,
+    ::ng-deep .navbar,
+    ::ng-deep .filter-card,
+    ::ng-deep .btn-group,
+    ::ng-deep .pagination-bar,
+    .pagination-bar {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+    }
+
+    /* 3. Ocultar todo por defecto */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Ocultar títulos y párrafos fuera del área de impresión */
+    h1,
+    h2,
+    h3,
+    p,
+    .titulo-modulo,
+    .page-title {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* 4. Mostrar solo el área de impresión */
+    #area-impresion,
+    #area-impresion * {
+        visibility: visible !important;
+    }
+
+    #area-impresion {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+
+    /* 5. Escala y anchos proporcionales ajustados a tus 10 columnas reales */
+    table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 8.5pt !important;
+    }
+
+    /* 1. Tipo */
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: 6%;
+    }
+
+    /* 2. ID Socio */
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 8%;
+    }
+
+    /* 3. Socio / Razón Social */
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 22%;
+    }
+
+    /* 4. Moneda */
+    th:nth-child(4),
+    td:nth-child(4) {
+        width: 5%;
+    }
+
+    /* 5. Cuenta (idcdp) */
+    th:nth-child(5),
+    td:nth-child(5) {
+        width: 8%;
+    }
+
+    /* 6. Producto (descri) */
+    th:nth-child(6),
+    td:nth-child(6) {
+        width: 17%;
+    }
+
+    /* 7. Fecha Creación (fecing) */
+    th:nth-child(7),
+    td:nth-child(7) {
+        width: 9%;
+    }
+
+    /* 8. Saldo MO */
+    th:nth-child(8),
+    td:nth-child(8) {
+        width: 8%;
+    }
+
+    /* 9. Saldo MN */
+    th:nth-child(9),
+    td:nth-child(9) {
+        width: 8%;
+    }
+
+    /* 10. Fec UltMovimiento */
+    th:nth-child(10),
+    td:nth-child(10) {
+        width: 9%;
+    }
+
+    /* 11. Ocultar última columna (Acción / 📝) */
+    th:nth-child(11),
+    td:nth-child(11) {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+    }
+
+    /* 6. Formato de celdas y alineaciones */
+    th,
+    td {
+        padding: 5px 4px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        border: 1px solid #000000 !important;
+        color: #000000 !important;
+    }
+
+    th {
+        background-color: #f2f4f4 !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Centrar: Tipo, ID Socio, Moneda, Cuenta, Fechas */
+    td:nth-child(1),
+    td:nth-child(2),
+    td:nth-child(4),
+    td:nth-child(5),
+    td:nth-child(7),
+    td:nth-child(10) {
+        text-align: center !important;
+    }
+
+    /* Alineación derecha: Saldo MO, Saldo MN */
+    td:nth-child(8),
+    td:nth-child(9) {
+        text-align: right !important;
+    }
+
+    /* Respetar el estilo visual básico sin fondos cargados */
+    td span {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #000 !important;
+        font-weight: bold !important;
+    }
+
+    td[style*="color"] {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Control de saltos de página */
+    tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+}
