@@ -73,7 +73,7 @@ export class Dashboard implements OnInit {
     if (!menuList || menuList.length === 0) return;
 
     this.menusAgrupados = menuList.reduce((acc, item) => {
-      const grupoName = item.grupo || 'GENERAL';
+      const grupoName = item.grupo.nombre || 'GENERAL';
       if (!acc[grupoName]) {
         acc[grupoName] = [];
       }

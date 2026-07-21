@@ -56,6 +56,10 @@
                 <button (click)="limpiarFiltros()"
                     style="padding: 10px 15px; background: #95a5a6; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Limpiar</button>
                 @if (movPasivos.length > 0) {
+                <button (click)="imprimirTabla()"
+                    style="padding: 10px 15px; background: #7f8c8d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    🖨️ Imprimir
+                </button>
                 <button (click)="exportarAExcel()"
                     style="padding: 10px 15px; background: #2980b9; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">📥
                     Excel</button>
@@ -79,7 +83,7 @@
     </div>
     }
     @else {
-    <div class="table-container"
+    <div class="table-container" id="area-impresion"
         style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>

@@ -13,16 +13,25 @@ export class MenusService {
         ruta: createMenuDto.ruta,
         icono: createMenuDto.icono,
         orden: Number(createMenuDto.orden),
-        grupo: createMenuDto.grupo, // Si no se proporciona, se establece como undefined
+        grupoId: createMenuDto.grupoId, // Si no se proporciona, se establece como undefined
       }
     });
   }
-
+  async getGrupos() {
+    return this.prisma.config_grupo.findMany({
+      orderBy: {
+        nombre: 'asc', // O por 'orden' o 'id' según tu preferencia
+      },
+    });
+  }
 
   async findAll() {
     return this.prisma.opcionMenu.findMany({
+      include: {
+        grupo: true,
+      },
       orderBy: [
-        { grupo: 'asc' },  // 1° Agrupa los menús del mismo tipo juntos
+        { grupo: { nombre: 'asc' } },  // 1° Agrupa los menús del mismo tipo juntos
         { orden: 'asc' }   // 2° Los ordena numéricamente: 0, 1, 2, 3...
       ] as any,
     });
@@ -44,7 +53,7 @@ export class MenusService {
         ruta: updateMenuDto.ruta,
         icono: updateMenuDto.icono,
         orden: Number(updateMenuDto.orden),
-        grupo: updateMenuDto.grupo, // Si no se proporciona, se establece como undefined
+        grupoId: updateMenuDto.grupoId,  // Si no se proporciona, se establece como undefined
       }
     });
   }

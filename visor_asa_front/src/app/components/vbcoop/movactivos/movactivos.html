@@ -57,6 +57,10 @@
                 <button (click)="limpiarFiltros()"
                     style="padding: 10px 15px; background: #95a5a6; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Limpiar</button>
                 @if (movActivos.length > 0) {
+                <button (click)="imprimirTabla()"
+                    style="padding: 10px 15px; background: #7f8c8d; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    🖨️ Imprimir
+                </button>
                 <button (click)="exportarAExcel()"
                     style="padding: 10px 15px; background: #2980b9; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">📥
                     Excel</button>
@@ -80,7 +84,7 @@
     </div>
     }
     @else {
-    <div class="table-container"
+    <div class="table-container" id="area-impresion"
         style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
@@ -93,8 +97,8 @@
                     <th style="padding: 12px;">Fecha Movimiento</th>
                     <th style="padding: 12px; text-align: right;">Operacion</th>
                     <th style="padding: 12px;">Cuota</th>
-                    <th style="padding: 12px;">Capital</th>
-                    <th style="padding: 12px;">Interes</th>
+                    <th style="padding: 12px;  text-align: right;">Capital</th>
+                    <th style="padding: 12px; text-align: right;">Interes</th>
                     <th style="padding: 12px; text-align: right;">Saldo / Monto</th>
                     <th style="padding: 12px;">Usuario</th>
                 </tr>
@@ -110,10 +114,10 @@
 
 
                     <td style="padding: 12px;">{{ item.fecha | date:'dd/MM/yyyy':'UTC' }}</td>
-                    <td style="padding: 12px; text-transform: uppercase;">{{ item.operacion }}</td>
+                    <td style="padding: 12px; text-transform: uppercase;">{{ item.operacion }} </td>
                     <td style="padding: 12px; text-transform: uppercase;">{{ item.nrocuota }}</td>
-                    <td style="padding: 12px; text-transform: uppercase;">{{ item.capital }}</td>
-                    <td style="padding: 12px; text-transform: uppercase;">{{ item.interes }}</td>
+                    <td style="padding: 12px; text-align: right;">{{ item.capital | number:'1.2-2'}}</td>
+                    <td style="padding: 12px; text-align: right;">{{ item.interes| number:'1.2-2' }}</td>
 
                     <td [style.color]="item.car_abo === 'C' ? '#EF6C00' : (item.car_abo === 'A' ? '#2E7D32' : '#2c3e50')"
                         style="padding: 12px; text-align: right; font-weight: bold;">

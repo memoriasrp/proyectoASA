@@ -174,4 +174,43 @@ export class Movactivos implements OnInit {
       });
   }
 
+  imprimirTabla(): void {
+    this.loading = true;
+    this.cdr.detectChanges();
+    const desdeDate = this.fechaDesde ? new Date(this.fechaDesde) : undefined;
+    const hastaDate = this.fechaHasta ? new Date(this.fechaHasta) : undefined;
+    // 1. Pedimos al API TODOS los registros acumulados en una sola página
+    this.movactivosService.getMovactivosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, desdeDate, hastaDate)
+      .subscribe({
+        next: (res) => {
+          // Guardamos la página de 20 registros que el usuario estaba viendo actualmente
+          const paginaOriginalRespaldada = [...this.movActivos];
+
+          // Mapeamos todos los registros recibidos (calculando los porcentajes)
+          const todosLosRegistros = (res || []).map((item: any) => {
+            return { ...item };
+          });
+
+          // 2. Reemplazamos temporalmente la lista en pantalla por el universo completo
+          this.movActivos = todosLosRegistros;
+          this.loading = false;
+          this.cdr.detectChanges();
+
+          // 3. Esperamos un instante a que Angular dibuje todas las filas y abrimos la impresión
+          setTimeout(() => {
+            window.print();
+
+            // 4. Al cerrar el cuadro de diálogo, restauramos la vista de 20 registros al instante
+            this.movActivos = paginaOriginalRespaldada;
+            this.cdr.detectChanges();
+          }, 350);
+        },
+        error: (err) => {
+          console.error('Error al descargar data completa para impresión:', err);
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
 }

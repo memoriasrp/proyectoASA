@@ -179,4 +179,43 @@ export class Movpasivos implements OnInit {
         error: (err) => console.error('Error al exportar ahorros SBS', err)
       });
   }
+  imprimirTabla(): void {
+    this.loading = true;
+    this.cdr.detectChanges();
+    // 1. Pedimos al API TODOS los registros acumulados en una sola página
+    const desdeDate = this.fechaDesde ? new Date(this.fechaDesde) : undefined;
+    const hastaDate = this.fechaHasta ? new Date(this.fechaHasta) : undefined;
+
+    this.movpasivosService.getMovpasivosParaExportar(this.searchTerm, this.monedaSeleccionada, this.productoSeleccionado, desdeDate, hastaDate)
+      .subscribe({
+        next: (res) => {
+          // Guardamos la página de 20 registros que el usuario estaba viendo actualmente
+          const paginaOriginalRespaldada = [...this.movPasivos];
+
+          // Mapeamos todos los registros recibidos (calculando los porcentajes)
+          const todosLosRegistros = (res || []).map((item: any) => {
+            return { ...item };
+          });
+
+          // 2. Reemplazamos temporalmente la lista en pantalla por el universo completo
+          this.movPasivos = todosLosRegistros;
+          this.loading = false;
+          this.cdr.detectChanges();
+
+          // 3. Esperamos un instante a que Angular dibuje todas las filas y abrimos la impresión
+          setTimeout(() => {
+            window.print();
+
+            // 4. Al cerrar el cuadro de diálogo, restauramos la vista de 20 registros al instante
+            this.movPasivos = paginaOriginalRespaldada;
+            this.cdr.detectChanges();
+          }, 350);
+        },
+        error: (err) => {
+          console.error('Error al descargar data completa para impresión:', err);
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
 }

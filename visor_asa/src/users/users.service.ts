@@ -18,8 +18,12 @@ export class UsersService {
                     include: {
                         permisos: {
                             include: {
-                                opcionMenu: true // Trae los detalles de la pantalla (nombre, ruta)
-                            }
+                                opcionMenu: {
+                                    include: {
+                                        grupo: true,
+                                    }
+                                }
+                            } // Trae los detalles de la pantalla (nombre, ruta)
                         }
                     }
                 }

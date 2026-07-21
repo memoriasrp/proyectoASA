@@ -1,21 +1,25 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MenusService } from '../../services/menus';
-
+export interface GrupoMenu {
+  id: number;
+  nombre: string;
+}
 interface MenuTabla {
   id: number;
   nombre: string;
   ruta: string;
   icono: string;
   orden: number;
-  grupo: string; // Usamos el Enum generado por Prisma
+  grupoId: number;
+  grupo: GrupoMenu | null;
 }
 
 @Component({
   selector: 'app-menus',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './menus.html',
   styleUrl: './menus.css',
 })
@@ -31,10 +35,11 @@ export class Menus implements OnInit {
     ruta: '',
     icono: '',
     orden: 0,
-    grupo: ''
+    grupoId: 0,
+    grupo: null
   };
   // 🛠️ SOLUCIÓN TS2307: Arreglo local con los valores exactos del Enum de tu Postgres
-  listaGrupos: string[] = [];
+  listaGrupos: GrupoMenu[] = [];
   constructor(private menusService: MenusService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -64,7 +69,7 @@ export class Menus implements OnInit {
   abrirModalCrear() {
     this.modoEdicion = false;
     this.menuEditandoId = null;
-    this.nuevoMenu = { nombre: '', ruta: '', icono: '', orden: 0, grupo: '' };
+    this.nuevoMenu = { nombre: '', ruta: '', icono: '', orden: 0, grupoId: 0, grupo: null };
     this.mostrarModal = true;
     this.cdr.detectChanges();
   }
@@ -77,7 +82,8 @@ export class Menus implements OnInit {
       ruta: menu.ruta,
       icono: menu.icono,
       orden: menu.orden,
-      grupo: menu.grupo
+      grupoId: menu.grupoId,
+      grupo: null
     };
     this.mostrarModal = true;
     this.cdr.detectChanges();
@@ -88,7 +94,7 @@ export class Menus implements OnInit {
     this.mostrarModal = false;
     this.modoEdicion = false;
     this.menuEditandoId = null;
-    this.nuevoMenu = { nombre: '', ruta: '', icono: '', orden: 0, grupo: '' };
+    this.nuevoMenu = { nombre: '', ruta: '', icono: '', orden: 0, grupoId: 0, grupo: null };
     this.cdr.detectChanges();
   }
 

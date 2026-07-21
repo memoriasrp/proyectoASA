@@ -19,10 +19,8 @@ export class MenusController {
   }
 
   @Get('grupos')
-  getGrupos(): string[] {
-    // Convertimos los valores del Enum de Prisma en un arreglo plano de strings
-    // Retorna: ["COMPARACIONES", "RESULTADOS", "REPORTES_SBS", "CONFIGURACION"]
-    return Object.values(GrupoMenu);
+  async getGrupos() {
+    return await this.menusService.getGrupos();
   }
   @Get(':id')
   async findOne(@Param('id') id: string) {

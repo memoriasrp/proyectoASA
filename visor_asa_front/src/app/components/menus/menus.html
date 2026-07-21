@@ -26,7 +26,7 @@
                     <td><strong>#{{ item.id }}</strong></td>
                     <td>{{ item.nombre }}</td>
                     <td><code>{{ item.ruta }}</code></td>
-                    <td>{{ item.grupo || 'Sin Grupo' }}</td>
+                    <td>{{ item.grupo?.nombre || 'Sin Grupo' }}</td>
                     <td>{{ item.orden }}</td>
                     <td><span style="font-size: 16px;">{{ item.icono || '📁' }}</span></td>
                     <td style="text-align: center;">
@@ -75,14 +75,11 @@
                 </div>
                 <div class="form-group">
                     <label for="grupo">Grupo / Sección del Menú</label>
-                    <select id="grupo" name="grupo" class="form-control" [(ngModel)]="nuevoMenu.grupo" required>
-                        <option value="" disabled selected>-- Seleccione un Grupo --</option>
-
-                        @for (grupo of listaGrupos; track grupo) {
-                        <option [value]="grupo">
-                            {{ grupo.replace('_', ' ') }}
+                    <select id="grupo" name="grupoId" class="form-control" [(ngModel)]="nuevoMenu.grupoId" required>
+                        <option [ngValue]="null">-- Seleccione un grupo --</option>
+                        <option *ngFor="let grupo of listaGrupos" [value]="grupo.id">
+                            {{ grupo.nombre }}
                         </option>
-                        }
                     </select>
                 </div>
                 <div class="form-group">

@@ -1,0 +1,200 @@
+@media print {
+
+    /* 1. Configuración de página */
+    @page {
+        size: landscape;
+        margin: 8mm;
+    }
+
+    /* 2. Formato del contenedor principal */
+    body,
+    .app-container,
+    .main-content {
+        display: block !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Ocultar navegación, menú lateral y paginación */
+    ::ng-deep .sidebar,
+    ::ng-deep aside,
+    ::ng-deep nav,
+    ::ng-deep .header-app,
+    ::ng-deep .navbar,
+    ::ng-deep .filter-card,
+    ::ng-deep .btn-group,
+    ::ng-deep .pagination-bar,
+    .pagination-bar {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+    }
+
+    /* 3. Ocultar todo por defecto */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Agrega h1, h2, p a los elementos ocultos */
+    h1,
+    h2,
+    h3,
+    p,
+    .titulo-modulo,
+    .page-title {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    #area-impresion {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        /* ... resto de tu CSS original ... */
+    }
+
+    /* 5. Ajustes de escala de la tabla (12 COLUMNAS) */
+    table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 7.5pt !important;
+        /* Reducido ligeramente para acomodar 12 columnas */
+        margin-top: 5px;
+    }
+
+    /* =========================================================
+       DEFINICIÓN DE ANCHOS PROPORCIONALES (SUMA TOTAL: 100%)
+       ========================================================= */
+    th:nth-child(1),
+    td:nth-child(1) {
+        width: 7%;
+    }
+
+    /* ID Socio */
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 17%;
+    }
+
+    /* Socio / Razón Social */
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 5%;
+    }
+
+    /* Moneda */
+    th:nth-child(4),
+    td:nth-child(4) {
+        width: 7%;
+    }
+
+    /* Cuenta */
+    th:nth-child(5),
+    td:nth-child(5) {
+        width: 11%;
+    }
+
+    /* Producto */
+    th:nth-child(6),
+    td:nth-child(6) {
+        width: 8%;
+    }
+
+    /* Fecha Movimiento */
+    th:nth-child(7),
+    td:nth-child(7) {
+        width: 7%;
+    }
+
+    /* Operación */
+    th:nth-child(8),
+    td:nth-child(8) {
+        width: 5%;
+    }
+
+    /* Cuota */
+    th:nth-child(9),
+    td:nth-child(9) {
+        width: 8%;
+    }
+
+    /* Capital */
+    th:nth-child(10),
+    td:nth-child(10) {
+        width: 8%;
+    }
+
+    /* Interés */
+    th:nth-child(11),
+    td:nth-child(11) {
+        width: 10%;
+    }
+
+    /* Saldo / Monto */
+    th:nth-child(12),
+    td:nth-child(12) {
+        width: 7%;
+    }
+
+    /* Usuario */
+
+    /* Estilos generales de celdas */
+    th,
+    td {
+        padding: 4px 2px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        border: 1px solid #000000 !important;
+        color: #000000 !important;
+    }
+
+    th {
+        background-color: #f2f4f4 !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Alineaciones específicas según el tipo de dato */
+    td:nth-child(1),
+    td:nth-child(3),
+    td:nth-child(4),
+    td:nth-child(6),
+    td:nth-child(7),
+    td:nth-child(8) {
+        text-align: center !important;
+        /* IDs, fechas, cuentas, operaciones al centro */
+    }
+
+    td:nth-child(9),
+    td:nth-child(10),
+    td:nth-child(11),
+    td:nth-child(12) {
+        text-align: right !important;
+        /* Importes numéricos y usuarios a la derecha */
+    }
+
+    /* Preservar los colores dinámicos de Cargo / Abono en el Saldo/Monto */
+    td[style*="color"] {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Evitar cortes feos en saltos de página */
+    tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+        /* Repite encabezados si pasa a otra hoja */
+    }
+}

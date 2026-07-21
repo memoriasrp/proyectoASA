@@ -21,7 +21,8 @@ export class CreateMenuDto {
     orden: number;
 
     // Declaramos el grupo usando el Enum obligatorio generado por Prisma
-    @IsEnum(GrupoMenu)
-    @IsNotEmpty()
-    grupo: GrupoMenu;
+    @IsNotEmpty({ message: 'El grupo es obligatorio' })
+    @Transform(({ value }) => Number(value))
+    @IsInt({ message: 'grupoId debe ser un número entero' })
+    grupoId: number;
 }
