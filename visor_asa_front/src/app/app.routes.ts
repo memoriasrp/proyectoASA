@@ -24,6 +24,7 @@ import { ObservacionesDpf } from './components/resultados/observaciones-dpf/obse
 import { ObservacionesAhorro } from './components/resultados/observaciones-ahorro/observaciones-ahorro'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesPrestamo } from './components/resultados/observaciones-prestamo/observaciones-prestamo'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesAportes } from './components/resultados/observaciones-aportes/observaciones-aportes'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { ListaSeguimiento } from './components/general/lista-seguimiento/lista-seguimiento'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -37,6 +38,7 @@ export const routes: Routes = [
             { path: 'mapa', component: Mapa },
 
             { path: 'socios', component: Socios },
+            { path: 'listaSeguimiento', component: ListaSeguimiento },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },

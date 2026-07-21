@@ -1,11 +1,9 @@
 <div class="container">
     <div class="header-section" style="margin-bottom: 20px;">
-        <h2>Padrón de Socios</h2>
-        <p class="text-muted">Gestión y consulta de los miembros de la cooperativa</p>
+        <h2>Padrón de Seguimientos</h2>
+        <p class="text-muted">Consulta de los seguimientos Registrados en la Cooperativa</p>
     </div>
-    <button class="btn btn-excel" (click)="exportarExcel()">
-        📄 Exportar a Excel
-    </button>
+
     <div class="filter-box">
         <div class="input-group">
             <input type="text" placeholder="Buscar por código de socio, nombres, apellidos ,DNI o RUC..."
@@ -20,35 +18,37 @@
                     <th>Código Socio</th>
                     <th>Apellidos y Nombres</th>
                     <th>Num Documento</th>
-                    <th>Fecha Ingreso</th>
-                    <th>Fecha Retiro</th>
+                    <th>Total Registros</th>
+                    <th>1er Registro</th>
+                    <th>Ultimo Registro</th>
                     <th>Seguimiento</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let socio of socios">
-                    <td><strong>{{ socio.idsocio }}</strong></td>
+                <tr *ngFor="let seguimiento of seguimientos">
+                    <td><strong>{{ seguimiento.idsocio }}</strong></td>
                     <td>
-                        {{ socio.paterno }} {{ socio.materno }}, {{ socio.nombres }}
+                        {{ seguimiento.paterno }} {{ seguimiento.materno }}, {{ seguimiento.nombres }}
                     </td>
                     <td>
-                        {{ socio.numdoc || socio.ruc || '---' }}
+                        {{ seguimiento.numdoc || seguimiento.ruc || '---' }}
                     </td>
-                    <td>{{ socio.fecing | date:'yyyy/MM/dd':'UTC' }}</td>
-                    <td>{{ socio.fecret | date:'yyyy/MM/dd':'UTC'}}</td>
+                    <td>{{ seguimiento.tot_registros}} </td>
+                    <td>{{ seguimiento.primer_registro | date:'yyyy/MM/dd':'UTC' }}</td>
+                    <td>{{ seguimiento.ult_registro | date:'yyyy/MM/dd':'UTC'}}</td>
                     <td>
                         <button class="btn btn-sm btn-info text-white"
-                            [routerLink]="['/vbcoop/seguimiento-historial', socio.idsocio]"
-                            [queryParams]="{ nombre: socio.nombres +' '+ socio.paterno +' '+ socio.materno }"
+                            [routerLink]="['/vbcoop/seguimiento-historial', seguimiento.idsocio]"
+                            [queryParams]="{ nombre: seguimiento.nombres +' '+ seguimiento.paterno +' '+ seguimiento.materno }"
                             title="Ver Historial de Seguimientos">
                             👁️
                         </button>
                     </td>
                 </tr>
 
-                <tr *ngIf="socios.length === 0">
+                <tr *ngIf="seguimientos.length === 0">
                     <td colspan="5" class="text-center" style="padding: 30px; color: #888;">
-                        No se encontraron socios que coincidan con la búsqueda.
+                        No se encontraron seguimientos que coincidan con la búsqueda.
                     </td>
                 </tr>
 
