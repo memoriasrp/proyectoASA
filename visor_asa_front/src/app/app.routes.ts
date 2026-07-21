@@ -72,7 +72,10 @@ export const routes: Routes = [
             // Aquí irás metiendo los componentes específicos de VBCOOP en el futuro
             // { path: 'reportes', component: ReportesVbcoop },
             // { path: 'configuracion', component: ConfigVbcoop },
-            { path: 'movpasivos', component: Movpasivos },
+            { path: 'movpasivos', component: Movpasivos, data: { productoDefecto: 'TODOS' } },
+            { path: 'movpasivos/ahorros', component: Movpasivos, data: { productoDefecto: 'AHORRO' } },
+            { path: 'movpasivos/aportes', component: Movpasivos, data: { productoDefecto: 'APORTE' } },
+            { path: 'movpasivos/dpf', component: Movpasivos, data: { productoDefecto: 'DPF' } },
             { path: 'movactivos', component: Movactivos },
             { path: 'seguimiento-historial/:idsocio', component: SeguimientoHistorial },
             { path: 'seguimiento-nuevo/:idsocio', component: Seguimiento },

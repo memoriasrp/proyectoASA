@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import { ActivatedRoute } from '@angular/router';
 
 import { MovpasivosService } from '../../../services/vbcoop/movpasivos-service';
 @Component({
@@ -22,7 +23,7 @@ export class Movpasivos implements OnInit {
   // Filtros vinculados a los inputs del HTML
   searchTerm: string = '';
   monedaSeleccionada: string = '';
-  productoSeleccionado: string = '';
+  productoSeleccionado: string = 'TODOS';
   fechaDesde: string = '';
   fechaHasta: string = '';
 
@@ -32,10 +33,17 @@ export class Movpasivos implements OnInit {
 
   constructor(
     private movpasivosService: MovpasivosService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // Initialization logic here
+    // Leemos el dato de la ruta actual
+    this.route.data.subscribe(data => {
+      if (data['productoDefecto']) {
+        this.productoSeleccionado = data['productoDefecto'];
+      }
+    });
   }
 
   ejecutarBusqueda(): void {

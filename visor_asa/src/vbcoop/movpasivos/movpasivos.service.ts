@@ -34,7 +34,7 @@ export class MovpasivosService {
         }
 
         // 3. Filtro de Producto
-        if (producto && producto.trim() !== '') {
+        if (producto && producto.trim() !== 'TODOS') {
             andConditions.push({ tipo: { contains: producto, mode: 'insensitive' } });
         }
 
