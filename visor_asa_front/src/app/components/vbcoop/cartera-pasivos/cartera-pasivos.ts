@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import { ActivatedRoute } from '@angular/router';
 
 import { CateraPasivosService } from '../../../services/vbcoop/catera-pasivos-service';
 
@@ -28,7 +29,7 @@ export class CarteraPasivos implements OnInit {
   // Filtros vinculados a los inputs del HTML
   searchTerm: string = '';
   monedaSeleccionada: string = '';
-  productoSeleccionado: string = '';
+  productoSeleccionado: string = 'TODOS';
   condicionSeleccionado: string = '';
   periodo: string = '';
 
@@ -38,10 +39,16 @@ export class CarteraPasivos implements OnInit {
   loading: boolean = false;
   constructor(
     private carteraPasivosService: CateraPasivosService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.cargarCombos();
+    this.route.data.subscribe(data => {
+      if (data['productoDefecto']) {
+        this.productoSeleccionado = data['productoDefecto'];
+      }
+    });
 
   }
 

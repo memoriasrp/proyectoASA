@@ -12,22 +12,35 @@ export class UsersService {
     async findByEmail(email: string) {
         return this.prisma.usuario.findUnique({
             where: { email },
-            // ⚠️ ESTO ES LO QUE FALTA: Le ordena a Prisma traer las tablas del esquema config
             include: {
                 tipoUsuario: {
                     include: {
                         permisos: {
+                            orderBy: [
+                                {
+                                    opcionMenu: {
+                                        grupo: {
+                                            orden: 'asc', // Cambia 'orden' por 'id' o 'nombre' según la columna de config_grupo
+                                        },
+                                    },
+                                },
+                                {
+                                    opcionMenu: {
+                                        orden: 'asc',
+                                    },
+                                },
+                            ],
                             include: {
                                 opcionMenu: {
                                     include: {
                                         grupo: true,
-                                    }
-                                }
-                            } // Trae los detalles de la pantalla (nombre, ruta)
-                        }
-                    }
-                }
-            }
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         });
     }
     // 2. Método para crear un nuevo usuario (Registro)

@@ -56,7 +56,10 @@ export const routes: Routes = [
         path: 'resultados',
         component: Dashboard, // Usa el mismo componente base para mantener el sidebar/diseño
         children: [
-            { path: 'carterapasivos', component: CarteraPasivos },
+            { path: 'carterapasivos', component: CarteraPasivos, data: { productoDefecto: 'TODOS' } },
+            { path: 'carterapasivos/ahorros', component: CarteraPasivos, data: { productoDefecto: 'AHORRO' } },
+            { path: 'carterapasivos/dpf', component: CarteraPasivos, data: { productoDefecto: 'DPF' } },
+            { path: 'carterapasivos/aportes', component: CarteraPasivos, data: { productoDefecto: 'APORTE' } },
             { path: 'carteraprestamos', component: CarteraPrestamos },
             { path: 'observaciones-dpf', component: ObservacionesDpf },
             { path: 'observaciones-ahorros', component: ObservacionesAhorro },
