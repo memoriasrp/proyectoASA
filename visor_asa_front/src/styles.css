@@ -274,7 +274,7 @@ body {
 
 /* Modal Extra Grande - XL (Ej: Tablas internas, reportería o formularios extensos) */
 .modal-xl {
-    max-width: 950px !important;
+    max-width: 95% !important;
 }
 
 /* Modal Fullscreen (Opcional: Ocupa casi toda la pantalla) */

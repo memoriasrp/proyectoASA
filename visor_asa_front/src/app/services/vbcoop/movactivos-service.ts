@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,10 @@ export class MovactivosService {
   private apiUrl = environment.apiUrl + '/movactivos';
 
   constructor(private http: HttpClient) { }
-
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+  }
   getMovactivosPaginados(page: number, limit: number, search?: string, moneda?: string, producto?: string, desde?: Date, hasta?: Date): Observable<any> {
     let params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
     if (search) params = params.set('search', search);
@@ -33,5 +37,10 @@ export class MovactivosService {
 
   getProductosUnicos(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/productos-unicos`);
+  }
+
+  registrarMovimiento(formData: any): Observable<any> {
+
+    return this.http.post<any>(this.apiUrl, formData, { headers: this.getHeaders() });
   }
 }

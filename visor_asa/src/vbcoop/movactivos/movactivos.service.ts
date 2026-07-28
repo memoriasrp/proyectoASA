@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { CreateMovimientoDto } from './dto/create-movimiento.dto';
 import { GetMovactivosFilterDto } from './dto/get-movactivos-filter.dto';
 
 
@@ -145,5 +146,112 @@ export class MovactivosService {
 
         // Mapeamos el arreglo de objetos para devolver un arreglo simple de strings
         return productos.map(p => p.descri);
+    }
+
+    async registrar(dto: CreateMovimientoDto) {
+        const existe = await this.prisma.movimientosprestamos.findFirst({ where: { idpagare: dto.idpagare, nrocuota: 0, car_abo: 'C' } });
+        if (!existe) {
+            throw new NotFoundException(`No se encontró el cargo inicial (cuota 0) para el pagaré ${dto.idpagare}`);
+        }
+        dto.idsocio = existe?.idsocio ?? '';
+        dto.nombre = existe?.nombre ?? '';
+        dto.numdoc = existe?.numdoc ?? '';
+        dto.descri = existe?.descri ?? '';
+        dto.moneda = existe?.moneda ?? '';
+        dto.idforma = existe?.idforma ?? '';
+        dto.importe = existe?.importe ? existe.importe.toNumber() : 0;
+        dto.plazo = existe?.plazo ?? 0;
+        dto.tasa = existe?.tasa ? existe.tasa.toNumber() : 0;
+        dto.tasa2 = existe?.tasa2 ? existe.tasa2.toNumber() : 0;
+        dto.fechades = existe?.fechades ? existe.fechades.toISOString() : undefined;
+        dto.f1 = existe?.f1 ? existe.f1.toISOString() : undefined;
+        dto.f2 = existe?.f2 ? existe.f2.toISOString() : undefined;
+        dto.f3 = existe?.f3 ?? '';
+        dto.tipsoc = existe?.tipsoc ? existe.tipsoc : 0;
+        dto.natjur = existe?.natjur ? existe.natjur : 0;
+        dto.ruc = existe?.ruc ?? '';
+        dto.sexo = existe?.sexo ? existe.sexo.toNumber() : 0;
+        dto.castigada = existe?.castigada ? existe.castigada.toNumber() : 0;
+        dto.castigo = existe?.castigo ? existe.castigo.toNumber() : 0;
+
+        const { fecha, fechades, f1, f2, ...restoDto } = dto;
+        //return await this.prisma.movimientosprestamos.create({ data: dto });
+        return await this.prisma.$transaction(async (tx) => {
+            const nuevoMovimiento = await tx.movimientosprestamos.create({
+                data: {
+                    ...restoDto,
+                    fecha: new Date(dto.fecha),
+
+                    // Asegurarte de que el resto de fechas opcionales también sean Date o null/undefined
+                    fechades: dto.fechades ? new Date(dto.fechades) : undefined,
+                    f1: dto.f1 ? new Date(dto.f1) : undefined,
+                    f2: dto.f2 ? new Date(dto.f2) : undefined,
+                },
+            });
+            await tx.$executeRaw`
+                DELETE FROM consolidado.carteraxperiodo_prestamo
+                WHERE idsocio = ${dto.idsocio} 
+                AND idpagare = ${dto.idpagare} 
+                AND periodo IN (
+                    SELECT prd.periodo 
+                    FROM consolidado.calendario_periodos prd 
+                    WHERE fecha > ${dto.fecha}::date
+                );
+            `;
+
+            await tx.$executeRaw`
+               insert into consolidado.carteraxperiodo_prestamo  
+                SELECT     c.periodo,	c.tc,    c.fecha AS fecha_corte,
+                    idpagare, idsocio, nombre, 
+                    numdoc, descri, moneda, 
+                    desembolso, plazo, tasa, 
+                    fechades, cuotas_pagadas, totalmov, 
+                    saldocapital as saldocapitalmo, 
+                    case when moneda='D' then saldocapital*c.tc else saldocapital end saldocapitalmn, 
+                    pagointeres as pagointeresmo,
+                    case when moneda='D' then pagointeres*c.tc else pagointeres end as pagointeresmn,
+                    pagomora as pagomoramo,
+                    case when moneda='D' then pagomora*c.tc else pagomora end  as pagomoramn,
+                    pagoseguro as pagoseguromo,
+                    case when moneda='D' then pagoseguro*c.tc else pagoseguro end as pagoseguromn,
+                    pagoaporte as pagoaportemo,
+                    case when moneda='D' then pagoaporte*c.tc  else pagoaporte end  as pagoaportemn,
+                    totalpago as totalpagomo,
+                    case when moneda='D' then totalpago*c.tc else totalpago end as totalpagomn,
+                    CASE WHEN saldocapital = 0 THEN 'CANCELADO' ELSE 'VIGENTE' END AS condicion,
+                    fecultmovimiento
+                FROM consolidado.calendario_periodos c
+                CROSS JOIN LATERAL (
+                    SELECT 
+                        idpagare, idsocio, nombre, 
+                        numdoc, descri, moneda, importe as desembolso, tasa, fechades,plazo,
+                        MAX(nrocuota) AS cuotas_pagadas, 
+                        COUNT(*) AS totalmov,
+                        SUM(CASE WHEN car_abo = 'C' THEN capital ELSE capital * (-1) END) AS saldoCapital, 
+                        SUM(interes) AS pagointeres, 
+                        SUM(mora) AS pagomora, 
+                        SUM(seguro) AS pagoseguro, 
+                        SUM(aporte) AS pagoaporte, 
+                        SUM(CASE WHEN car_abo = 'C' THEN total ELSE total * (-1) END) AS totalPago ,
+                        max(m.fecha) as fecultmovimiento
+                    FROM consolidado.movimientosprestamos M
+                WHERE 
+                    m.fecha <= c.fecha 
+                    AND c.fecha > ${dto.fecha}::date
+                    AND idsocio = ${dto.idsocio} 
+                    AND idpagare = ${dto.idpagare}
+                GROUP BY  idpagare, idsocio, nombre, 
+                 numdoc, descri, moneda, importe, plazo, tasa, fechades
+                ) AS cartera
+                ORDER BY c.periodo, cartera.idpagare, nombre;
+      `;
+        }).catch((error) => {
+            // Si ocurre CUALQUIER error en paso 1, 2 o 3, Prisma hace ROLLBACK automático de todo
+            throw new InternalServerErrorException(
+                `Error al procesar el movimiento y actualizar la cartera: ${error.message}`
+            );
+        });
+
+
     }
 }

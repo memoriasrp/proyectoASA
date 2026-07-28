@@ -22,9 +22,10 @@ import { CarteraPasivos } from './components/vbcoop/cartera-pasivos/cartera-pasi
 import { CarteraPrestamos } from './components/vbcoop/cartera-prestamos/cartera-prestamos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesDpf } from './components/resultados/observaciones-dpf/observaciones-dpf'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import { ObservacionesAhorro } from './components/resultados/observaciones-ahorro/observaciones-ahorro'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { ObservacionesPrestamo } from './components/resultados/observaciones-prestamo/observaciones-prestamo'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { ObservacionesAportes } from './components/resultados/observaciones-aportes/observaciones-aportes'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { ListaSeguimiento } from './components/general/lista-seguimiento/lista-seguimiento'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { ObservacionesPrestamo } from './components/resultados/observaciones-prestamo/observaciones-prestamo';
+import { ObservacionesAportes } from './components/resultados/observaciones-aportes/observaciones-aportes';
+import { ListaSeguimiento } from './components/general/lista-seguimiento/lista-seguimiento';
+import { RegistroPago } from './components/vbcoop/registro-pago/registro-pago';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -84,6 +85,7 @@ export const routes: Routes = [
             { path: 'movactivos', component: Movactivos },
             { path: 'seguimiento-historial/:idsocio', component: SeguimientoHistorial },
             { path: 'seguimiento-nuevo/:idsocio', component: Seguimiento },
+            { path: 'registro-pago', component: RegistroPago },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },
