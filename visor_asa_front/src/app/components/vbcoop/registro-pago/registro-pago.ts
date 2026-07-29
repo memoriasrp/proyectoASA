@@ -159,8 +159,8 @@ export class RegistroPago implements OnInit {
     this.generarCuotasPendientes();
     this.mostrarModal = true;
     this.cdr.detectChanges();
-
   }
+
   generarCuotasPendientes(): void {
     this.cuotasPendientes = [];
     const cuotasPagadas = parseInt(this.pagareSeleccionado?.cuotas_pagadas, 10) || 0;

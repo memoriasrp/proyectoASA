@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import { Auth } from '../../../services/auth'; // <-- Ajusta la ruta correcta a tu AuthService
 
 import { MovactivosService } from '../../../services/vbcoop/movactivos-service';
-
+import { finalize } from 'rxjs/operators'; // <-- Importa finalize
 @Component({
   selector: 'app-movactivos',
   standalone: true,
@@ -32,12 +33,33 @@ export class Movactivos implements OnInit {
   // Nueva variable de control para saber si ya buscaron al menos una vez
   busquedaRealizada: boolean = false;
   loading: boolean = false;
+  admin: boolean = false;
+
+  ////////////
+
+  mostrarModal = false;
+  pagareSeleccionado: any = null;
+  detalle: string = '';
+  cargando: boolean = false;
+
+  cuotasPendientes: number[] = [];
+  cuotaSeleccionada: number | null = null;
+  capital: number | null = null;
+  interes: number | null = null;
+  mora: number | null = null;
+  seguro: number | null = null;
+  aporte: number | null = null;
+  fecha: string = '';
+  idnumope: string = '';
+
   constructor(
     private movactivosService: MovactivosService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    public auth: Auth) { }
 
   ngOnInit(): void {
     this.productos$ = this.movactivosService.getProductosUnicos();
+    this.esAdmin();
   }
 
 
@@ -62,6 +84,12 @@ export class Movactivos implements OnInit {
       this.productoSeleccionado,
       desdeDate,
       hastaDate
+    ).pipe(
+      // finalize se ejecuta SIEMPRE (éxito, error o excepción en el mapeo)
+      finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      })
     ).subscribe({
       next: (res) => {
         this.movActivos = res.data || [];
@@ -212,5 +240,106 @@ export class Movactivos implements OnInit {
         }
       });
   }
+  // En tu .ts
+  esAdmin(): void {
+    // Ajusta según cómo almacenes el rol/tipo de usuario en tu AuthService o localStorage
+    const usuario = this.auth.getUsuarioActual();
 
+    this.admin = usuario?.tipoUsuario.id === 1; // o la condición que defina al admin
+  }
+  editarRegistro(registro: any): void {
+    // 1. Doble verificación de seguridad en la vista
+    if (!this.esAdmin) {
+      alert('No tienes permisos para modificar registros.');
+      return;
+    }
+    this.pagareSeleccionado = registro;
+    this.pagareSeleccionado.fecha = this.pagareSeleccionado.fecha.toString().substring(0, 10);
+    this.mostrarModal = true;
+    this.cdr.detectChanges();
+    // 2. Cambiamos el estado del componente a modo edición
+    //this.esModoEdicion = true;
+    //this.idRegistroSeleccionado = registro.id; // Guarda la llave primaria del movimiento
+
+    // 3. Poblamos el formulario o variables vinculadas con los datos del registro a editar
+    // Si usas Reactive Forms (FormGroup):
+    /*
+    this.miFormulario.patchValue({
+      socio: registro.socio,
+      monto: registro.monto,
+      fecha: registro.fecha ? registro.fecha.substring(0, 10) : '', // Formato YYYY-MM-DD para <input type="date">
+      // ...demás campos del DTO
+    });
+    */
+
+    // 4. Abrir el modal de edición (si manejas Bootstrap o similar mediante variable o ID)
+    // $('#modalMovimiento').modal('show'); // Ejemplo con Bootstrap/jQuery o variable de bandera local
+  }
+  get totalPagar(): number {
+    const c = Number(this.pagareSeleccionado.capital) || 0;
+    const i = Number(this.pagareSeleccionado.interes) || 0;
+    const m = Number(this.pagareSeleccionado.mora) || 0;
+    const s = Number(this.pagareSeleccionado.seguro) || 0;
+    const a = Number(this.pagareSeleccionado.aporte) || 0;
+
+    return c + i + m + s + a;
+  }
+
+  validarDecimal(campo: 'capital' | 'interes' | 'mora' | 'seguro' | 'aporte'): void {
+    // Verificamos que el objeto pagareSeleccionado exista
+    if (!this.pagareSeleccionado) return;
+
+    const valorActual = this.pagareSeleccionado[campo];
+
+    if (valorActual !== null && valorActual !== undefined && valorActual !== '') {
+      // 1. Convertimos a número y redondeamos a 2 decimales
+      let valorNumerico = parseFloat(Number(valorActual).toFixed(2));
+
+      // Si el valor no es un número válido (NaN), lo forzamos a 0
+      if (isNaN(valorNumerico)) {
+        valorNumerico = 0;
+      }
+
+      // 2. Validación específica para el capital contra el saldo capital de la deuda
+      if (campo === 'capital' && valorNumerico > this.pagareSeleccionado.saldocapitalmo) {
+        alert("EL MONTO A PAGAR DEL CAPITAL NO PUEDE SER MAYOR AL SALDO CAPITAL");
+        valorNumerico = parseFloat(Number(this.pagareSeleccionado.saldocapitalmo).toFixed(2));
+      }
+
+      // 3. Asignamos el valor corregido al objeto
+      this.pagareSeleccionado[campo] = valorNumerico;
+    }
+  }
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.pagareSeleccionado = null;
+    this.cdr.detectChanges();
+    this.ejecutarBusqueda();
+  }
+  guardarMovimiento() {
+    const payload = {
+      ...this.pagareSeleccionado,
+      capital: Number(this.pagareSeleccionado.capital),
+      interes: Number(this.pagareSeleccionado.interes),
+      mora: Number(this.pagareSeleccionado.mora),
+      seguro: Number(this.pagareSeleccionado.seguro),
+      aporte: Number(this.pagareSeleccionado.aporte),
+      total: Number(this.pagareSeleccionado.capital) + Number(this.pagareSeleccionado.interes)
+        + Number(this.pagareSeleccionado.mora) + Number(this.pagareSeleccionado.seguro) + Number(this.pagareSeleccionado.aporte),
+      nrocuota: Number(this.pagareSeleccionado.nrocuota),
+      tasa: Number(this.pagareSeleccionado.tasa),
+      tasa2: Number(this.pagareSeleccionado.tasa2),
+      sexo: Number(this.pagareSeleccionado.sexo),
+      importe: Number(this.pagareSeleccionado.importe),
+      castigo: Number(this.pagareSeleccionado.castigo),
+      // Convertir resto de campos numéricos lanzados en la validación...
+    };
+    this.movactivosService.updateMovimiento(this.pagareSeleccionado.idnumope, payload).subscribe({
+      next: () => {
+        this.cerrarModal();
+        this.ejecutarBusqueda();
+      },
+      error: (err) => console.error('Error al actualizar el movimiento:', err)
+    });
+  }
 }

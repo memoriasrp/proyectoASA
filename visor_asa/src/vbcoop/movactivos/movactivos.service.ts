@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
 import { GetMovactivosFilterDto } from './dto/get-movactivos-filter.dto';
+import { UpdateMovimientoActivoDto } from './dto/update-movactivos.dto';
 
 
 @Injectable()
@@ -254,4 +255,111 @@ export class MovactivosService {
 
 
     }
+
+    async update(id: string, updateMovimientoActivoDto: UpdateMovimientoActivoDto) {
+        const existe = await this.prisma.movimientosprestamos.findFirst({
+            where: {
+                idnumope: id,
+                idpagare: updateMovimientoActivoDto.idpagare
+            }
+        });
+
+        if (!existe) {
+            throw new NotFoundException(`El movimiento con IDnumOpe #${id} no existe.`);
+        }
+
+        var fechaEvaluacion = existe.fecha;
+        if (updateMovimientoActivoDto.fecha) {
+            if (new Date(updateMovimientoActivoDto.fecha) < fechaEvaluacion)
+                fechaEvaluacion = new Date(updateMovimientoActivoDto.fecha);
+        }
+        return await this.prisma.$transaction(async (tx) => {
+            const actualizarMovimiento = await tx.movimientosprestamos.update({
+                where: {
+                    // Sintaxis correcta para clave única compuesta en Prisma:
+                    idnumope_fecha_idpagare_nrocuota_car_abo: {
+                        idnumope: id,
+                        fecha: existe.fecha,
+                        idpagare: existe.idpagare,
+                        nrocuota: existe.nrocuota.toNumber(),
+                        car_abo: 'A'
+                    }
+                },
+                data: {
+                    capital: updateMovimientoActivoDto.capital,
+                    interes: updateMovimientoActivoDto.interes,
+                    mora: updateMovimientoActivoDto.mora,
+                    seguro: updateMovimientoActivoDto.seguro,
+                    aporte: updateMovimientoActivoDto.aporte,
+                    total: updateMovimientoActivoDto.total,
+                    ...(updateMovimientoActivoDto.fecha && {
+                        fecha: new Date(updateMovimientoActivoDto.fecha)
+                    })
+                }
+            });
+            await tx.$executeRaw`
+                DELETE FROM consolidado.carteraxperiodo_prestamo
+                WHERE idsocio = ${updateMovimientoActivoDto.idsocio} 
+                AND idpagare = ${updateMovimientoActivoDto.idpagare} 
+                AND periodo IN (
+                    SELECT prd.periodo 
+                    FROM consolidado.calendario_periodos prd 
+                    WHERE fecha > ${fechaEvaluacion}::date
+                );
+            `;
+
+            await tx.$executeRaw`
+               insert into consolidado.carteraxperiodo_prestamo  
+                SELECT     c.periodo,	c.tc,    c.fecha AS fecha_corte,
+                    idpagare, idsocio, nombre, 
+                    numdoc, descri, moneda, 
+                    desembolso, plazo, tasa, 
+                    fechades, cuotas_pagadas, totalmov, 
+                    saldocapital as saldocapitalmo, 
+                    case when moneda='D' then saldocapital*c.tc else saldocapital end saldocapitalmn, 
+                    pagointeres as pagointeresmo,
+                    case when moneda='D' then pagointeres*c.tc else pagointeres end as pagointeresmn,
+                    pagomora as pagomoramo,
+                    case when moneda='D' then pagomora*c.tc else pagomora end  as pagomoramn,
+                    pagoseguro as pagoseguromo,
+                    case when moneda='D' then pagoseguro*c.tc else pagoseguro end as pagoseguromn,
+                    pagoaporte as pagoaportemo,
+                    case when moneda='D' then pagoaporte*c.tc  else pagoaporte end  as pagoaportemn,
+                    totalpago as totalpagomo,
+                    case when moneda='D' then totalpago*c.tc else totalpago end as totalpagomn,
+                    CASE WHEN saldocapital = 0 THEN 'CANCELADO' ELSE 'VIGENTE' END AS condicion,
+                    fecultmovimiento
+                FROM consolidado.calendario_periodos c
+                CROSS JOIN LATERAL (
+                    SELECT 
+                        idpagare, idsocio, nombre, 
+                        numdoc, descri, moneda, importe as desembolso, tasa, fechades,plazo,
+                        MAX(nrocuota) AS cuotas_pagadas, 
+                        COUNT(*) AS totalmov,
+                        SUM(CASE WHEN car_abo = 'C' THEN capital ELSE capital * (-1) END) AS saldoCapital, 
+                        SUM(interes) AS pagointeres, 
+                        SUM(mora) AS pagomora, 
+                        SUM(seguro) AS pagoseguro, 
+                        SUM(aporte) AS pagoaporte, 
+                        SUM(CASE WHEN car_abo = 'C' THEN total ELSE total * (-1) END) AS totalPago ,
+                        max(m.fecha) as fecultmovimiento
+                    FROM consolidado.movimientosprestamos M
+                WHERE 
+                    m.fecha <= c.fecha 
+                    AND c.fecha > ${fechaEvaluacion}::date
+                    AND idsocio = ${updateMovimientoActivoDto.idsocio} 
+                    AND idpagare = ${updateMovimientoActivoDto.idpagare}
+                GROUP BY  idpagare, idsocio, nombre, 
+                 numdoc, descri, moneda, importe, plazo, tasa, fechades
+                ) AS cartera
+                ORDER BY c.periodo, cartera.idpagare, nombre;
+      `;
+        }).catch((error) => {
+            // Si ocurre CUALQUIER error en paso 1, 2 o 3, Prisma hace ROLLBACK automático de todo
+            throw new InternalServerErrorException(
+                `Error al procesar el movimiento y actualizar la cartera: ${error.message}`
+            );
+        });
+    }
+
 }

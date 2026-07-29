@@ -43,4 +43,8 @@ export class MovactivosService {
 
     return this.http.post<any>(this.apiUrl, formData, { headers: this.getHeaders() });
   }
+
+  updateMovimiento(id: Text, formData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, formData, { headers: this.getHeaders() });
+  }
 }

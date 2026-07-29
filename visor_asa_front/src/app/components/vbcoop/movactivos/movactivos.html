@@ -101,6 +101,7 @@
                     <th style="padding: 12px; text-align: right;">Interes</th>
                     <th style="padding: 12px; text-align: right;">Saldo / Monto</th>
                     <th style="padding: 12px;">Usuario</th>
+                    <th> <i class="fa-solid fa-pen"></i></th>
                 </tr>
             </thead>
             <tbody>
@@ -126,6 +127,13 @@
 
                     </td>
                     <td style="padding: 12px; text-align: right; ">{{ item.idusuario}}</td>
+                    <td>
+                        <button [disabled]="!admin || item.car_abo === 'C'" (click)="editarRegistro(item)"
+                            class="btn btn-warning btn-sm"
+                            [title]="!admin ? 'Requiere permisos de administrador' : (item.car_abo === 'C' ? 'Es un desembolsos' : 'Editar registro')">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </td>
                 </tr>
                 } @empty {
                 <tr>
@@ -154,3 +162,142 @@
     </div>
     }
 </div>
+
+
+@if (mostrarModal) {
+<div class="modal-backdrop">
+    <div class="modal-container modal-xl">
+
+        <!-- 1. CABECERA DEL MODAL -->
+        <div class="modal-header"
+            style="display: flex; flex-direction: column; align-items: flex-start !important; position: relative; padding: 20px 24px !important; gap: 4px;">
+
+            <!-- Botón de cerrar (X) rojo en la esquina derecha -->
+            <button type="button" class="btn-close-modal-red" (click)="cerrarModal()" title="Cerrar">
+                &times;
+            </button>
+
+            <!-- Título Principal: Socio -->
+            <h3
+                style="margin: 0 !important; font-size: 1.3rem !important; font-weight: 700 !important; color: #0f172a !important; padding-right: 40px; text-transform: uppercase;">
+                <span style="color: #0284c7;">REGISTRO DE PAGO</span>
+            </h3>
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong> SOCIO : </strong> <span style="color: #0284c7;"> {{ pagareSeleccionado?.nombre }}</span>
+            </p>
+
+            <!-- Subtítulo abajo -->
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong>PRESTAMO:</strong> {{ pagareSeleccionado?.idpagare }} - {{ pagareSeleccionado?.descri }}
+            </p>
+
+            <!-- Fila 1: MONTO y SALDO -->
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong>MONTO: </strong>{{ pagareSeleccionado?.importe | currency:(pagareSeleccionado?.moneda === 'S'
+                ? 'PEN' : 'USD'):'symbol':'1.2-2':'es-PE' }}
+            </p>
+
+            <!-- Fila 2: Fechas y Cuotas -->
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
+                <strong>Fec. apertura: </strong>{{ pagareSeleccionado?.fechades | date:'yyyy/MM/dd':'UTC' }}
+                <span style="margin-left: 15px;">
+                    <strong>total cuotas: </strong>{{ pagareSeleccionado?.plazo }}
+                </span>
+            </p>
+
+        </div>
+
+        <!-- 2. CUERPO DEL MODAL -->
+        <div class="modal-body" style="padding: 24px !important;">
+
+            <form (ngSubmit)="guardarMovimiento()">
+
+                <!-- FILA 1: Fecha, Num. Operación y Cuota (Forzado en Flex Horizontal) -->
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; width: 100%;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">Fecha Operacion:</label>
+                        <input type="date" [(ngModel)]="pagareSeleccionado.fecha" name="fecha"
+                            style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; color: #2c3e50; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">Num. de Operacion:</label>
+                        <label style="font-size: 0.85rem; color: #34495e;"> {{ pagareSeleccionado?.idnumope }}</label>
+
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">Cuota:</label>
+                        <label style="font-size: 0.85rem; color: #34495e;"> {{ pagareSeleccionado?.nrocuota }}</label>
+                    </div>
+
+                </div>
+
+                <!-- FILA 2: Capital, Interés, Mora, Seguro y Aporte (Forzado en Flex Horizontal) -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; width: 100%;">
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Capital:</label>
+                        <input type="number" step="0.01" min="0" [(ngModel)]="pagareSeleccionado.capital" name="capital"
+                            placeholder="0.00" (blur)="validarDecimal('capital')"
+                            style="padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Interés:</label>
+                        <input type="number" step="0.01" min="0" [(ngModel)]="pagareSeleccionado.interes" name="interes"
+                            placeholder="0.00" (blur)="validarDecimal('interes')"
+                            style="padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Mora:</label>
+                        <input type="number" step="0.01" min="0" [(ngModel)]="pagareSeleccionado.mora" name="mora"
+                            placeholder="0.00" (blur)="validarDecimal('mora')"
+                            style="padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Seguro:</label>
+                        <input type="number" step="0.01" min="0" [(ngModel)]="pagareSeleccionado.seguro" name="seguro"
+                            placeholder="0.00" (blur)="validarDecimal('seguro')"
+                            style="padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #64748b;">Aporte:</label>
+                        <input type="number" step="0.01" min="0" [(ngModel)]="pagareSeleccionado.aporte" name="aporte"
+                            placeholder="0.00" (blur)="validarDecimal('aporte')"
+                            style="padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
+                    </div>
+
+                </div>
+
+                <!-- TOTAL A PAGAR ALINEADO A LA DERECHA -->
+                <div
+                    style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; padding: 12px 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-align: right;">
+                    <span style="font-weight: bold; color: #64748b; font-size: 1.25rem; margin-right: 12px;">
+                        TOTAL A PAGAR:
+                    </span>
+                    <span style="font-weight: 800; color: #16a34a; font-size: 2rem; letter-spacing: -0.5px;">
+                        S/ {{ totalPagar | number:'1.2-2' }}
+                    </span>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN -->
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                        style="background-color: #27ae60 !important; border: none;">
+                        Actualizar Registro
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+}

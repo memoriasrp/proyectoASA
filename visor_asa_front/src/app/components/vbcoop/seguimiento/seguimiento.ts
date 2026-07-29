@@ -54,11 +54,11 @@ export class Seguimiento implements OnInit {
 
         // Extraemos los tipos únicos y removemos espacios en blanco (ej: 'AHORRO', 'PRESTAMO')
         const tipos = data.map(item => item.tipo ? item.tipo.trim().toUpperCase() : '');
-        console.log('Tipos obtenidos del backend:', tipos);
+
         // Filtramos vacíos y creamos un Set para evitar duplicados. 
         // Agregamos siempre 'GENERAL' como primera opción fija.
         this.tiposUnicos = ['GENERAL', ...Array.from(new Set(tipos)).filter(t => t && t !== 'GENERAL')];
-        console.log('Tipos obtenidos del tipos unicos:', this.tiposUnicos);
+
         // Inicializamos las cuentas del segundo combo (como arranca en GENERAL, estará en modo general)
         this.onTipoChange();
         this.cdRef.detectChanges();

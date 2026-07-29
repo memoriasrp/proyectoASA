@@ -1,7 +1,8 @@
-import { Controller, Get, Query, Post, Body, HttpStatus, HttpCode, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Query, Post, Put, Body, HttpStatus, HttpCode, BadRequestException, Param } from '@nestjs/common';
 import { MovactivosService } from './movactivos.service';
 import { GetMovactivosFilterDto } from './dto/get-movactivos-filter.dto';
 import { CreateMovimientoDto } from './dto/create-movimiento.dto';
+import { UpdateMovimientoActivoDto } from './dto/update-movactivos.dto';
 @Controller('movactivos')
 export class MovactivosController {
   constructor(private readonly movactivosService: MovactivosService) { }
@@ -40,5 +41,11 @@ export class MovactivosController {
 
       throw new BadRequestException(error.message || 'Error al procesar el registro del movimiento.');
     }
+  }
+
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateMovimientoActivoDto: UpdateMovimientoActivoDto) {
+    return this.movactivosService.update(id, updateMovimientoActivoDto);
   }
 }

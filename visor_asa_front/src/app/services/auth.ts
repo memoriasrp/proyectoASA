@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 @Injectable({
   providedIn: 'root',
 })
@@ -23,7 +24,19 @@ export class Auth {
       })
     );
   }
+  getUsuarioActual(): any {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
 
+    try {
+      // Decodifica la información técnica guardada dentro del JWT
+      const payload: any = jwtDecode(token);
+      return payload;
+    } catch (error) {
+      console.error('Error al decodificar el token', error);
+      return null;
+    }
+  }
   // Método útil para obtener el menú desde cualquier componente
   getMenu(): any[] {
     const menuString = localStorage.getItem('menu');

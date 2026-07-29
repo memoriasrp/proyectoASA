@@ -40,7 +40,7 @@ export class AuthService {
         // 4. Ahora TypeScript sabe con 100% de certeza que 'usuario' NO es null
         const menuPermitido = usuario.tipoUsuario.permisos.map(p => p.opcionMenu);
 
-        const payload = { sub: usuario.id, email: usuario.email, nombre: usuario.nombre };
+        const payload = { sub: usuario.id, email: usuario.email, nombre: usuario.nombre, tipoUsuario: usuario.tipoUsuario };
 
         return {
             status: 'success',
