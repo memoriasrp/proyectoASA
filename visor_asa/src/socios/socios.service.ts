@@ -34,7 +34,7 @@ export class SociosService {
                 where,
                 skip,
                 take: limit,
-                orderBy: { idsocio: 'asc' },
+                orderBy: { paterno: 'asc' },
             }),
             this.prisma.socios.count({ where }),
         ]);

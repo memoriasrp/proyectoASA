@@ -26,6 +26,7 @@ import { ObservacionesPrestamo } from './components/resultados/observaciones-pre
 import { ObservacionesAportes } from './components/resultados/observaciones-aportes/observaciones-aportes';
 import { ListaSeguimiento } from './components/general/lista-seguimiento/lista-seguimiento';
 import { RegistroPago } from './components/vbcoop/registro-pago/registro-pago';
+import { HojaResumen } from './components/general/hoja-resumen/hoja-resumen';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -84,6 +85,7 @@ export const routes: Routes = [
             { path: 'movpasivos/dpf', component: Movpasivos, data: { productoDefecto: 'DPF' } },
             { path: 'movactivos', component: Movactivos },
             { path: 'seguimiento-historial/:idsocio', component: SeguimientoHistorial },
+            { path: 'hoja-resumen/:idsocio', component: HojaResumen },
             { path: 'seguimiento-nuevo/:idsocio', component: Seguimiento },
             { path: 'registro-pago', component: RegistroPago },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }

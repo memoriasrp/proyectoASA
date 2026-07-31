@@ -23,6 +23,7 @@
                     <th>Fecha Ingreso</th>
                     <th>Fecha Retiro</th>
                     <th>Seguimiento</th>
+                    <th><i class="fa-solid fa-file-lines"></i></th>
                 </tr>
             </thead>
             <tbody>
@@ -42,6 +43,14 @@
                             [queryParams]="{ nombre: socio.nombres +' '+ socio.paterno +' '+ socio.materno }"
                             title="Ver Historial de Seguimientos">
                             👁️
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info text-white"
+                            [routerLink]="['/vbcoop/hoja-resumen', socio.idsocio]"
+                            [queryParams]="{ nombre: socio.nombres +' '+ socio.paterno +' '+ socio.materno }"
+                            title="Ver Hoja Resumen">
+                            <i class="fa-solid fa-file-lines"></i>
                         </button>
                     </td>
                 </tr>

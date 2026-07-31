@@ -25,7 +25,7 @@ export class SeguimientoController {
     constructor(private readonly seguimientoService: SeguimientoService) { }
 
     @Post()
-    @UseGuards(AuthGuard('jwt'))
+
     @UseInterceptors(
         FilesInterceptor('file', 20, {
             storage: diskStorage({
@@ -49,9 +49,6 @@ export class SeguimientoController {
         if (!body.idsocio || !body.detalle) {
             throw new BadRequestException('El código de socio y el detalle son obligatorios.');
         }
-        console.log('======= INSPECCIÓN DE SESIÓN =======');
-        console.log('Usuario autenticado (req.user):', req.user);
-        console.log('====================================');
         const usuario = req.user as any;
         const idUsuarioReal = usuario?.id || 1; // Si no viene, por defecto usa 1 (aquí es donde se puede estar quedando trabado)s
         return this.seguimientoService.crearSeguimientoConAdjuntos({

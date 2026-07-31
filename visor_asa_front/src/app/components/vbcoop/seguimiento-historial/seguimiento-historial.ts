@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SeguimientoService } from '../../../services/vbcoop/seguimiento-service';
 import { SeguimientoHistorialService } from '../../../services/vbcoop/seguimiento-historial-service';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +23,6 @@ export class SeguimientoHistorial implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
-    private seguimientoService: SeguimientoService,
     private seguimientoHistorialService: SeguimientoHistorialService,
     private cdRef: ChangeDetectorRef
   ) { }
