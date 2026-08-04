@@ -64,6 +64,7 @@ export class HojaResumen implements OnInit {
       this.datosAportes = (this.socioData?.aportes || []);
       this.datosAhorros = (this.socioData?.ahorros || []);
       this.datosDpf = (this.socioData?.depositosPlazoFijo || []);
+      this.datosPrestamos = (this.socioData?.prestamo || []);
 
     }
     this.datosSeguimiento = (this.socioData?.historial || []);

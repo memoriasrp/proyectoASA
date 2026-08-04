@@ -67,6 +67,9 @@ app-root {
 .categoria-body {
     padding: 1.5rem;
     background-color: #fcfcfd;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
 
 /* Tarjetas Individuales de Gestión */
@@ -77,6 +80,9 @@ app-root {
     padding: 1.25rem;
     margin-bottom: 1.25rem;
     transition: transform 0.2s, box-shadow 0.2s;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
 
 .gestion-card:last-child {
@@ -138,9 +144,11 @@ app-root {
     font-size: 0.95rem;
     line-height: 1.6;
     white-space: pre-line;
-    max-height: 200px;
     overflow-y: auto;
     padding: 0.5rem 0;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
 
 /* Botonera de Adjuntos */

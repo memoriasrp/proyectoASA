@@ -283,12 +283,12 @@
                                 <strong style="color: #495057;"> # de movimientos:</strong>
                                 <span style="color: #212529; margin-left: 5px;"> {{ item.totalmov}}</span>
                             </td>
-                            <td style="padding: 6px 12px; white-space: nowrap;">
+                            <td style="padding: 6px 12px; white-space: nowrap;" colspan="2">
                                 <strong style="color: #495057;">Fec.Desembolso:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fechades |
                                     date:'yyyy/MM/dd':'UTC'}} </span>
                             </td>
-                            <td style="padding: 6px 12px; white-space: nowrap;">
+                            <td style="padding: 6px 12px; white-space: nowrap;" colspan="2">
                                 <strong style="color: #495057;">Fec. Ultimo Movimiento:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecultmovimiento |
                                     date:'yyyy/MM/dd':'UTC'}}</span>
@@ -346,6 +346,18 @@
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Plazo Rep:</strong>
                                 <span style="color: #212529; margin-left: 5px;"> {{item.plazo_repr}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 12px; white-space: pre-line; word-break: break-word;" colspan="6">
+                                <strong style="color: #495057;">Detalle de Garantes:</strong>
+                                <div style="color: #212529; margin-left: 5px;">{{item.detalle_garantes}}</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 12px; white-space: pre-line; word-break: break-word;" colspan="6">
+                                <strong style="color: #495057;">Garantes externos:</strong>
+                                <div style="color: #212529; margin-left: 5px;">{{item.garantes_ext}}</div>
                             </td>
                         </tr>
                     </table>
