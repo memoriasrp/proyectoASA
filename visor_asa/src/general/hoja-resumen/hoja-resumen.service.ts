@@ -47,7 +47,7 @@ export class HojaResumenService {
                         THEN CONCAT(E'\n Centro laboral: ', CONCAT_WS('-', fg.centrotel, fg.centrotra))
                         ELSE '' 
                     END ),
-                    E'\n-----------------------------------\n' -- Separador entre un garante y otro
+                    E'\n-------------------------------\n' -- Separador entre un garante y otro
                 ) AS garantes_ext
                 FROM ctacte.garanext ge
                 INNER JOIN ctacte.ficgaran fg ON fg.idgarante = ge.idgarante
@@ -62,7 +62,7 @@ export class HojaResumenService {
                         THEN CONCAT(E'\n Centro laboral: ', CONCAT_WS('-', sc.centrotel, sc.centrotra))
                         ELSE '' 
                     END ),
-                    E'\n-----------------------------------\n' -- Separador entre un garante y otro
+                    E'\n-------------------------------\n' -- Separador entre un garante y otro
                 ) AS detalle_garantes
                 FROM  ctacte.garantes g INNER JOIN ctacte.socios sc ON sc.idsocio=g.idsocio
                 GROUP BY g.idpagare
