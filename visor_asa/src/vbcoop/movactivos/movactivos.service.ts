@@ -292,6 +292,7 @@ export class MovactivosService {
                     seguro: updateMovimientoActivoDto.seguro,
                     aporte: updateMovimientoActivoDto.aporte,
                     total: updateMovimientoActivoDto.total,
+                    castigada: 0,
                     ...(updateMovimientoActivoDto.fecha && {
                         fecha: new Date(updateMovimientoActivoDto.fecha)
                     })

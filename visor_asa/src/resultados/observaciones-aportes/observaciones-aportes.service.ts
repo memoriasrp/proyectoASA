@@ -73,7 +73,7 @@ export class ObservacionesAportesService {
                     END AS estado_conciliacion,
                     fecultmov
                 from 
-                (select * from consolidado.carteraxperiodo_pasivo where  tipo = 'APORTE' AND periodo = '202605'  AND condicion='VIGENTE') vbcoop
+                (select * from consolidado.carteraxperiodo_pasivo where  tipo = 'APORTE' AND periodo = '202303'  AND condicion='VIGENTE') vbcoop
                 FULL OUTER JOIN (
                     SELECT 'SBS' as origen, CODIGO as cuenta, idsocioc, socio as nombres, saldo  , 'S' as moneda  FROM sbs.aportaciones_socios 
                 ) sbs ON trim(vbcoop.idsocio) = trim(sbs.idsocioc)     AND sbs.saldo != 0 and sbs.moneda=vbcoop.moneda
@@ -103,7 +103,7 @@ export class ObservacionesAportesService {
                     END AS estado_conciliacion,
                     fecultmov
                 from 
-                (select * from consolidado.carteraxperiodo_pasivo where  tipo = 'APORTE' AND periodo = '202605'  AND condicion='VIGENTE') vbcoop
+                (select * from consolidado.carteraxperiodo_pasivo where  tipo = 'APORTE' AND periodo = '202303'  AND condicion='VIGENTE') vbcoop
                 FULL OUTER JOIN (
                     SELECT 'SBS' as origen, CODIGO as cuenta, idsocioc, socio as nombres, saldo  , 'S' as moneda  FROM sbs.aportaciones_socios 
                 ) sbs ON trim(vbcoop.idsocio) = trim(sbs.idsocioc)     AND sbs.saldo != 0 and sbs.moneda=vbcoop.moneda
@@ -151,7 +151,7 @@ export class ObservacionesAportesService {
                     END AS estado_conciliacion,
                     fecultmov
                 from 
-                (select * from consolidado.carteraxperiodo_pasivo where  tipo = 'APORTE' AND periodo = '202605'  AND condicion='VIGENTE') vbcoop
+                (select * from consolidado.carteraxperiodo_pasivo where  tipo = 'APORTE' AND periodo = '202303'  AND condicion='VIGENTE') vbcoop
                 FULL OUTER JOIN (
                     SELECT 'SBS' as origen, CODIGO as cuenta, idsocioc, socio as nombres, saldo  , 'S' as moneda  FROM sbs.aportaciones_socios 
                 ) sbs ON trim(vbcoop.idsocio) = trim(sbs.idsocioc)     AND sbs.saldo != 0 and sbs.moneda=vbcoop.moneda

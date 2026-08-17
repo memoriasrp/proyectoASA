@@ -72,7 +72,7 @@ export class ObservacionesPrestamoService {
                 abs(saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
-                where periodo = '202605'  AND condicion='VIGENTE' and saldocapitalmo>0
+                where periodo = '202303'  AND condicion='VIGENTE' and saldocapitalmo>0
                 and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
                         ${sqlWhereClause}                      
                 order by diferencia desc
@@ -86,7 +86,7 @@ export class ObservacionesPrestamoService {
                 abs(saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
-                where periodo = '202605'  AND condicion='VIGENTE' 
+                where periodo = '202303'  AND condicion='VIGENTE' 
                 and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0  
               ) AS unificado
               ${sqlWhereClause};  
@@ -117,8 +117,8 @@ export class ObservacionesPrestamoService {
                 abs(saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))) as diferencia
                 from consolidado.carteraxperiodo_prestamo vbcoop
                 FULL OUTER JOIN sbs.saldoprestamo sbs on sbs.idpagare=vbcoop.idpagare and sbs.idsocioc=vbcoop.idsocio
-                where periodo = '202605'  AND condicion='VIGENTE' 
-                and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0))))!=0) Resultado                
+                where periodo = (select periodo from consolidado.calendario_periodos where activo)  AND condicion='VIGENTE' 
+                and saldocapitalmn- coalesce(saldo251231,coalesce(saldo2025, coalesce(saldo241231, coalesce(saldo,0)))))!=0) Resultado                
                         ${sqlWhereClause}                      
                 order by diferencia desc
             `;

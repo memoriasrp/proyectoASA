@@ -74,7 +74,7 @@ export class ObservacionesAhorroService {
             from 
             (select *
             FROM consolidado.carteraxperiodo_pasivo
-            WHERE tipo = 'AHORRO' AND periodo = '202605'  AND condicion='VIGENTE' ) vbcoop
+            WHERE tipo = 'AHORRO' AND periodo = '202303' AND condicion='VIGENTE' ) vbcoop
             FULL OUTER JOIN (
                 SELECT 'SBS' as origen, cuenta, idcdp, idsocioc, nombres, saldo230831 AS saldo, moneda    FROM (
                     SELECT *, 'S'::text AS moneda FROM sbs.saldoahorro
@@ -110,7 +110,7 @@ export class ObservacionesAhorroService {
         from 
         (select *
         FROM consolidado.carteraxperiodo_pasivo
-        WHERE tipo = 'AHORRO' AND periodo = '202605'  AND condicion='VIGENTE' ) vbcoop
+        WHERE tipo = 'AHORRO' AND   periodo = '202303'   AND condicion='VIGENTE' ) vbcoop
         FULL OUTER JOIN (
             SELECT 'SBS' as origen, cuenta, idcdp, idsocioc, nombres, saldo230831 AS saldo, moneda    FROM (
                 SELECT *, 'S'::text AS moneda FROM sbs.saldoahorro

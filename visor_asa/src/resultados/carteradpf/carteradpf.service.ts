@@ -30,7 +30,8 @@ export class CarteradpfService {
                     SELECT *, 'D'::text AS moneda FROM sbs.saldodpfme
                 ) dpf_sbs
                 ) sbs ON vbcoop.idsocio = sbs.idsocioc    AND sbs.idcdp = vbcoop.idcdp    AND sbs.saldo != 0
-                WHERE (vbcoop.tipo = 'DPF' AND vbcoop.periodo = '202605'  AND vbcoop.saldo_periodomo != 0 AND sbs.cuenta IS NULL    )
+                WHERE (vbcoop.tipo = 'DPF' AND vbcoop.periodo = (select periodo from consolidado.calendario_periodos where activo)
+                  AND vbcoop.saldo_periodomo != 0 AND sbs.cuenta IS NULL    )
                     OR (vbcoop.idcdp IS NULL AND sbs.saldo!=0)
                     order by cuenta, nombre
                 LIMIT ${limit} OFFSET ${skip};`;
