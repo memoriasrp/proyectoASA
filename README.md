@@ -48,10 +48,13 @@ Servidor Web Estático		serve / Nginx					  Entrega del bundle optimizado de pro
 * 📊 **Gestión de Datos:** Módulos de registro, consulta y reportes estructurados.
 * ⚡ **API RESTful:** Endpoints optimizados para realizar operaciones CRUD.
 
-**Librerías y Dependencias Clave**
+Dependencias
+
+
 Autenticación: jwt-decode (manejo e interpretación de tokens JWT en el cliente).
 Exportación de Datos: xlsx-js-style (generación de reportes Excel con formato personalizado para la cartera).
 Estilos y Maquetación: CSS3 puro, utilidades de Bootstrap / Flexbox (soporte multi-página A4 @media print).
+
 ---
 ## 💻 Requisitos Previos
 
