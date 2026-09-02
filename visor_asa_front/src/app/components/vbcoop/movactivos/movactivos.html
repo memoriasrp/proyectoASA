@@ -199,7 +199,7 @@
 
             <!-- Fila 2: Fechas y Cuotas -->
             <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
-                <strong>Fec. apertura: </strong>{{ pagareSeleccionado?.fechades | date:'yyyy/MM/dd':'UTC' }}
+                <strong>Fec. apertura: </strong>{{ pagareSeleccionado?.fechades | date:'dd/MM/yy':'UTC' }}
                 <span style="margin-left: 15px;">
                     <strong>total cuotas: </strong>{{ pagareSeleccionado?.plazo }}
                 </span>

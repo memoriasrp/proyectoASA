@@ -20,7 +20,7 @@
                 @for (item of periodos; track item.periodo) {
                 <tr>
                     <td><strong>{{ item.periodo }}</strong></td>
-                    <td>{{ item.fecha | date:'dd/MM/yyyy':'UTC' }}</td>
+                    <td>{{ item.fecha | date:'dd/MM/yy':'UTC' }}</td>
                     <td>{{ item.tc }}</td>
                 </tr>
                 } @empty {

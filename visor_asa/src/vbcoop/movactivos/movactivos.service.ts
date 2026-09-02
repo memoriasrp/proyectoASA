@@ -244,8 +244,13 @@ export class MovactivosService {
                 GROUP BY  idpagare, idsocio, nombre, 
                  numdoc, descri, moneda, importe, plazo, tasa, fechades
                 ) AS cartera
-                ORDER BY c.periodo, cartera.idpagare, nombre;
-      `;
+                ORDER BY c.periodo, cartera.idpagare, nombre;      `;
+
+            await tx.$executeRaw`
+                 UPDATE consolidado.movimientosprestamos f set saldo = 
+                    (SELECT sum(case when car_Abo ='C' then capital else capital *(-1) end) 
+                    FROM consolidado.movimientosprestamos cal where cal.idpagare= f.idpagare and cal.fecha <=f.fecha)
+                    WHERE saldo is null and idpagare= ${dto.idpagare} AND idsocio= ${dto.idsocio} ; `;
         }).catch((error) => {
             // Si ocurre CUALQUIER error en paso 1, 2 o 3, Prisma hace ROLLBACK automático de todo
             throw new InternalServerErrorException(

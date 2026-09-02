@@ -248,6 +248,7 @@ model movimientosprestamos {
   castigada Decimal?  @db.Decimal(12, 2)
   castigo   Decimal?  @db.Decimal
   idusuario String?   @db.VarChar(30)
+  saldo     Decimal?  @db.Decimal
 
   @@id([idnumope, fecha, idpagare, nrocuota, car_abo])
   @@schema("consolidado")
@@ -1269,6 +1270,48 @@ model config_grupo {
 
   @@map("grupo")
   @@schema("config")
+}
+
+model ficgaran {
+  idgarante         String    @id @db.VarChar(27)
+  nombre            String?   @db.VarChar(255)
+  fecing            DateTime? @db.Date
+  numdoc            String?   @db.VarChar(255)
+  direccion         String?   @db.VarChar(255)
+  telefono          String?   @db.VarChar(255)
+  centrotra         String?   @db.VarChar(255)
+  centrotel         String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  idusua_e          String?   @db.VarChar(255)
+  hora_e            DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@schema("ctacte")
+}
+
+model garanext {
+  idpagare          String    @db.VarChar(28)
+  idgarante         String    @db.VarChar(27)
+  idsolicitu        String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, idgarante])
+  @@schema("ctacte")
+}
+
+model garantes {
+  idpagare          String    @db.VarChar(30)
+  idsocio           String    @db.VarChar(28)
+  idsolicitu        String?   @db.VarChar(255)
+  idusuario         String?   @db.VarChar(30)
+  hora              DateTime? @db.Timestamp(6)
+  registro_corrupto String?   @db.VarChar(2)
+
+  @@id([idpagare, idsocio])
+  @@schema("ctacte")
 }
 
 enum GrupoMenu {

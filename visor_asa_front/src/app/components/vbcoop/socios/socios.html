@@ -35,8 +35,8 @@
                     <td>
                         {{ socio.numdoc || socio.ruc || '---' }}
                     </td>
-                    <td>{{ socio.fecing | date:'yyyy/MM/dd':'UTC' }}</td>
-                    <td>{{ socio.fecret | date:'yyyy/MM/dd':'UTC'}}</td>
+                    <td>{{ socio.fecing | date:'dd/MM/yy':'UTC' }}</td>
+                    <td>{{ socio.fecret | date:'dd/MM/yy':'UTC'}}</td>
                     <td>
                         <button class="btn btn-sm btn-info text-white"
                             [routerLink]="['/vbcoop/seguimiento-historial', socio.idsocio]"

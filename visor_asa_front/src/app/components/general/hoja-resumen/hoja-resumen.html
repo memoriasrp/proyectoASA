@@ -1,9 +1,8 @@
 <div class="container hojaResumen-container mt-4" id="area-impresion">
 
+    <!-- CABECERA Y DATOS DEL SOCIO -->
     <div
         style="width: 100%; font-family: sans-serif; background-color: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #dee2e6; box-sizing: border-box; margin-bottom: 20px;">
-
-        <!-- Título y Socio Centrados -->
         <div style="text-align: center; margin-bottom: 15px; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;">
             <h1 style="font-size: 1.5rem; font-weight: bold; color: #212529; margin: 0 0 5px 0;">Hoja Resumen</h1>
             <div style="font-size: 0.9rem; color: #6c757d;">
@@ -13,9 +12,7 @@
             </div>
         </div>
 
-        <!-- Tabla de Datos (Garantiza alineación horizontal perfecta) -->
         <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
-            <!-- Fila 1: Datos de Identificación -->
             <tr>
                 <td style="padding: 6px 12px; white-space: nowrap;">
                     <strong style="color: #495057;">Tipo de Persona:</strong>
@@ -33,13 +30,11 @@
                         datosPersonales?.numdoc : datosPersonales?.ruc }}</span>
                 </td>
             </tr>
-
-            <!-- Fila 2: Datos de Contacto -->
             <tr>
                 <td style="padding: 6px 12px; white-space: nowrap;">
                     <strong style="color: #495057;">Fecha Nacimiento:</strong>
                     <span style="color: #212529; margin-left: 5px;">{{ datosPersonales?.fecnac |
-                        date:'yyyy/MM/dd':'UTC'}}&nbsp;-&nbsp;{{edadSocio}}&nbsp;años &nbsp;&nbsp;&nbsp;</span>
+                        date:'dd/MM/yy':'UTC'}}&nbsp;-&nbsp;{{edadSocio}}&nbsp;años</span>
                 </td>
                 <td style="padding: 6px 12px; white-space: nowrap;">
                     <strong style="color: #495057;">Email:</strong>
@@ -56,7 +51,7 @@
                     <span style="color: #212529; margin-left: 5px;">{{ datosPersonales?.celular || '-' }}</span>
                 </td>
                 <td colspan="2" style="padding: 6px 12px;">
-                    <strong style="color: #495057;">Telefono:</strong>
+                    <strong style="color: #495057;">Teléfono:</strong>
                     <span style="color: #212529; margin-left: 5px;">{{ datosPersonales?.telefono || '-' }}</span>
                 </td>
             </tr>
@@ -64,12 +59,12 @@
                 <td style="padding: 6px 12px; white-space: nowrap;">
                     <strong style="color: #495057;">Fecha de Ingreso:</strong>
                     <span style="color: #212529; margin-left: 5px;">{{ datosPersonales?.fecing |
-                        date:'yyyy/MM/dd':'UTC'}}</span>
+                        date:'dd/MM/yy':'UTC'}}</span>
                 </td>
                 <td colspan="2" style="padding: 6px 12px;">
                     <strong style="color: #495057;">Fecha de Retiro:</strong>
                     <span style="color: #212529; margin-left: 5px;">{{ datosPersonales?.fecret |
-                        date:'yyyy/MM/dd':'UTC'}} </span>
+                        date:'dd/MM/yy':'UTC'}}</span>
                 </td>
             </tr>
             <tr>
@@ -91,73 +86,66 @@
                 </td>
             </tr>
         </table>
-
     </div>
+
+    <!-- SPINNER CARGANDO -->
     <div *ngIf="cargando" class="text-center my-5">
         <div class="spinner-border text-primary" role="status"></div>
         <p class="mt-2 text-muted">Estructurando información...</p>
     </div>
 
+    <!-- CATEGORÍA: APORTES -->
     <div class="categoria-bloque" *ngIf="!cargando && datosAportes.length > 0">
-
-
         <div class="categoria-header">
-            <span class="categoria-titulo">Categoria: APORTES</span>
+            <span class="categoria-titulo">Categoría: APORTES</span>
         </div>
-
         <div class="categoria-body">
-
             <div class="gestion-card shadow-sm" *ngFor="let item of datosAportes">
-
                 <div class="gestion-meta">
                     <div class="meta-info">
                         <span class="meta-fecha">📅 {{ item.condicion }}</span>
-                        <span class="meta-cuenta"> {{ item.moneda==='D'?'Dolares':'Soles' }}</span>
+                        <span class="meta-cuenta">{{ item.moneda==='D'?'Dólares':'Soles' }}</span>
                     </div>
                     <span class="meta-usuario">
                         Saldo: <strong>&nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.saldo_periodomo | number:'1.2-2'
                             }}</strong>
                     </span>
                 </div>
-
                 <div class="gestion-detalle">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
                         <tr>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;"> # de movimientos:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.totalmov}}</span>
+                                <strong style="color: #495057;"># de movimientos:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.totalmov}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Fec. inicial:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecdeposito |
-                                    date:'yyyy/MM/dd':'UTC'}} </span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Fec. Ultimo Movimiento:</strong>
+                                <strong style="color: #495057;">Fec. Último Movimiento:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecultmov |
-                                    date:'yyyy/MM/dd':'UTC'}}</span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                         </tr>
                     </table>
-
                 </div>
-
-
             </div>
         </div>
-
     </div>
 
+    <!-- CATEGORÍA: AHORROS -->
     <div class="categoria-bloque" *ngIf="!cargando && datosAhorros.length > 0">
         <div class="categoria-header">
-            <span class="categoria-titulo">Categoria: AHORROS</span>
+            <span class="categoria-titulo">Categoría: AHORROS</span>
         </div>
         <div class="categoria-body">
-            <div class="gestion-card shadow-sm" *ngFor="let item of  datosAhorros">
+            <div class="gestion-card shadow-sm" *ngFor="let item of datosAhorros">
                 <div class="gestion-meta">
                     <div class="meta-info">
                         <span class="meta-fecha">📅 {{ item.condicion }}</span>
-                        <span class="meta-cuenta">Cuenta:{{item.idcdp}}&nbsp;- &nbsp;{{ item.descri }}</span>
+                        <span class="meta-cuenta">Cuenta: {{item.idcdp}}&nbsp;- &nbsp;{{ item.descri }}</span>
                     </div>
                     <span class="meta-usuario">
                         Saldo: <strong>&nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.saldo_periodomo | number:'1.2-2'
@@ -169,25 +157,25 @@
                         <tr>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.tasa}}%</span>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.tasa}}%</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa Anual:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.tasaanual}} %</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;"> # de movimientos:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.totalmov}}</span>
+                                <strong style="color: #495057;"># de movimientos:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.totalmov}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Fec. inicial:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecdeposito |
-                                    date:'yyyy/MM/dd':'UTC'}} </span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Fec. Ultimo Movimiento:</strong>
+                                <strong style="color: #495057;">Fec. Último Movimiento:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecultmov |
-                                    date:'yyyy/MM/dd':'UTC'}}</span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                         </tr>
                     </table>
@@ -196,18 +184,18 @@
         </div>
     </div>
 
+    <!-- CATEGORÍA: DPF -->
     <div class="categoria-bloque" *ngIf="!cargando && datosDpf.length > 0">
         <div class="categoria-header">
-            <span class="categoria-titulo">Categoria: DPF</span>
+            <span class="categoria-titulo">Categoría: DPF</span>
         </div>
         <div class="categoria-body">
-            <div class="gestion-card shadow-sm" *ngFor="let item of  datosDpf">
+            <div class="gestion-card shadow-sm" *ngFor="let item of datosDpf">
                 <div class="gestion-meta">
                     <div class="meta-info">
                         <span class="meta-fecha">📅 {{ item.condicion }}</span>
-                        <span class="meta-cuenta">Cuenta:{{item.idcdp}}&nbsp;- &nbsp;{{ item.descri }}
-                            &nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.cap_originalmo | number:'1.2-2'
-                            }}
+                        <span class="meta-cuenta">Cuenta: {{item.idcdp}}&nbsp;- &nbsp;{{ item.descri }}
+                            &nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.cap_originalmo | number:'1.2-2' }}
                         </span>
                     </div>
                     <span class="meta-usuario">
@@ -220,30 +208,30 @@
                         <tr>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.tasa}}%</span>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.tasa}}%</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa Anual:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.tasaanual}} %</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;"> # de movimientos:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.totalmov}}</span>
+                                <strong style="color: #495057;"># de movimientos:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.totalmov}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Fec. inicial:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecdeposito |
-                                    date:'yyyy/MM/dd':'UTC'}} </span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Fec. Ultimo Movimiento:</strong>
+                                <strong style="color: #495057;">Fec. Último Movimiento:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecultmov |
-                                    date:'yyyy/MM/dd':'UTC'}}</span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Int.Pagado:</strong>
+                                <strong style="color: #495057;">Int. Pagado:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item.moneda==='D'?'$':'S/.' }}{{
-                                    item?.pagointeres_periodomo| number:'1.2-2'}}</span>
+                                    item?.pagointeres_periodomo | number:'1.2-2'}}</span>
                             </td>
                         </tr>
                     </table>
@@ -252,100 +240,104 @@
         </div>
     </div>
 
+    <!-- CATEGORÍA: PRESTAMOS -->
     <div class="categoria-bloque" *ngIf="!cargando && datosPrestamos.length > 0">
         <div class="categoria-header">
-            <span class="categoria-titulo">Categoria: PRESTAMOS</span>
+            <span class="categoria-titulo">Categoría: PRÉSTAMOS</span>
         </div>
+
         <div class="categoria-body">
-            <div class="gestion-card shadow-sm" *ngFor="let item of  datosPrestamos">
+            <div class="gestion-card shadow-sm" *ngFor="let item of datosPrestamos">
                 <div class="gestion-meta">
                     <div class="meta-info">
                         <span class="meta-fecha">📅 {{ item.condicion }}</span>
-                        <span class="meta-cuenta">Pagare:{{item.idpagare}}&nbsp;- &nbsp;{{ item.descri }}
-                            &nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.desembolso | number:'1.2-2'
-                            }}
+                        <span class="meta-cuenta">Pagaré: {{item.idpagare}}&nbsp;- &nbsp;{{ item.descri }}
+                            &nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.desembolso | number:'1.2-2' }}
                         </span>
-                        <span class="meta-reprogramado" *ngIf="item.fecha_repr!=null">REPROGRAMADO</span>
+                        <span class="meta-reprogramado" *ngIf="item.fecha_repr != null">REPROGRAMADO</span>
                     </div>
                     <span class="meta-usuario">
                         Saldo: <strong>&nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.saldocapitalmo | number:'1.2-2'
                             }}</strong>
                     </span>
                 </div>
+
                 <div class="gestion-detalle">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
                         <tr>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.tasa}}%</span>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.tasa}}%</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;"> # de movimientos:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.totalmov}}</span>
+                                <strong style="color: #495057;">Tasa Mor:</strong>
+                                <span style="color: #212529; margin-left: 5px;">40%</span>
                             </td>
-                            <td style="padding: 6px 12px; white-space: nowrap;" colspan="2">
-                                <strong style="color: #495057;">Fec.Desembolso:</strong>
+                            <td style="padding: 6px 12px; white-space: nowrap;">
+                                <strong style="color: #495057;"># de movimientos:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.totalmov}}</span>
+                            </td>
+                            <td style="padding: 6px 12px; white-space: nowrap;">
+                                <strong style="color: #495057;">Fec. Desembolso:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fechades |
-                                    date:'yyyy/MM/dd':'UTC'}} </span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;" colspan="2">
-                                <strong style="color: #495057;">Fec. Ultimo Movimiento:</strong>
+                                <strong style="color: #495057;">Fec. Último Movimiento:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecultmovimiento |
-                                    date:'yyyy/MM/dd':'UTC'}}</span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Cuotas:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{item.cuotas_pagadas}}&nbsp; de&nbsp;
-                                    {{
-                                    item.plazo}}</span>
+                                <span style="color: #212529; margin-left: 5px;">{{item.cuotas_pagadas}}&nbsp; de&nbsp;
+                                    {{ item.plazo}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Pago Capital:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{(item.desembolso
-                                    -item.saldocapitalmo) | number:'1.2-2'}}</span>
+                                <span style="color: #212529; margin-left: 5px;">{{(item.desembolso -
+                                    item.saldocapitalmo) | number:'1.2-2'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Pago Interes:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{(item.pagointeresmo) |
+                                <strong style="color: #495057;">Pago Interés:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{(item.pagointeresmo) |
                                     number:'1.2-2'}}</span>
                             </td>
-
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Pago Seguro:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{(item.pagoseguromo) |
+                                <span style="color: #212529; margin-left: 5px;">{{(item.pagoseguromo) |
                                     number:'1.2-2'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Pago aporte:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{(item.pagoaportemo) |
+                                <strong style="color: #495057;">Pago Aporte:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{(item.pagoaportemo) |
                                     number:'1.2-2'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Pago mora:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{(item.pagomoramo) |
+                                <strong style="color: #495057;">Pago Mora:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{(item.pagomoramo) |
                                     number:'1.2-2'}}</span>
                             </td>
                         </tr>
-                        <tr *ngIf="item.fecha_repr!=null">
+                        <tr *ngIf="item.fecha_repr != null">
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa Reprogramado:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{item.tasa_repro}}%</span>
+                                <span style="color: #212529; margin-left: 5px;">{{item.tasa_repro}}%</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Importe Rep:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{item.importe_re|
+                                <span style="color: #212529; margin-left: 5px;">{{item.importe_re |
                                     number:'1.2-2'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Fecha Rep:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{item.fecha_repr |
-                                    date:'yyyy/MM/dd':'UTC'}}</span>
+                                <span style="color: #212529; margin-left: 5px;">{{item.fecha_repr |
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Plazo Rep:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{item.plazo_repr}}</span>
+                                <span style="color: #212529; margin-left: 5px;">{{item.plazo_repr}}</span>
                             </td>
                         </tr>
                         <tr>
@@ -362,34 +354,43 @@
                         </tr>
                     </table>
                 </div>
+
+                <!-- Botón de apertura del cronograma -->
+                <div class="adjunto-section no-print" *ngIf="item.condicion === 'VIGENTE'">
+                    <button class="btn btn-sm btn-outline-primary"
+                        (click)="verCronograma(item.idpagare, item.saldocapitalmo, item.moneda)">
+                        📋 Ver Cronograma
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- CATEGORÍA: SEGUIMIENTO -->
     <div class="categoria-bloque" *ngIf="!cargando && datosSeguimiento.length > 0">
         <div class="categoria-header">
-            <span class="categoria-titulo">Categoria: SEGUIMIENTO</span>
+            <span class="categoria-titulo">Categoría: SEGUIMIENTO</span>
         </div>
         <div class="categoria-body">
             <div class="gestion-card shadow-sm" *ngFor="let item of datosSeguimiento">
                 <div class="gestion-detalle">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; table-layout: fixed;">
                         <tr>
-                            <td style="padding: 6px 12px; white-space: nowrap; width: 50%;">
+                            <td style="padding: 6px 12px; white-space: nowrap; width: 33%;">
                                 <strong style="color: #495057;">Tipo Producto:</strong>
-                                <span style="color: #212529; margin-left: 5px;"> {{ item.tipoproducto}}%</span>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.tipoproducto}}</span>
                             </td>
-                            <td style="padding: 6px 12px; white-space: nowrap; width: 50%;">
-                                <strong style="color: #495057;">id Producto:</strong>
-                                <span style="color: #212529; margin-left: 5px;">{{ item?.idproducto}} </span>
+                            <td style="padding: 6px 12px; white-space: nowrap; width: 33%;">
+                                <strong style="color: #495057;">ID Producto:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item?.idproducto}}</span>
                             </td>
-                            <td style="padding: 6px 12px; white-space: nowrap; width: 50%;">
+                            <td style="padding: 6px 12px; white-space: nowrap; width: 33%;">
                                 <strong style="color: #495057;">Fecha:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.fecha |
-                                    date:'yyyy/MM/dd':'UTC'}} </span>
+                                    date:'dd/MM/yy':'UTC'}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <!-- Se cambia 'white-space: nowrap' por 'normal' y se agrega 'word-break' -->
                             <td style="padding: 6px 12px; white-space: normal; word-break: break-word;" colspan="3">
                                 <strong style="color: #495057;">Detalle:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{ item?.detalle }}</span>
@@ -400,10 +401,280 @@
             </div>
         </div>
     </div>
+
     <div class="mt-4 no-print">
         <button class="btn btn-secondary px-4" [routerLink]="['/dashboard/socios']">
             Volver a Lista de Socios
         </button>
     </div>
 
+</div>
+
+<!-- MODAL CRONOGRAMA Y MOVIMIENTOS DE PAGOS -->
+<div class="custom-modal-backdrop no-print" *ngIf="mostrarModal">
+    <div class="modal-dialog modal-xl modal-dialog-centered w-100">
+        <div class="modal-content shadow-lg border-0">
+
+            <!-- Encabezado del Modal -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold fs-4">
+                    📋 Cronograma de Pagos - Pagaré: {{ cronogramaData?.cabecera?.idpagare || 'Cargando...' }} - {{
+                    nombreSocio }}
+                </h5>
+                <span class="me-3 fs-6">
+                    <strong>Estado:</strong>
+                    <span class="badge bg-info text-dark">{{ cronogramaData?.cabecera?.estado || '-' }}</span>
+                </span>
+                <span class="fs-6 me-3">
+                    <strong>Monto:</strong> {{ cronogramaData?.cabecera?.moneda }} {{ cronogramaData?.cabecera?.importe
+                    | number:'1.2-2' }}
+                </span>
+                <span class="fs-6">
+                    <strong>TEA:</strong> {{ cronogramaData?.cabecera?.tea }}%
+                </span>
+                <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+            </div>
+
+            <!-- Cuerpo del Modal -->
+            <div class="modal-body p-4">
+
+                <!-- Spinner de Carga -->
+                <div *ngIf="cargandoCronograma" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+                    <p class="mt-3 text-secondary fw-semibold">Cargando información del préstamo...</p>
+                </div>
+
+                <!-- Contenido Dinámico -->
+                <div *ngIf="!cargandoCronograma && cronogramaData">
+                    <!-- PARALELO LADO A LADO -->
+                    <div class="modal-grid-container">
+                        <div class="modal-grid-col">
+                            <div class="p-3 border rounded shadow-sm bg-white h-100">
+                                <div class="titulo-seccion-custom text-success border-bottom pb-2 mb-3">
+                                    <i class="bi bi-clock-history me-2"></i>HISTORIAL DE PAGOS
+                                </div>
+                                <div class="table-responsive border rounded"
+                                    style="max-height: 420px; overflow-y: auto;">
+                                    <table class="table table-sm table-striped table-hover align-middle mb-0">
+                                        <thead class="table-secondary sticky-top">
+                                            <tr>
+                                                <th class="text-center">N°</th>
+                                                <th class="text-center">Fecha</th>
+                                                <th class="text-end">Capital</th>
+                                                <th class="text-end">Interés</th>
+                                                <th class="text-end">Mora</th>
+                                                <th class="text-end">Seguro</th>
+                                                <th class="text-end">Aporte</th>
+                                                <th class="text-end">Total</th>
+                                                <th class="text-end">Saldo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let cuota of cronogramaData.movimientos">
+                                                <td style="padding: 12px; text-align: right;"
+                                                    class="text-center fw-bold">{{ cuota.nrocuota }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-center">{{
+                                                    cuota.fecha | date:'dd/MM/yy':'UTC' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.capital | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.interes | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.mora | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.seguro | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.aporte | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;"
+                                                    class="text-end fw-bold text-success">{{ cuota.total |
+                                                    number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.saldo | number:'1.2-2' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-grid-col seccion-cronograma">
+                            <div class="p-3 border rounded shadow-sm bg-white h-100">
+                                <div class="titulo-seccion-custom text-primary border-bottom pb-2 mb-3">
+                                    <i class="bi bi-calendar3 me-2"></i>CRONOGRAMA DE PAGOS
+                                </div>
+                                <div class="table-responsive border rounded"
+                                    style="max-height: 420px; overflow-y: auto;">
+                                    <!-- Clase 'tabla-cronograma-mini' añadida aquí -->
+                                    <table
+                                        class="table table-sm table-striped table-hover align-middle mb-0 tabla-cronograma-mini">
+                                        <thead class="table-dark sticky-top">
+                                            <tr>
+                                                <th class="text-center">N°</th>
+                                                <th>Vencimiento</th>
+                                                <th class="text-end">Capital</th>
+                                                <th class="text-end">Interés</th>
+                                                <th class="text-end">Aporte</th>
+                                                <th class="text-end">Cuota</th>
+                                                <th class="text-end">Saldo</th>
+                                                <th class="text-center">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let cuota of cronogramaData.cronograma">
+                                                <td style="padding: 12px; text-align: right;"
+                                                    class="text-center fw-bold">{{ cuota.orden }}</td>
+                                                <td style="padding: 12px; text-align: right;">{{ cuota.fecha |
+                                                    date:'dd/MM/yy':'UTC' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.capital | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.interes | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.aporte | number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;"
+                                                    class="text-end text-primary fw-bold">{{ cuota.cuota |
+                                                    number:'1.2-2' }}</td>
+                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
+                                                    cuota.saldo | number:'1.2-2' }}</td>
+                                                <td class="text-center">
+                                                    <span class="badge"
+                                                        [ngClass]="cuota.estado === 'PAGADO' ? 'bg-success' : 'bg-warning text-dark'">
+                                                        {{ cuota.estado }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DINÁMICA: DEUDAS POR AÑO Y TOTALES LADO A LADO -->
+                <div class="mt-4 pt-3 border-top">
+                    <h5 class="fw-bold text-dark mb-3 fs-5">
+                        <i class="bi bi-calculator me-2 text-warning"></i>DESGLOSE DE INTERESES Y MORA POR AÑO
+                    </h5>
+
+                    <!-- PARALELO LADO A LADO -->
+                    <div class="modal-grid-container align-items-start">
+
+                        <!-- COLUMNA IZQUIERDA: LISTA EDITABLE ANUAL -->
+                        <div class="modal-grid-col">
+                            <div class="p-3 border rounded shadow-sm bg-white">
+
+                                <!-- Cabecera de Columnas -->
+                                <div class="desglose-fila-unica px-3 py-1 bg-secondary text-white fw-bold rounded-top small mb-2"
+                                    *ngIf="deudasPorAno.length > 0">
+                                    <div class="desglose-label">Año / Días</div>
+                                    <div class="desglose-input-group text-end pe-2">Interés</div>
+                                    <div class="desglose-input-group text-end pe-2">Mora</div>
+                                </div>
+
+                                <!-- Lista Scrollable de Filas -->
+                                <div class="desglose-scroll-container border rounded p-2 bg-light"
+                                    *ngIf="deudasPorAno.length > 0">
+                                    <div class="desglose-fila-unica bg-white p-2 mb-2 border rounded shadow-sm"
+                                        *ngFor="let item of deudasPorAno; let i = index">
+
+                                        <!-- Año y Días -->
+                                        <div class="desglose-label fw-bold text-secondary text-nowrap">
+                                            {{ item.ano }} <span class="badge bg-light text-dark border">({{ item.dias
+                                                }} d)</span>
+                                        </div>
+
+                                        <!-- Input Interés (Alineado a la derecha) -->
+                                        <div class="input-group input-group-sm desglose-input-group">
+                                            <input type="number" step="0.01"
+                                                class="form-control text-end fw-semibold pe-2"
+                                                [(ngModel)]="deudasPorAno[i].interes" (input)="calcularTotalDeudas()">
+                                        </div>
+
+                                        <!-- Input Mora (Alineado a la derecha) -->
+                                        <div class="input-group input-group-sm desglose-input-group">
+                                            <input type="number" step="0.01"
+                                                class="form-control text-end fw-semibold pe-2"
+                                                [(ngModel)]="deudasPorAno[i].mora" (input)="calcularTotalDeudas()">
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Mensaje sin datos -->
+                                <div *ngIf="deudasPorAno.length === 0"
+                                    class="alert alert-light text-center py-2 text-muted mb-0">
+                                    No hay registros de intereses devengados por año para mostrar.
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- COLUMNA DERECHA: TARJETA DE TOTALES -->
+                        <div class="modal-grid-col">
+                            <div class="p-3 border rounded shadow-sm bg-dark text-white h-100"
+                                style="display: flex !important; flex-direction: column !important; justify-content: center !important;">
+
+                                <h6
+                                    class="text-uppercase fw-bold text-warning border-bottom border-secondary pb-2 mb-3 fs-6">
+                                    📊 Resumen Acumulado
+                                </h6>
+
+                                <!-- Total Interés -->
+                                <div class="mb-3"
+                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">
+                                        SLD. CAPITAL:</span>
+                                    <span class="fs-5 fw-bold text-warning"
+                                        style="white-space: nowrap; text-align: right !important;">
+                                        S/. {{ saldoCapitalMo | number:'1.2-2' }}
+                                    </span>
+                                </div>
+                                <!-- Total Interés -->
+                                <div class="mb-3"
+                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T.
+                                        INTERÉS:</span>
+                                    <span class="fs-5 fw-bold text-warning"
+                                        style="white-space: nowrap; text-align: right !important;">
+                                        S/. {{ totalInteresAnos | number:'1.2-2' }}
+                                    </span>
+                                </div>
+
+                                <!-- Total Mora -->
+                                <div class="mb-3"
+                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T.
+                                        MORA:</span>
+                                    <span class="fs-5 fw-bold text-warning"
+                                        style="white-space: nowrap; text-align: right !important;">
+                                        S/. {{ totalMoraAnos | number:'1.2-2' }}
+                                    </span>
+                                </div>
+
+                                <div class="pt-2 border-top border-secondary"
+                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">TOT.
+                                        GENERAL:</span>
+                                    <span class="fs-4 fw-bold text-success"
+                                        style="white-space: nowrap; text-align: right !important;">
+                                        S/. {{ totalGeneralAnos | number:'1.2-2' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie del Modal -->
+            <div class="modal-footer bg-light no-print">
+                <button type="button" class="btn btn-primary px-4 fs-6 me-2" (click)="imprimirModal()">
+                    𖥕 Imprimir
+                </button>
+                <button type="button" class="btn btn-secondary px-4 fs-6" (click)="cerrarModal()">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

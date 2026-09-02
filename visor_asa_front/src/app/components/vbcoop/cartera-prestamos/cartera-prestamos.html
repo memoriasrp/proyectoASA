@@ -224,10 +224,10 @@
 
             <!-- Fila 2: Fechas -->
             <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important; line-height: 1.4;">
-                <strong>Fec. apertura: </strong>{{ socioSeleccionado?.fechades | date:'yyyy/MM/dd':'UTC' }}
+                <strong>Fec. apertura: </strong>{{ socioSeleccionado?.fechades | date:'dd/MM/yy':'UTC' }}
                 <span style="margin-left: 15px;">
                     <strong>Fec. Ultimo Movimiento: </strong>{{ socioSeleccionado?.fecultmovimiento |
-                    date:'yyyy/MM/dd':'UTC' }}
+                    date:'dd/MM/yy':'UTC' }}
                 </span>
             </p>
         </div>

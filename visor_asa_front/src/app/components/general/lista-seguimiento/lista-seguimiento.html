@@ -34,8 +34,8 @@
                         {{ seguimiento.numdoc || seguimiento.ruc || '---' }}
                     </td>
                     <td>{{ seguimiento.tot_registros}} </td>
-                    <td>{{ seguimiento.primer_registro | date:'yyyy/MM/dd':'UTC' }}</td>
-                    <td>{{ seguimiento.ult_registro | date:'yyyy/MM/dd':'UTC'}}</td>
+                    <td>{{ seguimiento.primer_registro | date:'dd/MM/yy':'UTC' }}</td>
+                    <td>{{ seguimiento.ult_registro | date:'dd/MM/yy':'UTC'}}</td>
                     <td>
                         <button class="btn btn-sm btn-info text-white"
                             [routerLink]="['/vbcoop/seguimiento-historial', seguimiento.idsocio]"

@@ -6,26 +6,27 @@ import { Mapa } from './components/mapa/mapa';
 import { Menus } from './components/menus/menus';
 import { Usuarios } from './components/usuarios/usuarios';
 import { TipoUsuarios } from './components/tipo-usuarios/tipo-usuarios';
-import { PermisoPantallas } from './components/permiso-pantallas/permiso-pantallas'; // 🆕 Importación de la pantalla de Permisos
+import { PermisoPantallas } from './components/permiso-pantallas/permiso-pantallas';
 import { Socios } from './components/vbcoop/socios/socios';
 import { Aportaciones } from './components/sbs/aportaciones/aportaciones';
-import { Creditos } from './components/sbs/creditos/creditos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { Ahorros } from './components/sbs/ahorros/ahorros'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { Dpfs } from './components/sbs/dpfs/dpfs'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { Creditos } from './components/sbs/creditos/creditos';
+import { Ahorros } from './components/sbs/ahorros/ahorros';
+import { Dpfs } from './components/sbs/dpfs/dpfs';
 import { AsignarIdsocio } from './components/sbs/asignar-idsocio/asignar-idsocio';
 import { Periodos } from './components/configuracion/periodos/periodos';
 import { Movpasivos } from './components/vbcoop/movpasivos/movpasivos';
-import { Movactivos } from './components/vbcoop/movactivos/movactivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { Seguimiento } from './components/vbcoop/seguimiento/seguimiento'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { SeguimientoHistorial } from './components/vbcoop/seguimiento-historial/seguimiento-historial'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { CarteraPasivos } from './components/vbcoop/cartera-pasivos/cartera-pasivos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { CarteraPrestamos } from './components/vbcoop/cartera-prestamos/cartera-prestamos'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { ObservacionesDpf } from './components/resultados/observaciones-dpf/observaciones-dpf'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
-import { ObservacionesAhorro } from './components/resultados/observaciones-ahorro/observaciones-ahorro'; // Asegúrate de que la ruta sea correcta según tu estructura de carpetas
+import { Movactivos } from './components/vbcoop/movactivos/movactivos';
+import { Seguimiento } from './components/vbcoop/seguimiento/seguimiento';
+import { SeguimientoHistorial } from './components/vbcoop/seguimiento-historial/seguimiento-historial';
+import { CarteraPasivos } from './components/vbcoop/cartera-pasivos/cartera-pasivos';
+import { CarteraPrestamos } from './components/vbcoop/cartera-prestamos/cartera-prestamos';
+import { ObservacionesDpf } from './components/resultados/observaciones-dpf/observaciones-dpf';
+import { ObservacionesAhorro } from './components/resultados/observaciones-ahorro/observaciones-ahorro';
 import { ObservacionesPrestamo } from './components/resultados/observaciones-prestamo/observaciones-prestamo';
 import { ObservacionesAportes } from './components/resultados/observaciones-aportes/observaciones-aportes';
 import { ListaSeguimiento } from './components/general/lista-seguimiento/lista-seguimiento';
 import { RegistroPago } from './components/vbcoop/registro-pago/registro-pago';
+import { Cronograma } from './components/vbcoop/cronograma/cronograma';
 import { HojaResumen } from './components/general/hoja-resumen/hoja-resumen';
 
 export const routes: Routes = [
