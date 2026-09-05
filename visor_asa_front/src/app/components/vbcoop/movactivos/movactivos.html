@@ -99,7 +99,8 @@
                     <th style="padding: 12px;">Cuota</th>
                     <th style="padding: 12px;  text-align: right;">Capital</th>
                     <th style="padding: 12px; text-align: right;">Interes</th>
-                    <th style="padding: 12px; text-align: right;">Saldo / Monto</th>
+                    <th style="padding: 12px; text-align: right;">P.Total</th>
+                    <th style="padding: 12px; text-align: right;">Saldo</th>
                     <th style="padding: 12px;">Usuario</th>
                     <th> <i class="fa-solid fa-pen"></i></th>
                 </tr>
@@ -124,6 +125,12 @@
                         style="padding: 12px; text-align: right; font-weight: bold;">
 
                         {{ (item.car_abo === 'C' ? (item.total * -1) : item.total) | number:'1.2-2' }}
+
+                    </td>
+                    <td [style.color]="item.car_abo === 'C' ? '#EF6C00' : (item.car_abo === 'A' ? '#2E7D32' : '#2c3e50')"
+                        style="padding: 12px; text-align: right; font-weight: bold;">
+
+                        {{ item.saldo | number:'1.2-2' }}
 
                     </td>
                     <td style="padding: 12px; text-align: right; ">{{ item.idusuario}}</td>

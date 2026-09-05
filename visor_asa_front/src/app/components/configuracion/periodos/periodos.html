@@ -4,7 +4,7 @@
             <h2 class="page-title">Lista de Periodos</h2>
             <p class="page-subtitle">Consulta de periodos disponibles.</p>
         </div>
-
+        <button class="btn btn-primary" (click)="abrirModalCrear()">+ Nuevo Periodo</button>
     </div>
 
     <div class="table-responsive">
@@ -14,6 +14,12 @@
                     <th>Periodo</th>
                     <th>Fecha</th>
                     <th>Tipo de Cambio</th>
+                    <th>Activo</th>
+                    <th>Aportes</th>
+                    <th>Ahorros</th>
+                    <th>DPF</th>
+                    <th>Préstamos</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,6 +28,23 @@
                     <td><strong>{{ item.periodo }}</strong></td>
                     <td>{{ item.fecha | date:'dd/MM/yy':'UTC' }}</td>
                     <td>{{ item.tc }}</td>
+                    <td>
+                        <span *ngIf="item.activo" class="badge badge-success">Activo</span>
+                        <button *ngIf="!item.activo" class="btn btn-sm btn-outline-primary"
+                            (click)="activarPeriodo(item.periodo)">Activar</button>
+
+                    </td>
+                    <td>{{ item.aportes }}</td>
+                    <td>{{ item.ahorros }}</td>
+                    <td>{{ item.dpf }}</td>
+                    <td>{{ item.prestamos }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" (click)="abrirModalEditar(item)">✏️</button>
+                        <button class="btn btn-sm btn-outline-danger"
+                            (click)="eliminarPeriodo(item.periodo)">🗑️</button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="RecalcularPeriodo(item.periodo)"
+                            title="Recalcular Saldos">🔄</button>
+                    </td>
                 </tr>
                 } @empty {
                 <tr>
@@ -59,3 +82,43 @@
         </div>
     </div>
 </div>
+
+
+@if (mostrarModal) {
+<div class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>{{ modoEdicion ? 'Modificar Opción de Periodo' : 'Registrar Nueva Opción de Periodo' }}</h3>
+
+        </div>
+
+        <form (submit)="guardarPeriodo($event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nombre">Periodo</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" [(ngModel)]="nuevoPeriodo.periodo"
+                        required placeholder="Ej. 202606(año mes sin guiones)">
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" class="form-control" [(ngModel)]="nuevoPeriodo.fecha"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tc">Tipo de Cambio</label>
+                    <input type="text" id="tc" name="tc" class="form-control" [(ngModel)]="nuevoPeriodo.tc" required>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    {{ modoEdicion ? 'Actualizar Cambios' : 'Crear Periodo' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

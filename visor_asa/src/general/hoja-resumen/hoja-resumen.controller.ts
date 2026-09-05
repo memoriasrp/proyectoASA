@@ -7,7 +7,6 @@ export class HojaResumenController {
   constructor(private readonly hojaResumenService: HojaResumenService) { }
   @Get('socio/:idsocio')
   async getHojaResumen(@Param('idsocio') idsocio: string) {
-    console.log("hola este es el socio" + idsocio);
     return await this.hojaResumenService.obtenerHojaResumen(idsocio);
   }
 }

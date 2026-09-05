@@ -2,6 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 
+(BigInt.prototype as any).toJSON = function () {
+  return Number(this); // O return this.toString(); si los números superan Number.MAX_SAFE_INTEGER
+};
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();

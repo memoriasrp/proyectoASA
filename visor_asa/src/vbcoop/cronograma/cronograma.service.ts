@@ -47,13 +47,14 @@ export class CronogramaService {
         const datosPlan = {
             importe: Number(esReprogramado ? pagare.importe_re : pagare.importe),
             fechaEmi: esReprogramado ? pagare.fecha_repr! : pagare.fechaemi!,
-            tasa: Number(
-                esReprogramado
-                    ? pagare.tasa_repro
-                    : pagare.formapago === 2 && pagare.tasaplan
-                        ? pagare.tasaplan
-                        : pagare.tasa,
-            ),
+            // tasa: Number(
+            //     esReprogramado
+            //         ? pagare.tasa_repro
+            //         : pagare.formapago === 2 && pagare.tasaplan
+            //             ? pagare.tasaplan
+            //             : pagare.tasa,
+            // ),
+            tasa: Number(pagare.tasa),
             diaFijo: Number(esReprogramado ? pagare.diafijo_re : pagare.diafijo || 0),
             plazo: Number(esReprogramado ? pagare.plazo_repr : pagare.plazo),
             cuota: Number(esReprogramado ? pagare.cuota_repr : pagare.cuota || 0),

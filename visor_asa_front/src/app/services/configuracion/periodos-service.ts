@@ -20,5 +20,27 @@ export class PeriodosService {
 
     return this.http.get<any>(this.apiUrl, { params });
   }
+  crearPeriodo(periodo: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, periodo, { headers: this.getHeaders() });
+  }
+
+  actualizarPeriodo(periodoId: string, periodo: any): Observable<any> {
+    const url = `${this.apiUrl}/${periodoId}`;
+    return this.http.put<any>(url, periodo, { headers: this.getHeaders() });
+  }
+
+  activarPeriodo(periodoId: string): Observable<any> {
+    const url = `${this.apiUrl}/${periodoId}/activar`;
+    return this.http.patch<any>(url, { headers: this.getHeaders() });
+  }
+  RecalcularPeriodo(periodoId: string): Observable<any> {
+    const url = `${this.apiUrl}/${periodoId}/recalcular`;
+    return this.http.patch<any>(url, { headers: this.getHeaders() });
+  }
+
+  eliminarPeriodo(periodoId: string): Observable<any> {
+    const url = `${this.apiUrl}/${periodoId}`;
+    return this.http.delete<any>(url, { headers: this.getHeaders() });
+  }
 
 }

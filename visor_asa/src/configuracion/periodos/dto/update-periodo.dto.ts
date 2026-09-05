@@ -3,7 +3,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { IsString, IsNumber, IsNotEmpty, IsInt, IsEnum, IsDate, IsOptional } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
-export class UpdateMenuDto {
+export class UpdatePeriodoDto {
     @IsString()
     @IsNotEmpty({ message: 'El periodo es obligatorio' })
     periodo!: string;
@@ -16,7 +16,7 @@ export class UpdateMenuDto {
     @Transform(({ value }) => (value !== null && value !== undefined ? parseFloat(value) : value))
     @IsNumber(
         { maxDecimalPlaces: 4 }, // 💡 El Tipo de Cambio en Perú (SBS) usualmente maneja de 3 a 4 decimales
-        { message: 'El tipo de cambio (tc) debe ser un número decimal válido' } // 👈 Corregido el mensaje
+        { message: 'El tipo de cambio (tc) debe ser un número decimal válido' }
     )
     tc?: number | null; // Mapea con el Decimal? de Prisma
 
