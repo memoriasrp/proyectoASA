@@ -359,7 +359,7 @@
                 <div class="adjunto-section no-print" *ngIf="item.condicion === 'VIGENTE'">
                     <button class="btn btn-sm btn-outline-primary"
                         (click)="verCronograma(item.idpagare, item.saldocapitalmo, item.moneda)">
-                        📋 Ver Cronograma
+                        📋 Ver Detalle
                     </button>
                 </div>
             </div>
@@ -415,24 +415,44 @@
     <div class="modal-dialog modal-xl modal-dialog-centered w-100">
         <div class="modal-content shadow-lg border-0">
 
-            <!-- Encabezado del Modal -->
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold fs-4">
-                    📋 Cronograma de Pagos - Pagaré: {{ cronogramaData?.cabecera?.idpagare || 'Cargando...' }} - {{
-                    nombreSocio }}
-                </h5>
-                <span class="me-3 fs-6">
-                    <strong>Estado:</strong>
-                    <span class="badge bg-info text-dark">{{ cronogramaData?.cabecera?.estado || '-' }}</span>
-                </span>
-                <span class="fs-6 me-3">
-                    <strong>Monto:</strong> {{ cronogramaData?.cabecera?.moneda }} {{ cronogramaData?.cabecera?.importe
-                    | number:'1.2-2' }}
-                </span>
-                <span class="fs-6">
-                    <strong>TEA:</strong> {{ cronogramaData?.cabecera?.tea }}%
-                </span>
-                <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+            <!-- Encabezado del Modal con Estilos Flex Column Forzados -->
+            <div class="modal-header bg-primary text-white position-relative py-3"
+                style="display: flex !important; flex-direction: column !important; align-items: stretch !important; justify-content: center !important; text-align: center !important;">
+                <!-- PRIMERA LÍNEA: Título Principal CENTRADO ABSOLUTO -->
+                <div style="width: 100% !important; display: block !important; text-align: center !important;"
+                    class="mb-2">
+                    <h3 class="modal-title fw-bold m-0 fs-3 text-white text-center"
+                        style="display: inline-block !important; width: 100% !important; text-align: center !important;">
+                        📋 Historial de Pagos
+                    </h3>
+                </div>
+
+                <!-- SEGUNDA LÍNEA: Detalle Alineado a la Izquierda -->
+                <div style="display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 0.5rem !important; width: 100% !important; font-size: 0.95rem !important; text-align: left !important;"
+                    class="text-white-50">
+                    <span class="text-white">
+                        <strong>Pagaré:</strong> {{ cronogramaData?.cabecera?.idpagare || 'Cargando...' }}
+                    </span>
+                    <span>&bull;</span>
+                    <span class="text-white fw-semibold">
+                        {{ nombreSocio }}
+                    </span>
+                    <span>&bull;</span>
+                    <span class="text-white">
+                        <strong>Estado:</strong>
+                        <span class="badge bg-info text-dark ms-1">{{ cronogramaData?.cabecera?.estado || '-' }}</span>
+                    </span>
+                    <span>&bull;</span>
+                    <span class="text-white">
+                        <strong>Monto:</strong> {{ cronogramaData?.cabecera?.moneda }} {{
+                        cronogramaData?.cabecera?.importe | number:'1.2-2' }}
+                    </span>
+                    <span>&bull;</span>
+                    <span class="text-white">
+                        <strong>TEA:</strong> {{ cronogramaData?.cabecera?.tea }}%
+                    </span>
+                </div>
+
             </div>
 
             <!-- Cuerpo del Modal -->
@@ -446,6 +466,17 @@
 
                 <!-- Contenido Dinámico -->
                 <div *ngIf="!cargandoCronograma && cronogramaData">
+                    <!-- SECTOR SUPERIOR: FECHA DE CÁLCULO CON ESPACIADO INFERIOR -->
+                    <div class="d-flex align-items-center mb-4 p-2 bg-light rounded border gap-3 no-print">
+                        <label for="fechaCalculoInput" class="form-label fw-bold text-dark mb-0 fs-5 text-nowrap">
+                            📅 Fecha de Cálculo:
+                        </label>
+                        <input type="date" id="fechaCalculoInput"
+                            class="form-control form-control-lg fw-bold text-dark shadow-sm border-secondary"
+                            style="max-width: 220px; font-size: 1.1rem; color: #1a252f;" [(ngModel)]="fechaCalculo"
+                            (change)="onFechaCalculoChange()">
+                    </div>
+
                     <!-- PARALELO LADO A LADO -->
                     <div class="modal-grid-container">
                         <div class="modal-grid-col">
@@ -496,6 +527,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="modal-grid-col seccion-cronograma">
                             <div class="p-3 border rounded shadow-sm bg-white h-100">
                                 <div class="titulo-seccion-custom text-primary border-bottom pb-2 mb-3">
@@ -503,7 +535,6 @@
                                 </div>
                                 <div class="table-responsive border rounded"
                                     style="max-height: 420px; overflow-y: auto;">
-                                    <!-- Clase 'tabla-cronograma-mini' añadida aquí -->
                                     <table
                                         class="table table-sm table-striped table-hover align-middle mb-0 tabla-cronograma-mini">
                                         <thead class="table-dark sticky-top">
@@ -537,7 +568,7 @@
                                                     cuota.saldo | number:'1.2-2' }}</td>
                                                 <td class="text-center">
                                                     <span class="badge"
-                                                        [ngClass]="cuota.estado === 'PAGADO' ? 'bg-success' : 'bg-warning text-dark'">
+                                                        [ngClass]="cuota.estado === 'PAGADO' || cuota.estado === 'PAG' ? 'bg-success text-white' : 'bg-danger text-white'">
                                                         {{ cuota.estado }}
                                                     </span>
                                                 </td>
@@ -583,14 +614,14 @@
                                                 }} d)</span>
                                         </div>
 
-                                        <!-- Input Interés (Alineado a la derecha) -->
+                                        <!-- Input Interés -->
                                         <div class="input-group input-group-sm desglose-input-group">
                                             <input type="number" step="0.01"
                                                 class="form-control text-end fw-semibold pe-2"
                                                 [(ngModel)]="deudasPorAno[i].interes" (input)="calcularTotalDeudas()">
                                         </div>
 
-                                        <!-- Input Mora (Alineado a la derecha) -->
+                                        <!-- Input Mora -->
                                         <div class="input-group input-group-sm desglose-input-group">
                                             <input type="number" step="0.01"
                                                 class="form-control text-end fw-semibold pe-2"
@@ -619,17 +650,16 @@
                                     📊 Resumen Acumulado
                                 </h6>
 
-                                <!-- Total Interés -->
                                 <div class="mb-3"
                                     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">
-                                        SLD. CAPITAL:</span>
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">SLD.
+                                        CAPITAL:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
                                         S/. {{ saldoCapitalMo | number:'1.2-2' }}
                                     </span>
                                 </div>
-                                <!-- Total Interés -->
+
                                 <div class="mb-3"
                                     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
                                     <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T.
@@ -640,11 +670,9 @@
                                     </span>
                                 </div>
 
-                                <!-- Total Mora -->
                                 <div class="mb-3"
                                     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T.
-                                        MORA:</span>
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. MORA:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
                                         S/. {{ totalMoraAnos | number:'1.2-2' }}

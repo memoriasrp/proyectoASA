@@ -45,6 +45,8 @@ export class HojaResumen implements OnInit {
   totalGeneralAnos: number = 0;
   moneda: string = '';
   excluirCancelados = true;
+  fechaCalculo: string = new Date().toISOString().substring(0, 10);
+  pagareActual: string = '';
 
   productosAgrupados: { tipo: string, lista: any[] }[] = [];
 
@@ -201,12 +203,20 @@ export class HojaResumen implements OnInit {
       }, 250);
     }
   }
+
+  onFechaCalculoChange() {
+    if (this.pagareActual) {
+      this.cargandoCronograma = true;
+      this.verCronograma(this.pagareActual, this.saldoCapitalMo, this.moneda);
+    }
+  }
+
   verCronograma(idpagare: string, saldocapitalmo: number, moneda: string) {
-    console.log('Ver cronograma para idpagare:', idpagare, 'Saldo Capital MO:', saldocapitalmo, 'Moneda:', moneda);
+    this.pagareActual = idpagare; // Guardar el pagare actual para futuras referencias
     this.mostrarModal = true;
     this.cargandoCronograma = true;
     this.cronogramaData = null;
-    const fechaConsulta = '2026-06-06';
+    const fechaConsulta = this.fechaCalculo;
     this.saldoCapitalMo = saldocapitalmo;
     this.moneda = moneda;
     const params = new HttpParams().set('fecha', fechaConsulta);
@@ -230,7 +240,6 @@ export class HojaResumen implements OnInit {
 
   // Método para procesar el desglose que viene del backend o de la función de cálculo
   cargarDeudasPorAno(lista: InteresAnoEditable[]) {
-    console.log(lista);
     this.deudasPorAno = lista;
     this.calcularTotalDeudas();
   }

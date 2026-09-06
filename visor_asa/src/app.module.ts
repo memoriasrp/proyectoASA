@@ -26,10 +26,11 @@ import { ObservacionesAportesModule } from './resultados/observaciones-aportes/o
 import { ListaSeguimientoModule } from './general/lista-seguimiento/lista-seguimiento.module';
 import { HojaResumenModule } from './general/hoja-resumen/hoja-resumen.module';
 import { CronogramaModule } from './vbcoop/cronograma/cronograma.module';
+import { PeriodoEstadoModule } from './init/periodo-estado/periodo-estado.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule,
-    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule, CarteradpfModule, ObservacionesAhorroModule, ObservacionesPrestamoModule, ObservacionesAportesModule, ListaSeguimientoModule, HojaResumenModule, CronogramaModule],
+    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule, CarteradpfModule, ObservacionesAhorroModule, ObservacionesPrestamoModule, ObservacionesAportesModule, ListaSeguimientoModule, HojaResumenModule, CronogramaModule, PeriodoEstadoModule],
   controllers: [AppController],
   providers: [AppService],
 })

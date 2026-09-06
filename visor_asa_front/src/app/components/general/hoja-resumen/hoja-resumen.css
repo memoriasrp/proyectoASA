@@ -1,13 +1,13 @@
-/* Contenedor general */
+/* ==========================================
+   CONFIGURACIÓN GENERAL
+   ========================================== */
 body,
 html,
 .wrapper,
 .main-panel,
 app-root {
     height: 100vh;
-    /* o height: 100% */
     overflow: hidden;
-    /* o overflow-y: auto */
 }
 
 .historial-container {
@@ -28,7 +28,7 @@ app-root {
     box-sizing: border-box;
 }
 
-/* Bloques de Categoría (Simulación de Acordeón Estilizado) */
+/* Bloques de Categoría (Acordeón) */
 .categoria-bloque {
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
@@ -63,7 +63,7 @@ app-root {
     letter-spacing: 0.5px;
 }
 
-/* Cuerpo interno de las gestiones */
+/* Cuerpo de las Gestiones */
 .categoria-body {
     padding: 1.5rem;
     background-color: #fcfcfd;
@@ -72,7 +72,6 @@ app-root {
     overflow: visible !important;
 }
 
-/* Tarjetas Individuales de Gestión */
 .gestion-card {
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
@@ -93,7 +92,6 @@ app-root {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-/* Metadatos de la gestión */
 .gestion-meta {
     display: flex;
     justify-content: space-between;
@@ -138,20 +136,17 @@ app-root {
     color: #64748b;
 }
 
-/* Cuadro de texto para el detalle largo */
 .gestion-detalle {
     color: #475569;
     font-size: 0.95rem;
     line-height: 1.6;
     white-space: pre-line;
-    overflow-y: auto;
     padding: 0.5rem 0;
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
 }
 
-/* Botonera de Adjuntos */
 .adjunto-section {
     display: flex;
     justify-content: flex-end;
@@ -161,119 +156,8 @@ app-root {
 }
 
 /* ==========================================
-   CONFIGURACIÓN DE IMPRESIÓN (PRINT)
-   ========================================== */
-/* ==========================================
-   CONFIGURACIÓN DE IMPRESIÓN (PRINT)
-   ========================================== */
-/* ==========================================
-   CONFIGURACIÓN DE IMPRESIÓN PARA EL MODAL
-   ========================================== */
-@media print {
-
-    /* 1. Resetear el área de impresión global */
-    @page {
-        size: A4 portrait;
-        margin: 10mm 10mm;
-    }
-
-    /* 2. Cuando se imprime el modal, ocultar absolutamente todo lo demás */
-    body.imprimiendo-modal>*:not(app-root) {
-        display: none !important;
-    }
-
-    body.imprimiendo-modal #area-impresion,
-    body.imprimiendo-modal .no-print {
-        display: none !important;
-    }
-
-    /* 3. Desbloquear el backdrop y la ventana del modal para ocupar todo el papel */
-    body.imprimiendo-modal .custom-modal-backdrop {
-        position: static !important;
-        background: transparent !important;
-        width: 100% !important;
-        height: auto !important;
-        display: block !important;
-        padding: 0 !important;
-    }
-
-    body.imprimiendo-modal .modal-dialog,
-    body.imprimiendo-modal .modal-content,
-    body.imprimiendo-modal .modal-body {
-        max-width: 100% !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
-        overflow: visible !important;
-        /* Elimina scrollbars al imprimir */
-        max-height: none !important;
-        height: auto !important;
-    }
-
-    /* 4. MANTENER LAS TABLAS LADO A LADO EN EL PAPEL */
-    body.imprimiendo-modal .modal-grid-container {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 15px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    body.imprimiendo-modal .modal-grid-col:first-child {
-        width: 55% !important;
-        flex: 0 0 55% !important;
-    }
-
-    body.imprimiendo-modal .modal-grid-col:last-child {
-        width: 43% !important;
-        flex: 0 0 43% !important;
-    }
-
-    /* 5. Eliminar Scrollbars internas y mostrar todo el contenido extenso */
-    body.imprimiendo-modal .table-responsive,
-    body.imprimiendo-modal .desglose-scroll-container {
-        max-height: none !important;
-        height: auto !important;
-        overflow: visible !important;
-        border: none !important;
-    }
-
-    /* 6. Formatear la tabla para aprovechar el espacio impreso */
-    body.imprimiendo-modal table {
-        width: 100% !important;
-        font-size: 0.72rem !important;
-    }
-
-    body.imprimiendo-modal th,
-    body.imprimiendo-modal td {
-        padding: 4px 3px !important;
-        white-space: normal !important;
-    }
-
-    /* 7. Limpiar los campos de entrada de texto (Inputs del desglose) */
-    body.imprimiendo-modal .desglose-scroll-container .form-control {
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-        font-size: 0.85rem !important;
-        box-shadow: none !important;
-    }
-
-    body.imprimiendo-modal .desglose-scroll-container .input-group-text {
-        display: none !important;
-        /* Oculta el S/. para ahorrar ancho */
-    }
-}
-
-/* ==========================================
    ESTILOS ESPECÍFICOS DEL MODAL DE CRONOGRAMA
    ========================================== */
-
-/* Fondo oscuro flotante centrado */
 .custom-modal-backdrop {
     position: fixed !important;
     top: 0 !important;
@@ -287,7 +171,11 @@ app-root {
     justify-content: center !important;
 }
 
-/* Forzar que los elementos dentro del modal restauren sus estilos Bootstrap */
+.custom-modal-backdrop .modal-body {
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+}
+
 .custom-modal-backdrop table {
     width: 100% !important;
     border-collapse: collapse !important;
@@ -300,7 +188,6 @@ app-root {
     font-size: 0.85rem !important;
 }
 
-/* Asegura el fondo oscuro fijo del thead */
 .custom-modal-backdrop .table-dark th {
     background-color: #212529 !important;
     color: #ffffff !important;
@@ -309,14 +196,6 @@ app-root {
 .custom-modal-backdrop .table-secondary th {
     background-color: #e9ecef !important;
     color: #212529 !important;
-}
-
-/* Badges bonitos para estados */
-.custom-modal-backdrop .badge {
-    padding: 0.35em 0.65em !important;
-    font-size: 0.75rem !important;
-    font-weight: 700 !important;
-    border-radius: 4px !important;
 }
 
 /* Layout en 2 columnas paralelas para el modal */
@@ -333,13 +212,11 @@ app-root {
     width: 60% !important;
 }
 
-/* Columna Derecha (Historial): Más estrecha */
 .modal-grid-col:last-child {
     flex: 1 1 40% !important;
     width: 40% !important;
 }
 
-/* Títulos de sección grandes y llamativos */
 .titulo-seccion-custom {
     font-size: 1.25rem !important;
     font-weight: 800 !important;
@@ -349,66 +226,47 @@ app-root {
     align-items: center !important;
 }
 
-/* Tamaño de letra reducido y padding compacto para la Tabla de Cronograma */
+/* Ajustes compactos para la tabla mini */
 .tabla-cronograma-mini th,
 .tabla-cronograma-mini td {
     font-size: 0.75rem !important;
-    /* Ajusta a 0.70rem si lo prefieres aún más pequeño */
     padding: 4px 6px !important;
-    /* Reduce el padding vertical y horizontal para compactar */
 }
 
-/* Badge comprimido proporcionalmente al tamaño del texto */
-.tabla-cronograma-mini .badge {
-    font-size: 0.65rem !important;
-    padding: 0.25em 0.4em !important;
+/* Badges de estado en tabla */
+.tabla-cronograma-mini .badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    font-size: 0.75rem !important;
 }
 
-/* 1. Limita la altura del contenedor y habilita el scroll vertical */
+.tabla-cronograma-mini .badge.bg-success {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+    font-size: 0.75rem !important;
+}
+
 .table-responsive thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 2 !important;
     background-color: #e9ecef !important;
-    /* Color gris de Bootstrap table-secondary */
 }
 
-/* Cajas de texto editables del desglose anual */
-.input-group-sm .form-control {
-    font-size: 0.85rem !important;
-    padding: 0.25rem 0.4rem !important;
+/* Input de fecha de cálculo */
+#fechaCalculoInput {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    background-color: #ffffff !important;
 }
 
-/* Quitar flechas del input number para mayor claridad */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* Contenedor del desglose anual con scroll vertical independiente */
+/* Desglose Anual y Entradas */
 .desglose-scroll-container {
-    max-height: 220px;
-    /* Ajusta este valor si deseas mostrar más o menos filas antes de desplegar el scroll */
-    overflow-y: auto;
-}
-
-/* Opcional: Estilo limpio para los inputs en una sola línea */
-.desglose-scroll-container .input-group-text {
-    font-size: 0.78rem !important;
-}
-
-/* Limitar la altura del cuerpo del modal para evitar que los totales se salgan de pantalla */
-.custom-modal-backdrop .modal-body {
-    max-height: 80vh !important;
+    max-height: 200px !important;
     overflow-y: auto !important;
 }
 
-/* Layout y Alineación Estricta en una Sola Fila Horizontal */
 .desglose-fila-unica {
     display: flex !important;
     flex-direction: row !important;
@@ -429,12 +287,116 @@ input[type=number] {
     min-width: 0 !important;
 }
 
-/* Scroll Vertical Independiente para el Listado Izquierdo */
-.desglose-scroll-container {
-    max-height: 200px !important;
-    overflow-y: auto !important;
-}
-
 .desglose-input-group input {
     text-align: right !important;
+}
+
+/* Ocultar flechas en inputs de números */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Espaciado del contenedor de fecha */
+.modal-body .d-flex.align-items-center.bg-light {
+    margin-bottom: 1.75rem !important;
+}
+
+/* ==========================================
+   CONFIGURACIÓN DE IMPRESIÓN PARA EL MODAL
+   ========================================== */
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm 10mm;
+    }
+
+    body.imprimiendo-modal>*:not(app-root) {
+        display: none !important;
+    }
+
+    body.imprimiendo-modal #area-impresion,
+    body.imprimiendo-modal .no-print {
+        display: none !important;
+    }
+
+    body.imprimiendo-modal .custom-modal-backdrop {
+        position: static !important;
+        background: transparent !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        padding: 0 !important;
+    }
+
+    body.imprimiendo-modal .modal-dialog,
+    body.imprimiendo-modal .modal-content,
+    body.imprimiendo-modal .modal-body {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        overflow: visible !important;
+        max-height: none !important;
+        height: auto !important;
+    }
+
+    body.imprimiendo-modal .modal-grid-container {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 15px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    body.imprimiendo-modal .modal-grid-col:first-child {
+        width: 55% !important;
+        flex: 0 0 55% !important;
+    }
+
+    body.imprimiendo-modal .modal-grid-col:last-child {
+        width: 43% !important;
+        flex: 0 0 43% !important;
+    }
+
+    body.imprimiendo-modal .table-responsive,
+    body.imprimiendo-modal .desglose-scroll-container {
+        max-height: none !important;
+        height: auto !important;
+        overflow: visible !important;
+        border: none !important;
+    }
+
+    body.imprimiendo-modal table {
+        width: 100% !important;
+        font-size: 0.72rem !important;
+    }
+
+    body.imprimiendo-modal th,
+    body.imprimiendo-modal td {
+        padding: 4px 3px !important;
+        white-space: normal !important;
+    }
+
+    body.imprimiendo-modal .desglose-scroll-container .form-control {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-size: 0.85rem !important;
+        box-shadow: none !important;
+    }
+
+    body.imprimiendo-modal .desglose-scroll-container .input-group-text {
+        display: none !important;
+    }
 }

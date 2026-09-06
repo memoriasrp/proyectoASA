@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout'; // 🟢 Importación requerida para detectar el tamaño de pantalla
 import { Auth } from '../../services/auth';
+import { Subscription } from 'rxjs';
+import { PeriodoEstadoService } from '../../services/init/periodo-estado.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,14 +23,19 @@ export class Dashboard implements OnInit {
   menuItems: any[] = [];
   usuarioNombre: string = '';
 
+  periodoActivo: string = '-';
+  tipoCambio: number = 0;
+
   constructor(
     private auth: Auth,
     private router: Router,
-    private breakpointObserver: BreakpointObserver // 🟢 Inyección del observador de pantalla
+    private breakpointObserver: BreakpointObserver,
+    private periodoEstadoService: PeriodoEstadoService,
+    private cdr: ChangeDetectorRef
+
   ) { }
 
   ngOnInit(): void {
-    // 🟢 1. CONTROL DE RESPONSIVIDAD AUTOMÁTICA EN TIEMPO REAL
     this.breakpointObserver.observe(['(max-width: 768px)']).subscribe(result => {
       this.isMobile = result.matches;
 
@@ -47,6 +54,17 @@ export class Dashboard implements OnInit {
     } else {
       this.menuItems = this.auth.getMenu() || [];
     }
+    //this.periodoActivo = this.auth.getPeriodoActivo(); // Obtener el periodo activo desde el servicio Auth
+
+    this.periodoEstadoService.periodo$.subscribe(data => {
+      if (data) {
+        this.periodoActivo = data.periodo;
+        this.tipoCambio = data.tc;
+
+        // 3. 🟢 Forzar la detección para sincronizar 'dashboard.html' sin errores
+        this.cdr.detectChanges();
+      }
+    });
 
     this.agruparMenu(this.menuItems);
 
@@ -92,4 +110,5 @@ export class Dashboard implements OnInit {
     this.auth.logout();
     this.router.navigate(['/login']);
   }
+
 }

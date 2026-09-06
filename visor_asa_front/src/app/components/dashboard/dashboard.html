@@ -60,6 +60,9 @@
 
         <!-- CABECERA SUPERIOR (TOP NAVBAR) -->
         <header class="top-navbar">
+            <data class="periodo-activo" *ngIf="periodoActivo">
+                <span>Periodo Activo: {{ periodoActivo}} | TC: {{tipoCambio}}</span>
+            </data>
             <div class="user-profile" style="margin-left: auto;">
                 <span>{{ usuarioNombre }}</span>
             </div>

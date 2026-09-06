@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth';
+import { PeriodoEstadoService } from '../../services/init/periodo-estado.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -18,6 +19,7 @@ export class Login {
   constructor(
     private fb: FormBuilder,
     private authService: Auth,
+    private periodoEstadoService: PeriodoEstadoService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -31,6 +33,12 @@ export class Login {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
+        if (res.periodoActivo) {
+          this.periodoEstadoService.setPeriodoActivo({
+            periodo: res.periodoActivo.periodo,
+            tc: res.periodoActivo.tc
+          });
+        }
         // Aquí podrás redirigir al visor cuando tengamos las rutas listas
         this.router.navigate(['/dashboard']);
       },

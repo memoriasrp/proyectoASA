@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PeriodoEstadoService } from '../init/periodo-estado.service';
 @Injectable({
   providedIn: 'root',
 })
 export class PeriodosService {
   private apiUrl = `${environment.apiUrl}/periodos`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private periodoEstadoService: PeriodoEstadoService) { }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -31,7 +32,17 @@ export class PeriodosService {
 
   activarPeriodo(periodoId: string): Observable<any> {
     const url = `${this.apiUrl}/${periodoId}/activar`;
-    return this.http.patch<any>(url, { headers: this.getHeaders() });
+    return this.http.patch<any>(url, {}, { headers: this.getHeaders() }).pipe(
+      tap((periodoActivado) => {
+        // Verifica si la respuesta contiene el periodo y el tipo de cambio (tc)
+        if (periodoActivado) {
+          this.periodoEstadoService.setPeriodoActivo({
+            periodo: periodoActivado.periodo,
+            tc: periodoActivado.tc
+          });
+        }
+      })
+    );
   }
   RecalcularPeriodo(periodoId: string): Observable<any> {
     const url = `${this.apiUrl}/${periodoId}/recalcular`;

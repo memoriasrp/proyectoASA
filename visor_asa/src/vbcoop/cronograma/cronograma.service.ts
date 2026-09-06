@@ -28,12 +28,15 @@ export class CronogramaService {
     constructor(private prisma: PrismaService) { }
 
     async generarCronograma(idpagare: string, fechaConsultaStr?: string) {
-        const fechaConsulta = new Date();
+        const fechaConsulta = fechaConsultaStr ? new Date(fechaConsultaStr) : new Date();
 
         const pagare = await this.prisma.pagares.findFirst({
             where: { idpagare },
 
         });
+        //     const datosPagare = await this.prisma.$queryRaw`    
+        //     Select * from pagares where idpagare = ${idpagare};
+        // `;
 
         if (!pagare) throw new NotFoundException('Pagaré no encontrado');
         const socio = await this.prisma.socios.findFirst({
@@ -285,6 +288,7 @@ export class CronogramaService {
                 inicioRango = new Date(fechaUltimoAbono);
             } else {
                 inicioRango = new Date(Date.UTC(ano, 0, 1)); // 1 de enero
+                inicioRango.setUTCDate(inicioRango.getUTCDate() - 1);
             }
 
             // 2. Determinar fin del periodo para este año

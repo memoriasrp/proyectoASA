@@ -116,4 +116,10 @@ export class UsersService {
             }
         });
     }
+
+    async obtenerPeriodoActivo() {
+        return await this.prisma.calendario_periodos.findFirst({
+            where: { activo: true },
+        });
+    }
 }

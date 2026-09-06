@@ -19,7 +19,13 @@ export class Auth {
         }
         // 2. Guardamos la estructura del menú convirtiendo el objeto/array a texto plano (JSON string)
         if (res && res.menu) {
+
           localStorage.setItem('menu', JSON.stringify(res.menu));
+        }
+        // 3. Guardamos el periodo activo si existe
+        if (res && res.periodoActivo) {
+          console.log('Guardando periodo activo en localStorage:', res.periodoActivo);
+          localStorage.setItem('periodo_activo', JSON.stringify(res.periodoActivo));
         }
       })
     );
@@ -39,13 +45,20 @@ export class Auth {
   }
   // Método útil para obtener el menú desde cualquier componente
   getMenu(): any[] {
+    console.log(localStorage);
     const menuString = localStorage.getItem('menu');
     if (menuString) {
       return JSON.parse(menuString); // Si existe, lo transformamos de texto a Arreglo
     }
     return []; // Si no hay nada, devolvemos un arreglo vacío
   }
-
+  getPeriodoActivo(): any | null {
+    const periodoString = localStorage.getItem('periodo_activo');
+    if (periodoString) {
+      return JSON.parse(periodoString); // Si existe, lo transformamos de texto a Objeto
+    }
+    return null; // Si no hay nada, devolvemos null
+  }
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
