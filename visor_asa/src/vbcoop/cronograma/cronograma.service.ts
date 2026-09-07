@@ -132,7 +132,7 @@ export class CronogramaService {
                 fechaUltimoAbono: fechaUltimoAbono,
                 tea: tea,
                 tem: datosPlan.tasa,
-                tmor: Number(tmor),
+                tmor: 40,// Number(tmor),
                 descripcionProducto: cartera?.descri,
                 ndocumento: cartera?.numdoc,
                 fechaDes: cartera?.fechades,
@@ -323,6 +323,7 @@ export class CronogramaService {
                 console.log(`Diferencia en días: ${dias}`);
 
                 if (dias > 0) {
+                    console.log("la mora es" + tmor + "la tasa mor " + tasaMor + "la tasa mensual es " + tasaMensual + "la tasa diaria es " + tasaDia);
                     // Interés al rebatir exponencial
                     const interes = Number(((Math.pow((1 + tint), dias / 360) - 1) * saldoCapital).toFixed(2));
                     const mora = Number(((Math.pow((1 + tmor), dias / 360) - 1) * saldoCapital).toFixed(2));
