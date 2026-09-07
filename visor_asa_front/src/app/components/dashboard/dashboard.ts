@@ -69,7 +69,7 @@ export class Dashboard implements OnInit {
     this.agruparMenu(this.menuItems);
 
     // 3. Extracción del nombre de usuario desde el JWT (Tu lógica original)
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
     if (token) {
       try {
         const base64Url = token.split('.')[1];

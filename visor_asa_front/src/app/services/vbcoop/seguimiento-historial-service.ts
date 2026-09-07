@@ -22,7 +22,7 @@ export class SeguimientoHistorialService {
 
   guardarSeguimiento(formData: FormData): Observable<any> {
     // Angular deduce automáticamente el 'Content-Type': 'multipart/form-data' al pasarle un FormData
-    const token = localStorage.getItem('token'); // O de donde guardes el token JWT
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
 
     // 2. Crea las cabeceras e inyecta el "Bearer <token>"
     const headers = new HttpHeaders({

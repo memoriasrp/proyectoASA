@@ -12,7 +12,7 @@ export class TipoUsuariosServices {
   constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
@@ -33,7 +33,7 @@ export class TipoUsuariosServices {
   }
 
   actualizarPermisosRol(idRol: number, menuIds: number[]): Observable<any> {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
     return this.http.put<any>(`${this.apiUrl}/${idRol}/permisos`, { menuIds }, { headers });
   }

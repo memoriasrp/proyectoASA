@@ -78,13 +78,13 @@ export class HojaResumen implements OnInit {
   recargarData(): void {
     if (this.excluirCancelados) {
       this.datosAportes = (this.socioData?.aportes || [])
-        .filter((a: any) => a.condicion === 'VIGENTE');
+        .filter((a: any) => a.saldocapitalmo === 'VIGENTE');
       this.datosAhorros = (this.socioData?.ahorros || [])
         .filter((a: any) => a.condicion === 'VIGENTE');
       this.datosDpf = (this.socioData?.depositosPlazoFijo || [])
         .filter((a: any) => a.condicion === 'VIGENTE');
       this.datosPrestamos = (this.socioData?.prestamo || [])
-        .filter((a: any) => a.condicion === 'VIGENTE');
+        .filter((a: any) => a.saldocapitalmo > 0);
     }
     else {
       this.datosAportes = (this.socioData?.aportes || []);

@@ -27,21 +27,26 @@ export class CronogramaService {
 
     constructor(private prisma: PrismaService) { }
 
-    async generarCronograma(idpagare: string, fechaConsultaStr?: string) {
+    async generarCronograma(idpagare: string, fechaConsultaStr?: string, periodo?: string, tc?: number) {
         const fechaConsulta = fechaConsultaStr ? new Date(fechaConsultaStr) : new Date();
 
         const pagare = await this.prisma.pagares.findFirst({
             where: { idpagare },
 
+
         });
         //     const datosPagare = await this.prisma.$queryRaw`    
         //     Select * from pagares where idpagare = ${idpagare};
         // `;
+        const cartera = await this.prisma.consolidado_carteraxperiodo_prestamo.findFirst({
+            where: { idpagare: idpagare, periodo: periodo },
+            include: {
+                formptmo: true // 👈 Se incluye la tabla relacionada
+            }
 
-        if (!pagare) throw new NotFoundException('Pagaré no encontrado');
-        const socio = await this.prisma.socios.findFirst({
-            where: { idsocio: pagare.idsocio! },
         });
+        if (!pagare) throw new NotFoundException('Pagaré no encontrado');
+
         // 1. Evaluar Reprogramación (si aplica según fecha de consulta)
         const esReprogramado =
             !!pagare.fecha_repr &&
@@ -70,6 +75,7 @@ export class CronogramaService {
             gracia: Number(pagare.gracia || 0),
             mesgracia: Number(pagare.mesgracia || 0),
             formapago: Number(pagare.formapago || 1),
+            producto: cartera?.descri
         };
 
         // 2. Acumular Amortizaciones Pagadas desde el Histórico
@@ -106,13 +112,17 @@ export class CronogramaService {
             capitalPagado,
         });
         const tea = Number((((Math.pow(1 + (datosPlan.tasa / 100), 12) - 1) * 100)).toFixed(2));
+        const tasaMora = Number(cartera?.formptmo?.mora ?? 3.3);
+
+        // 2. Aplicar la fórmula con los paréntesis del Math.pow correctamente ubicados
+        const tmor = (((Math.pow(1 + (tasaMora / 100), 12)) - 1) * 100).toFixed(2);
 
         const deuda = this.calcularInteresPorAnos(fechaUltimoAbono, fechaConsulta, datosPlan.importe - capitalPagado, tea, 40);
         return {
             cabecera: {
                 idpagare: pagare.idpagare,
                 idsocio: pagare.idsocio,
-                nombre: socio?.nombres,
+                nombre: cartera?.nombre,
                 estado: esReprogramado ? 'REPROGRAMADO' : 'NORMAL', //[cite: 1]
                 importe: datosPlan.importe,
                 tasa: datosPlan.tasa,
@@ -121,6 +131,13 @@ export class CronogramaService {
                 fechaEmi: datosPlan.fechaEmi,
                 fechaUltimoAbono: fechaUltimoAbono,
                 tea: tea,
+                tem: datosPlan.tasa,
+                tmor: Number(tmor),
+                descripcionProducto: cartera?.descri,
+                ndocumento: cartera?.numdoc,
+                fechaDes: cartera?.fechades,
+                saldo: Number((datosPlan.importe - capitalPagado).toFixed(2)),
+
             },
             cronograma: cuotas,
             movimientos: mov,

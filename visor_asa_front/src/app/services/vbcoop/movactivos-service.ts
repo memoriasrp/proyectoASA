@@ -12,7 +12,7 @@ export class MovactivosService {
 
   constructor(private http: HttpClient) { }
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
   getMovactivosPaginados(page: number, limit: number, search?: string, moneda?: string, producto?: string, desde?: Date, hasta?: Date): Observable<any> {

@@ -11,8 +11,6 @@ export class SeguimientoService {
 
     async crearSeguimientoConAdjuntos(dto: CrearSeguimientoDto) {
         try {
-            console.log('🚀 Iniciando transacción Prisma...');
-
             return await this.prisma.$transaction(async (tx) => {
 
                 // 1. Insertar el seguimiento padre
@@ -26,12 +24,8 @@ export class SeguimientoService {
                         fecha: new Date(),
                     },
                 });
-
-                console.log('✅ Seguimiento padre creado con ID:', nuevoSeguimiento.id);
-
                 // 2. Insertar los adjuntos si existen
                 if (dto.files && dto.files.length > 0) {
-                    console.log(`📂 Mapeando ${dto.files.length} archivos para insertar...`);
 
                     const datosAdjuntos = dto.files.map((file) => ({
                         id_seguimiento: nuevoSeguimiento.id,

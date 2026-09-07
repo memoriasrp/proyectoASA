@@ -13,7 +13,7 @@ export class PermisoPantallasService {
   constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 

@@ -20,8 +20,12 @@
                     <th>Código Socio</th>
                     <th>Apellidos y Nombres</th>
                     <th>Num Documento</th>
-                    <th>Fecha Ingreso</th>
-                    <th>Fecha Retiro</th>
+                    <th>F. Ingreso</th>
+                    <th>F. Retiro</th>
+                    <th>S.Aportes</th>
+                    <th>S.Ahorros</th>
+                    <th>S.DPF</th>
+                    <th>S.Prestamos</th>
                     <th>Seguimiento</th>
                     <th><i class="fa-solid fa-file-lines"></i></th>
                 </tr>
@@ -37,6 +41,10 @@
                     </td>
                     <td>{{ socio.fecing | date:'dd/MM/yy':'UTC' }}</td>
                     <td>{{ socio.fecret | date:'dd/MM/yy':'UTC'}}</td>
+                    <td style="padding: 12px; text-align: right;">{{ socio.total_aportes | number:'1.2-2'}}</td>
+                    <td style="padding: 12px; text-align: right;">{{ socio.total_ahorros | number:'1.2-2'}}</td>
+                    <td style="padding: 12px; text-align: right;">{{ socio.total_dpf | number:'1.2-2'}}</td>
+                    <td style="padding: 12px; text-align: right;">{{ socio.total_prestamos | number:'1.2-2'}}</td>
                     <td>
                         <button class="btn btn-sm btn-info text-white"
                             [routerLink]="['/vbcoop/seguimiento-historial', socio.idsocio]"

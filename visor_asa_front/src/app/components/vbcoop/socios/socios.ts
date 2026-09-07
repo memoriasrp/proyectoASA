@@ -93,7 +93,11 @@ export class Socios implements OnInit {
           'Apellidos y Nombres': socio.paterno + ' ' + socio.materno + ', ' + socio.nombres, // Ajusta a tus propiedades reales
           'N° Documento': socio.numdoc || socio.ruc || '---',
           'Fecha Ingreso': this.formatearFecha(socio.fecing),
-          'Fecha Retiro': this.formatearFecha(socio.fecret) || '---'
+          'Fecha Retiro': this.formatearFecha(socio.fecret) || '---',
+          'S.Aportes': socio.total_aportes || 0,
+          'S.Ahorros': socio.total_ahorros || 0,
+          'S.DPF': socio.total_dpf || 0,
+          'S.Prestamos': socio.total_prestamos || 0
         }));
         // 4. Construimos y descargamos el reporte completo
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(datosMapeados);

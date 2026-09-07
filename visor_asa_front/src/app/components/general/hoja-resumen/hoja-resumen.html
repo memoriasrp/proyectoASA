@@ -423,7 +423,8 @@
                     class="mb-2">
                     <h3 class="modal-title fw-bold m-0 fs-3 text-white text-center"
                         style="display: inline-block !important; width: 100% !important; text-align: center !important;">
-                        📋 Historial de Pagos
+                        📋 PAGARE {{ cronogramaData?.cabecera?.idpagare}}
+                        - {{cronogramaData?.cabecera?.descripcionProducto}}
                     </h3>
                 </div>
 
@@ -431,11 +432,11 @@
                 <div style="display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 0.5rem !important; width: 100% !important; font-size: 0.95rem !important; text-align: left !important;"
                     class="text-white-50">
                     <span class="text-white">
-                        <strong>Pagaré:</strong> {{ cronogramaData?.cabecera?.idpagare || 'Cargando...' }}
+                        <strong>COD.SOCIO:</strong> {{ cronogramaData?.cabecera?.idsocio }}
                     </span>
                     <span>&bull;</span>
                     <span class="text-white fw-semibold">
-                        {{ nombreSocio }}
+                        {{ cronogramaData?.cabecera?.nombre}}({{ cronogramaData?.cabecera?.ndocumento }})
                     </span>
                     <span>&bull;</span>
                     <span class="text-white">
@@ -444,15 +445,33 @@
                     </span>
                     <span>&bull;</span>
                     <span class="text-white">
+                        <strong>TEA:</strong> {{ cronogramaData?.cabecera?.tea }}%
+                        <strong>TEM:</strong> {{ cronogramaData?.cabecera?.tem }}%
+                    </span>
+                </div>
+                <!-- TERCERA LÍNEA: Detalle Alineado a la Izquierda -->
+                <div style="display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 0.5rem !important; width: 100% !important; font-size: 0.95rem !important; text-align: left !important;"
+                    class="text-white-50">
+                    <span class="text-white">
                         <strong>Monto:</strong> {{ cronogramaData?.cabecera?.moneda }} {{
                         cronogramaData?.cabecera?.importe | number:'1.2-2' }}
                     </span>
                     <span>&bull;</span>
                     <span class="text-white">
-                        <strong>TEA:</strong> {{ cronogramaData?.cabecera?.tea }}%
+                        <strong>Saldo:</strong> {{ cronogramaData?.cabecera?.moneda }} {{
+                        cronogramaData?.cabecera?.saldo | number:'1.2-2' }}
                     </span>
-                </div>
+                    <span>&bull;</span>
+                    <span class="text-white">
+                        <strong>F.Desembolso:</strong> {{ cronogramaData?.cabecera?.fechaDes |
+                        date:'dd/MM/yy':'UTC'}}
+                    </span>
+                    <span>&bull;</span>
+                    <span class="text-white">
+                        <strong>T.Moratoria:</strong> {{ cronogramaData?.cabecera?.tmor }}%
+                    </span>
 
+                </div>
             </div>
 
             <!-- Cuerpo del Modal -->
@@ -647,7 +666,7 @@
 
                                 <h6
                                     class="text-uppercase fw-bold text-warning border-bottom border-secondary pb-2 mb-3 fs-6">
-                                    📊 Resumen Acumulado
+                                    📊 SALDO DEUDOR AL {{ fechaCalculo | date:'dd/MM/yyyy':'UTC' }}
                                 </h6>
 
                                 <div class="mb-3"
@@ -656,7 +675,8 @@
                                         CAPITAL:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
-                                        S/. {{ saldoCapitalMo | number:'1.2-2' }}
+                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ saldoCapitalMo |
+                                        number:'1.2-2' }}
                                     </span>
                                 </div>
 
@@ -666,7 +686,8 @@
                                         INTERÉS:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
-                                        S/. {{ totalInteresAnos | number:'1.2-2' }}
+                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalInteresAnos |
+                                        number:'1.2-2' }}
                                     </span>
                                 </div>
 
@@ -675,7 +696,8 @@
                                     <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. MORA:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
-                                        S/. {{ totalMoraAnos | number:'1.2-2' }}
+                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalMoraAnos |
+                                        number:'1.2-2' }}
                                     </span>
                                 </div>
 
@@ -685,7 +707,8 @@
                                         GENERAL:</span>
                                     <span class="fs-4 fw-bold text-success"
                                         style="white-space: nowrap; text-align: right !important;">
-                                        S/. {{ totalGeneralAnos | number:'1.2-2' }}
+                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalGeneralAnos |
+                                        number:'1.2-2' }}
                                     </span>
                                 </div>
                             </div>
