@@ -168,11 +168,15 @@ export class RegistroPago implements OnInit {
     for (let i = inicio; i <= this.pagareSeleccionado.plazo; i++) {
       this.cuotasPendientes.push(i);
     }
+    if (this.cuotasPendientes.length === 0) {
+      this.cuotasPendientes.push(cuotasPagadas);
+    }
 
     // Opcional: preseleccionar la primera cuota pendiente (ej. Cuota 51)
     if (this.cuotasPendientes.length > 0) {
       this.cuotaSeleccionada = this.cuotasPendientes[0];
     }
+
   }
 
 
