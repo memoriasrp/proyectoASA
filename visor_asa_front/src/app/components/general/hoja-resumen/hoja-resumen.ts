@@ -244,100 +244,194 @@ export class HojaResumen implements OnInit {
     this.calcularTotalDeudas();
   }
 
+  private formatearFecha(fecha: string): string {
+    if (!fecha) return '-';
+    const d = new Date(fecha);
+    return isNaN(d.getTime()) ? fecha : d.toLocaleDateString('es-PE', { timeZone: 'UTC' });
+  }
 
+  private formatearNumero(valor: any): string {
+    const num = Number(valor);
+    return isNaN(num) ? '0.00' : num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
 
   // Impresión exclusiva del Modal
-  imprimirModal() {
-    const modalElement = document.querySelector('.custom-modal-backdrop .modal-content');
+  imprimirModal(): void {
+    if (!this.cronogramaData) return;
 
-    if (!modalElement) return;
-
-    // 1. Clona el elemento HTML para no alterar el modal en pantalla
-    const clonModal = modalElement.cloneNode(true) as HTMLElement;
-
-    // 2. Lee los valores reales introducidos en los inputs originales y los asigna al clon
-    const inputsOriginales = modalElement.querySelectorAll('input');
-    const inputsClonados = clonModal.querySelectorAll('input');
-
-    inputsOriginales.forEach((input, index) => {
-      if (inputsClonados[index]) {
-        inputsClonados[index].setAttribute('value', input.value);
-      }
-    });
-
-    const contenidoModal = clonModal.innerHTML;
-    const ventanaImpresion = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-
-    if (ventanaImpresion) {
-      ventanaImpresion.document.write(`
-      <html>
-        <head>
-          <title>Liquidación de Deuda - ${this.idsocio}</title>
-          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-          <style>
-            body { font-family: sans-serif; padding: 15px; color: #212529; background: #fff !important; }
-            
-            .no-print, button, .btn-close { display: none !important; }
-            .seccion-cronograma { display: none !important; }
-
-            .modal-grid-container { display: block !important; width: 100% !important; }
-            .modal-grid-col { width: 100% !important; flex: 0 0 100% !important; margin-bottom: 15px; }
-
-            .table-responsive, .desglose-scroll-container, .modal-body { 
-              max-height: none !important; 
-              overflow: visible !important; 
-              height: auto !important; 
-            }
-
-            table { width: 100% !important; font-size: 0.75rem !important; }
-            td, th { padding: 4px 6px !important; }
-
-            .mt-4 .modal-grid-container {
-              display: flex !important;
-              flex-direction: row !important;
-              gap: 15px !important;
-            }
-            .mt-4 .modal-grid-col:first-child { flex: 0 0 58% !important; width: 58% !important; }
-            .mt-4 .modal-grid-col:last-child { flex: 0 0 40% !important; width: 40% !important; }
-
-            .desglose-fila-unica {
-              display: flex !important;
-              flex-direction: row !important;
-              gap: 10px !important;
-              padding: 4px 0;
-            }
-            .desglose-label { flex: 0 0 110px !important; font-weight: bold; }
-            .desglose-input-group { flex: 1 1 50% !important; }
-            
-            /* Forzar visualización de los valores de los inputs impresos */
-            .desglose-input-group input { 
-              border: 1px solid #ced4da !important; 
-              text-align: right !important; 
-              font-weight: bold !important;
-              width: 100% !important;
-              background: #f8f9fa !important;
-              padding: 2px 6px !important;
-            }
-
-            @page { size: A4 portrait; margin: 8mm; }
-          </style>
-        </head>
-        <body>
-          <div class="modal-content border-0">
-            ${contenidoModal}
-          </div>
-        </body>
-      </html>
-    `);
-
-      ventanaImpresion.document.close();
-      ventanaImpresion.focus();
-
-      setTimeout(() => {
-        ventanaImpresion.print();
-        ventanaImpresion.close();
-      }, 500);
+    const ventimp = window.open('', '_blank', 'width=900,height=700');
+    if (!ventimp) {
+      alert('Por favor habilite las ventanas emergentes para imprimir.');
+      return;
     }
+
+    // 1. Filas del Historial de Pagos
+    const filasHistorial = (this.cronogramaData.movimientos || []).map((cuota: any) => `
+    <tr>
+      <td style="padding: 3px; text-align: center; font-weight: bold;">${cuota.nrocuota || ''}</td>
+      <td style="padding: 3px; text-align: center;">${this.formatearFecha(cuota.fecha)}</td>
+      <td style="padding: 3px; text-align: right;">${this.formatearNumero(cuota.capital)}</td>
+      <td style="padding: 3px; text-align: right;">${this.formatearNumero(cuota.interes)}</td>
+      <td style="padding: 3px; text-align: right;">${this.formatearNumero(cuota.mora)}</td>
+      <td style="padding: 3px; text-align: right;">${this.formatearNumero(cuota.seguro)}</td>
+      <td style="padding: 3px; text-align: right;">${this.formatearNumero(cuota.aporte)}</td>
+      <td style="padding: 3px; text-align: right; font-weight: bold;">${this.formatearNumero(cuota.total)}</td>
+      <td style="padding: 3px; text-align: right;">${this.formatearNumero(cuota.saldo)}</td>
+    </tr>
+  `).join('');
+
+    // 2. Filas del Desglose por Año (Asegurando lectura de campos)
+    const filasDesglose = (this.deudasPorAno || []).map((item: any) => {
+      const valInteres = item.interes !== undefined && item.interes !== null ? item.interes : item.intCompensatorio;
+      const valMora = item.mora !== undefined && item.mora !== null ? item.mora : item.intMoratorio;
+
+      return `
+      <tr>
+        <td style="padding: 4px; font-weight: bold; text-align: left;">${item.ano} (${item.dias} d)</td>
+        <td style="padding: 4px; text-align: right; font-weight: bold;">${this.formatearNumero(valInteres)}</td>
+        <td style="padding: 4px; text-align: right; font-weight: bold;">${this.formatearNumero(valMora)}</td>
+      </tr>
+    `;
+    }).join('');
+
+    const simboloMoneda = (this.moneda === '1' || this.moneda === 'S') ? 'S/.' : '$';
+
+    // 3. Documento HTML estático
+    ventimp.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Liquidación de Deuda - ${this.cronogramaData.cabecera?.idpagare || ''}</title>
+        <style>
+          @page { size: A4 portrait; margin: 8mm; }
+          body { font-family: Arial, sans-serif; font-size: 10px; color: #000; margin: 0; padding: 0; }
+          
+          /* Encabezado */
+          .titulo-principal { font-size: 0.95rem; font-weight: bold; margin-bottom: 2px; text-align: center; }
+          .cabecera-info { font-size: 0.80rem; margin-bottom: 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; line-height: 1.3; }
+          
+          /* Cajas y Tablas */
+          .card-box { border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; margin-bottom: 8px; }
+          .subtitulo { font-weight: bold; font-size: 0.80rem; margin-bottom: 4px; border-bottom: 1px solid #000; padding-bottom: 2px; }
+          
+          table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+          th, td { border: 1px solid #cbd5e1; padding: 3px; }
+          th { background-color: #f1f5f9; text-align: center; font-weight: bold; }
+          
+          /* Layout Desglose + Totales */
+          .grid-container { display: flex; gap: 12px; align-items: flex-start; margin-top: 6px; }
+          .col-izq { width: 58%; }
+          .col-der { width: 40%; }
+          
+          /* Tarjeta de Saldos homogênea */
+          .tarjeta-totales { border: 1px solid #000; padding: 6px; border-radius: 4px; }
+          .fila-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; font-size: 0.78rem; font-weight: bold; }
+          .total-general { border-top: 1px solid #000; padding-top: 3px; margin-top: 3px; font-size: 0.82rem; }
+        </style>
+      </head>
+      <body>
+
+        <!-- ENCABEZADO RECOR TADO -->
+        <div class="titulo-principal">
+          📋 PAGARE ${this.cronogramaData.cabecera?.idpagare || ''} - ${this.cronogramaData.cabecera?.descripcionProducto || ''}
+        </div>
+        <div class="cabecera-info">
+          <strong>COD.SOCIO:</strong> ${this.cronogramaData.cabecera?.idsocio || ''} &bull; 
+          <strong>${this.cronogramaData.cabecera?.nombre || ''}</strong> (${this.cronogramaData.cabecera?.ndocumento || ''}) &bull;
+          <strong>Estado:</strong> ${this.cronogramaData.cabecera?.estado || '-'}<br>
+          <strong>TEA:</strong> ${this.cronogramaData.cabecera?.tea || '0'}% &bull; 
+          <strong>TEM:</strong> ${this.cronogramaData.cabecera?.tem || '0'}% &bull; 
+          <strong>Monto:</strong> ${this.cronogramaData.cabecera?.moneda || ''} ${this.formatearNumero(this.cronogramaData.cabecera?.importe)} &bull; 
+          <strong>Saldo:</strong> ${this.cronogramaData.cabecera?.moneda || ''} ${this.formatearNumero(this.cronogramaData.cabecera?.saldo)} &bull; 
+          <strong>F.Desembolso:</strong> ${this.formatearFecha(this.cronogramaData.cabecera?.fechaDes)} &bull; 
+          <strong>T.Moratoria:</strong> ${this.cronogramaData.cabecera?.tmor || '0'}%
+        </div>
+
+        <!-- SOLO HISTORIAL DE PAGOS (SIN CRONOGRAMA) -->
+        <div class="card-box">
+          <div class="subtitulo">HISTORIAL DE PAGOS</div>
+          <table>
+            <thead>
+              <tr>
+                <th>N°</th>
+                <th>Fecha</th>
+                <th>Capital</th>
+                <th>Interés</th>
+                <th>Mora</th>
+                <th>Seguro</th>
+                <th>Aporte</th>
+                <th>Total</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filasHistorial}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- DESGLOSE Y TOTALES LADO A LADO -->
+        <div class="subtitulo">DESGLOSE DE INTERESES Y MORA POR AÑO</div>
+        <div class="grid-container">
+          
+          <!-- COLUMNA DESGLOSE ANUAL -->
+          <div class="col-izq">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align: left;">Año / Días</th>
+                  <th style="text-align: right;">Int. Compensatorio</th>
+                  <th style="text-align: right;">Int. Moratorio</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filasDesglose}
+                <tr style="border-top: 2px solid #000; font-weight: bold;">
+                  <td style="padding: 4px; text-align: left;">TOTAL:</td>
+                  <td style="padding: 4px; text-align: right;">${simboloMoneda} ${this.formatearNumero(this.totalInteresAnos)}</td>
+                  <td style="padding: 4px; text-align: right;">${simboloMoneda} ${this.formatearNumero(this.totalMoraAnos)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- COLUMNA TARJETA DE SALDOS -->
+          <div class="col-der">
+            <div class="tarjeta-totales">
+              <div class="subtitulo" style="border-bottom: 1px solid #ccc;">📊 SALDO DEUDOR AL ${this.formatearFecha(this.fechaCalculo)}</div>
+              
+              <div class="fila-total">
+                <span>SLD. CAPITAL:</span>
+                <span>${simboloMoneda} ${this.formatearNumero(this.saldoCapitalMo)}</span>
+              </div>
+              <div class="fila-total">
+                <span>T. Int. Compensatorio:</span>
+                <span>${simboloMoneda} ${this.formatearNumero(this.totalInteresAnos)}</span>
+              </div>
+              <div class="fila-total">
+                <span>T. Int. Moratorio:</span>
+                <span>${simboloMoneda} ${this.formatearNumero(this.totalMoraAnos)}</span>
+              </div>
+              <div class="fila-total total-general">
+                <span>TOT. GENERAL:</span>
+                <span>${simboloMoneda} ${this.formatearNumero(this.totalGeneralAnos)}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </body>
+    </html>
+  `);
+
+    ventimp.document.close();
+    ventimp.focus();
+
+    setTimeout(() => {
+      ventimp.print();
+      ventimp.close();
+    }, 300);
   }
 
 

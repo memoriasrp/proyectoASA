@@ -399,4 +399,40 @@ input[type=number] {
     body.imprimiendo-modal .desglose-scroll-container .input-group-text {
         display: none !important;
     }
+
+    /* Título principal en la impresión */
+    body.imprimiendo-modal .modal-title {
+        font-size: 1.05rem !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Estilos reducidos para la tarjeta de Totales solo al imprimir */
+    body.imprimiendo-modal .bg-dark {
+        background-color: transparent !important;
+        color: #000 !important;
+    }
+
+    body.imprimiendo-modal .bg-dark h6 {
+        font-size: 0.85rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    body.imprimiendo-modal .bg-dark .fs-6,
+    body.imprimiendo-modal .bg-dark .fs-5,
+    body.imprimiendo-modal .bg-dark .fs-4 {
+        font-size: 0.78rem !important;
+        font-weight: bold !important;
+        color: #000 !important;
+    }
+
+    body.imprimiendo-modal .bg-dark .mb-3 {
+        margin-bottom: 0.35rem !important;
+    }
+
+    /* Reducción fina para la fila de TOTALES del desglose */
+    body.imprimiendo-modal .desglose-fila-unica:last-child {
+        border-top: 2px solid #000 !important;
+        padding-top: 4px !important;
+        font-size: 0.8rem !important;
+    }
 }
