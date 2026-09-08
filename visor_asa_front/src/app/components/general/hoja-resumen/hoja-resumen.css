@@ -283,12 +283,8 @@ app-root {
 }
 
 .desglose-input-group {
-    flex: 1 1 50% !important;
+    flex: 1 1 25% !important;
     min-width: 0 !important;
-}
-
-.desglose-input-group input {
-    text-align: right !important;
 }
 
 /* Ocultar flechas en inputs de números */
@@ -305,6 +301,14 @@ input[type=number] {
 /* Espaciado del contenedor de fecha */
 .modal-body .d-flex.align-items-center.bg-light {
     margin-bottom: 1.75rem !important;
+}
+
+/* 🟢 CLASE ESPECÍFICA PARA QUITAR BORDES ÚNICAMENTE A LOS TOTALES */
+.input-sin-borde {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 /* ==========================================
@@ -435,4 +439,17 @@ input[type=number] {
         padding-top: 4px !important;
         font-size: 0.8rem !important;
     }
+}
+
+/* Forzar alineación a la derecha de los números en el desglose */
+.desglose-input-group input {
+    text-align: right !important;
+}
+
+/* Regla para quitar bordes únicamente en los totales */
+.input-sin-borde {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
 }

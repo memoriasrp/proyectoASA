@@ -608,62 +608,104 @@
 
                     <!-- PARALELO LADO A LADO -->
                     <div class="modal-grid-container align-items-start">
-
-                        <!-- COLUMNA IZQUIERDA: LISTA EDITABLE ANUAL -->
                         <!-- COLUMNA IZQUIERDA: LISTA EDITABLE ANUAL -->
                         <div class="modal-grid-col">
                             <div class="p-3 border rounded shadow-sm bg-white">
 
                                 <!-- Cabecera de Columnas -->
-                                <div class="desglose-fila-unica px-3 py-1 bg-secondary text-white fw-bold rounded-top small mb-2"
+                                <div class="desglose-fila-unica p-2 bg-secondary text-white rounded-top mb-2"
                                     *ngIf="deudasPorAno.length > 0">
-                                    <div class="desglose-label">Año / Días</div>
-                                    <div class="desglose-input-group text-end pe-2">Int. Compensatorio</div>
-                                    <div class="desglose-input-group text-end pe-2">Int. Moratorio</div>
+                                    <div class="desglose-label text-center fw-bold text-white small">Año / Días</div>
+
+                                    <div
+                                        class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
+                                        <span
+                                            class="fw-bold text-dark mb-3 fs-5"><strong>INT.COMPENSATORIO</strong></span>
+                                    </div>
+                                    <div
+                                        class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
+                                        <span class="fw-bold text-dark mb-3 fs-5"><strong>INT. MORATORIO</strong></span>
+                                    </div>
+                                    <div
+                                        class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
+                                        <span class="fw-bold text-dark mb-3 fs-5"><strong>TOTAL</strong></span>
+                                    </div>
                                 </div>
 
-                                <!-- Lista de Filas + Total dentro del mismo bloque -->
-                                <div class="desglose-scroll-container border rounded p-2 bg-light"
+                                <!-- Lista de Filas + Total -->
+                                <div class="desglose-scroll-container p-2 bg-light border rounded"
                                     *ngIf="deudasPorAno.length > 0">
 
-                                    <!-- Filas Dinámicas -->
+                                    <!-- Filas Dinámicas (Con Bordes en Editables) -->
                                     <div class="desglose-fila-unica bg-white p-2 mb-2 border rounded shadow-sm"
                                         *ngFor="let item of deudasPorAno; let i = index">
 
+                                        <!-- Año / Días -->
                                         <div class="desglose-label fw-bold text-secondary text-nowrap">
                                             {{ item.ano }} <span class="badge bg-light text-dark border">({{ item.dias
                                                 }} d)</span>
                                         </div>
 
+                                        <!-- Input Interés Compensatorio (Editable - Con Bordes) -->
                                         <div class="input-group input-group-sm desglose-input-group">
                                             <input type="number" step="0.01"
                                                 class="form-control text-end fw-semibold pe-2"
+                                                style="text-align: right !important;"
                                                 [(ngModel)]="deudasPorAno[i].interes" (input)="calcularTotalDeudas()">
                                         </div>
 
+                                        <!-- Input Interés Moratorio (Editable - Con Bordes) -->
                                         <div class="input-group input-group-sm desglose-input-group">
                                             <input type="number" step="0.01"
                                                 class="form-control text-end fw-semibold pe-2"
-                                                [(ngModel)]="deudasPorAno[i].mora" (input)="calcularTotalDeudas()">
+                                                style="text-align: right !important;" [(ngModel)]="deudasPorAno[i].mora"
+                                                (input)="calcularTotalDeudas()">
+                                        </div>
+
+                                        <!-- Total Fila (Sin Bordes) -->
+                                        <div class="input-group input-group-sm desglose-input-group">
+                                            <input type="text"
+                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                style="text-align: right !important;"
+                                                [value]="(deudasPorAno[i].interes + deudasPorAno[i].mora | number:'1.2-2')"
+                                                readonly>
                                         </div>
                                     </div>
 
-                                    <!-- 🟢 FILA TOTAL ALINEADA EN PANTALLA Y EN PDF -->
+                                    <!-- FILA TOTALES GENERALES (Todas las cajas SIN BORDES) -->
                                     <div
-                                        class="desglose-fila-unica bg-white p-2 border-top border-2 border-dark rounded shadow-sm mt-2">
+                                        class="desglose-fila-unica bg-white p-2 border-top border-2 border-dark rounded-bottom mt-2">
                                         <div class="desglose-label fw-bold text-dark text-nowrap">
                                             TOTAL:
                                         </div>
-                                        <div class="desglose-input-group text-end fw-bold text-dark pe-2">
-                                            {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalInteresAnos |
-                                            number:'1.2-2' }}
+
+                                        <!-- Suma Compensatorio (Sin Bordes) -->
+                                        <div class="input-group input-group-sm desglose-input-group">
+                                            <input type="text"
+                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                style="text-align: right !important;"
+                                                [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalInteresAnos | number:'1.2-2')"
+                                                readonly>
                                         </div>
-                                        <div class="desglose-input-group text-end fw-bold text-dark pe-2">
-                                            {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalMoraAnos |
-                                            number:'1.2-2' }}
+
+                                        <!-- Suma Moratorio (Sin Bordes) -->
+                                        <div class="input-group input-group-sm desglose-input-group">
+                                            <input type="text"
+                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                style="text-align: right !important;"
+                                                [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalMoraAnos | number:'1.2-2')"
+                                                readonly>
+                                        </div>
+
+                                        <!-- Total Acumulado (Sin Bordes) -->
+                                        <div class="input-group input-group-sm desglose-input-group">
+                                            <input type="text"
+                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                style="text-align: right !important;"
+                                                [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalMoraAnos + totalInteresAnos | number:'1.2-2')"
+                                                readonly>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <!-- Mensaje sin datos -->
@@ -674,6 +716,7 @@
 
                             </div>
                         </div>
+
                         <!-- COLUMNA DERECHA: TARJETA DE TOTALES -->
                         <div class="modal-grid-col">
                             <div class="p-3 border rounded shadow-sm bg-dark text-white h-100"
@@ -697,8 +740,8 @@
 
                                 <div class="mb-3"
                                     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T.
-                                        Int. Compensatorio:</span>
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. Int.
+                                        Compensatorio:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
                                         {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalInteresAnos |
@@ -708,8 +751,8 @@
 
                                 <div class="mb-3"
                                     style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T.
-                                        Int. Moratorio:</span>
+                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. Int.
+                                        Moratorio:</span>
                                     <span class="fs-5 fw-bold text-warning"
                                         style="white-space: nowrap; text-align: right !important;">
                                         {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalMoraAnos |

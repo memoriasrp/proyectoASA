@@ -290,6 +290,7 @@ export class HojaResumen implements OnInit {
         <td style="padding: 4px; font-weight: bold; text-align: left;">${item.ano} (${item.dias} d)</td>
         <td style="padding: 4px; text-align: right; font-weight: bold;">${this.formatearNumero(valInteres)}</td>
         <td style="padding: 4px; text-align: right; font-weight: bold;">${this.formatearNumero(valMora)}</td>
+        <td style="padding: 4px; text-align: right; font-weight: bold;">${this.formatearNumero(valInteres + valMora)}</td>
       </tr>
     `;
     }).join('');
@@ -382,6 +383,7 @@ export class HojaResumen implements OnInit {
                   <th style="text-align: left;">Año / Días</th>
                   <th style="text-align: right;">Int. Compensatorio</th>
                   <th style="text-align: right;">Int. Moratorio</th>
+                  <th style="text-align: right;">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -390,6 +392,7 @@ export class HojaResumen implements OnInit {
                   <td style="padding: 4px; text-align: left;">TOTAL:</td>
                   <td style="padding: 4px; text-align: right;">${simboloMoneda} ${this.formatearNumero(this.totalInteresAnos)}</td>
                   <td style="padding: 4px; text-align: right;">${simboloMoneda} ${this.formatearNumero(this.totalMoraAnos)}</td>
+                  <td style="padding: 4px; text-align: right;">${simboloMoneda} ${this.formatearNumero(this.totalGeneralAnos)}</td>
                 </tr>
               </tbody>
             </table>
