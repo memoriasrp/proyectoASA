@@ -44,7 +44,6 @@ export class Usuarios implements OnInit {
   cargarUsuariosReal(): void {
     this.users.getUsers().subscribe({
       next: (data) => {
-        console.log("datos", data);
         this.usuarios = data;
         this.cdr.detectChanges(); // Forzar la detección de cambios
       },

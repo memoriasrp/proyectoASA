@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsNumber, IsOptional, IsDateString } from 'class-validator';
-
+import { Type } from 'class-transformer';
 export class CreateMovimientoDto {
     // Clave Primaria Compuesta & Identificadores de Operación
     @IsString()
@@ -106,6 +106,7 @@ export class CreateMovimientoDto {
 
     @IsNumber()
     @IsOptional()
+    @Type(() => Number)
     castigada?: number;
 
     @IsNumber()

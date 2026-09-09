@@ -1321,6 +1321,14 @@ model garantes {
   @@schema("ctacte")
 }
 
+model tipogastos {
+  idtipogasto Int     @id @default(autoincrement())
+  descripcion String? @db.VarChar(255)
+
+  @@map("tipogastos")
+  @@schema("consolidado")
+}
+
 enum GrupoMenu {
   COMPARACIONES
   RESULTADOS

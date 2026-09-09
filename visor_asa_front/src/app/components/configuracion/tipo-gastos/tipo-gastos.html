@@ -1,0 +1,65 @@
+<div class="usuarios-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Tipo de gastos de Cobranza</h2>
+            <p class="page-subtitle">Consulta de tipos de gastos disponibles.</p>
+        </div>
+        <button class="btn btn-primary" (click)="abrirModalCrear()">+ Nuevo Tipo de Gasto</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of tipoGastos; track item.idtipogasto) {
+                <tr>
+                    <td><strong>{{ item.idtipogasto }}</strong></td>
+                    <td>{{ item.descripcion }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" (click)="abrirModalEditar(item)">✏️</button>
+                        <button class="btn btn-sm btn-outline-danger"
+                            (click)="eliminarTipoGasto(item.idtipogasto)">🗑️</button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="2" class="empty-row">No se encontraron tipos de gastos registrados.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@if (mostrarModal) {
+<div class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>{{ modoEdicion ? 'Modificar Tipo de Gasto' : 'Registrar Nuevo Tipo de Gasto' }}</h3>
+
+        </div>
+
+        <form (submit)="guardarTipoGasto($event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nombre">Tipo de Gasto</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control"
+                        [(ngModel)]="nuevoTipoGasto.descripcion" required placeholder="Descripcion del tipo de gasto">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    {{ modoEdicion ? 'Actualizar Cambios' : 'Crear Tipo de Gasto' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

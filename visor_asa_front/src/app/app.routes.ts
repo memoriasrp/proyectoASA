@@ -28,7 +28,7 @@ import { ListaSeguimiento } from './components/general/lista-seguimiento/lista-s
 import { RegistroPago } from './components/vbcoop/registro-pago/registro-pago';
 import { Cronograma } from './components/vbcoop/cronograma/cronograma';
 import { HojaResumen } from './components/general/hoja-resumen/hoja-resumen';
-
+import { TipoGastos } from './components/configuracion/tipo-gastos/tipo-gastos';
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },
@@ -101,6 +101,7 @@ export const routes: Routes = [
             { path: 'tipo-usuarios', component: TipoUsuarios },
             { path: 'permiso-pantallas', component: PermisoPantallas },
             { path: 'periodos', component: Periodos },
+            { path: 'tipo-gastos', component: TipoGastos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },

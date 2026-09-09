@@ -38,7 +38,6 @@ export class Menus implements OnInit {
     grupoId: 0,
     grupo: null
   };
-  // 🛠️ SOLUCIÓN TS2307: Arreglo local con los valores exactos del Enum de tu Postgres
   listaGrupos: GrupoMenu[] = [];
   constructor(private menusService: MenusService, private cdr: ChangeDetectorRef) { }
 

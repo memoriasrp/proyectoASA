@@ -27,10 +27,11 @@ import { ListaSeguimientoModule } from './general/lista-seguimiento/lista-seguim
 import { HojaResumenModule } from './general/hoja-resumen/hoja-resumen.module';
 import { CronogramaModule } from './vbcoop/cronograma/cronograma.module';
 import { PeriodoEstadoModule } from './init/periodo-estado/periodo-estado.module';
+import { TipogastosModule } from './configuracion/tipogastos/tipogastos.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule,
-    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule, CarteradpfModule, ObservacionesAhorroModule, ObservacionesPrestamoModule, ObservacionesAportesModule, ListaSeguimientoModule, HojaResumenModule, CronogramaModule, PeriodoEstadoModule],
+    SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule, MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule, CarteradpfModule, ObservacionesAhorroModule, ObservacionesPrestamoModule, ObservacionesAportesModule, ListaSeguimientoModule, HojaResumenModule, CronogramaModule, PeriodoEstadoModule, TipogastosModule],
   controllers: [AppController],
   providers: [AppService],
 })
