@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsInt, Min, IsDate } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsArray, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export class GetCarteraprestamosFilterDto {
     @IsOptional()
@@ -16,11 +16,11 @@ export class GetCarteraprestamosFilterDto {
 
     @IsOptional()
     @IsString()
-    search?: string; // Para buscar por nombre, apellido o documento
+    search?: string;
 
     @IsOptional()
     @IsString()
-    producto?: string; // si solo quiere ahorros, dpf , aportes
+    producto?: string;
 
     @IsOptional()
     @IsString()
@@ -33,4 +33,20 @@ export class GetCarteraprestamosFilterDto {
     @IsOptional()
     @IsString()
     condicion?: string;
+
+    @IsOptional()
+    @Transform(({ value }) => {
+        // Convierte el string separado por comas (ej: "GRUPO1,GRUPO2") a un array string[]
+        if (typeof value === 'string') {
+            return value.split(',').map((g) => g.trim()).filter((g) => g.length > 0);
+        }
+        // Si ya viene como un arreglo
+        if (Array.isArray(value)) {
+            return value;
+        }
+        return [];
+    })
+    @IsArray()
+    @IsString({ each: true })
+    grupos?: string[];
 }

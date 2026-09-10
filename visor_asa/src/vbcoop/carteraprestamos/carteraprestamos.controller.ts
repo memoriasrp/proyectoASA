@@ -19,7 +19,7 @@ export class CarteraprestamosController {
 
   @Get('periodos-disponibles')
   async getPeriodosDisponibles() {
-    return this.carteraprestamosService.obtenerPeriodos();
+    return await this.carteraprestamosService.obtenerPeriodos();
   }
 
 

@@ -274,6 +274,11 @@ export class PeriodosService {
                 WHERE c.periodo = ${periodo} 
                 ORDER BY c.periodo, fechades, idpagare;          
             `,
+
+            this.prisma.$executeRaw`
+              update consolidado.carteraxperiodo_prestamo crt 
+                set idforma= (select idforma  from ctacte.pagares tpr where tpr.idpagare=crt.idpagare )
+                where idforma is null  `,
             // inserta la cartera de prestamos de este periodo
         ]).then(([, periodoActivado]) => periodoActivado); // Retorna la entidad recién activada
     }

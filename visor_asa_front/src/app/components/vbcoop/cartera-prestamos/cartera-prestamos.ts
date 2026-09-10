@@ -8,6 +8,11 @@ import * as XLSX from 'xlsx-js-style';
 import { CateraPrestamosService } from '../../../services/vbcoop/catera-prestamos-service';
 import { SeguimientoHistorialService } from '../../../services/vbcoop/seguimiento-historial-service';
 
+
+export interface GrupoOption {
+  nombre: string;
+  seleccionado: boolean;
+}
 @Component({
   selector: 'app-cartera-prestamos',
   standalone: true,
@@ -16,9 +21,11 @@ import { SeguimientoHistorialService } from '../../../services/vbcoop/seguimient
   styleUrl: './cartera-prestamos.css',
 })
 export class CarteraPrestamos implements OnInit {
+  carteraOriginal: any[] = [];
   carteraPrestamos: any[] = [];
-
+  dataSource: any;
   listaPeriodos: any[] = [];
+  gruposSeleccionados: string[] = [];
   periodoSeleccionado: string = '';
 
   periodos$!: Observable<string[]>;
@@ -33,6 +40,7 @@ export class CarteraPrestamos implements OnInit {
   condicionSeleccionado: string = '';
   periodo: string = '';
 
+  gruposDisponibles: GrupoOption[] = [];
 
   // Nueva variable de control para saber si ya buscaron al menos una vez
   busquedaRealizada: boolean = false;
@@ -55,9 +63,15 @@ export class CarteraPrestamos implements OnInit {
   cargarCombos(): void {
     //    this.periodos$ = this.carteraPasivosService.getPeriodosDisponibles();
     this.carteraPrestamosService.getPeriodosDisponibles().subscribe({
-      next: (data) => {
-        this.listaPeriodos = data || [];
+      next: (data: any[]) => {
+        this.dataSource = data || [];
+        console.log(this.dataSource);
+        this.listaPeriodos = this.dataSource.periodos || [];
         const periodoActivo = this.listaPeriodos.find(p => p.activo === true);
+        this.gruposDisponibles = this.dataSource.gruposDisponibles.map((nombre: string) => ({
+          nombre,
+          seleccionado: true
+        }));
         this.periodoSeleccionado = periodoActivo.periodo;
         this.cdr.detectChanges();
       },
@@ -127,6 +141,17 @@ export class CarteraPrestamos implements OnInit {
     this.loading = true;
     this.cdr.detectChanges();
 
+
+    const hayDesmarcados = this.gruposDisponibles.some(grupo => !grupo.seleccionado);
+
+    // 2. Si hay desmarcados enviamos el arreglo de seleccionados; si todos están marcados, enviamos null
+    const gruposSeleccionados: string[] | null = hayDesmarcados
+      ? this.gruposDisponibles
+        .filter(grupo => grupo.seleccionado)
+        .map(grupo => grupo.nombre)
+      : null;
+
+    // 3. Petición al servicio pasándole los parámetros
     this.carteraPrestamosService.getCarteraPrestamosPaginados(
       this.currentPage,
       20,
@@ -134,12 +159,14 @@ export class CarteraPrestamos implements OnInit {
       this.monedaSeleccionada,
       this.productoSeleccionado,
       this.periodoSeleccionado,
-      this.condicionSeleccionado
+      this.condicionSeleccionado,
+      gruposSeleccionados
+
     ).subscribe({
       next: (res: any) => {
-        // 🟢 DETECCION FLEXIBLE: Si 'res' es directamente el array o viene en 'res.data'
-        const dataCruda = Array.isArray(res) ? res : (res.data || []);
 
+        const dataCruda = Array.isArray(res) ? res : (res.data || []);
+        this.carteraOriginal = res || [];
         this.carteraPrestamos = dataCruda.map((item: any) => {
           const desembolsado = Number(item.desembolso) || 0;
           const saldo = Number(item.saldocapitalmo) || 0;
@@ -169,6 +196,11 @@ export class CarteraPrestamos implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  marcarTodosGrupos(estado: boolean): void {
+    this.gruposDisponibles.forEach(g => g.seleccionado = estado);
+    this.aplicarFiltrosLocales();
   }
   // Cambiar de página respetando los filtros actuales
   cambiarPagina(page: number): void {

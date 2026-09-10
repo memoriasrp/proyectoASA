@@ -1162,6 +1162,7 @@ model formptmo {
   hora                     DateTime?                              @db.Timestamp(6)
   registro_corrupto        String?                                @db.VarChar(2)
   carteraxperiodo_prestamo consolidado_carteraxperiodo_prestamo[]
+  tipoptmo                 tipoptmo?                              @relation(fields: [idcategori], references: [idcategori], onDelete: Restrict, map: "fk_formptmo_tipoptmo")
 
   @@id([descri, idmoneda, idforma])
   @@schema("ctacte")
@@ -1327,6 +1328,19 @@ model tipogastos {
 
   @@map("tipogastos")
   @@schema("consolidado")
+}
+
+model tipoptmo {
+  descrip           String?    @db.VarChar(255)
+  idcategori        String     @id @db.VarChar(18)
+  idcalifica        String?    @db.VarChar(19)
+  idusuario         String?    @db.VarChar(25)
+  hora              DateTime?  @db.Timestamp(6)
+  registro_corrupto String?    @db.VarChar(2)
+  grupo             String?    @db.VarChar(30)
+  formptmo          formptmo[]
+
+  @@schema("ctacte")
 }
 
 enum GrupoMenu {

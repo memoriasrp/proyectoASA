@@ -5,7 +5,7 @@ import { GetCarteraprestamosFilterDto } from './dto/get-carteraprestamos-filter.
 @Injectable()
 export class CarteraprestamosService {
     constructor(private prisma: PrismaService) { }
-    private buildWhereCondition(search?: string, producto?: string, periodos?: string, moneda?: string, condicion?: string) {
+    private buildWhereCondition(search?: string, producto?: string, periodos?: string, moneda?: string, condicion?: string, grupos?: string[]) {
         const where: any = {};
         // Inicializamos un arreglo AND para unificar todos los filtros de manera limpia
         const andConditions: any[] = [];
@@ -46,7 +46,18 @@ export class CarteraprestamosService {
         if (andConditions.length > 0) {
             where.AND = andConditions;
         }
-
+        // 6. Filtro de Grupos (Relación anidada: formptmo -> tipoptmo -> grupo)
+        if (grupos && Array.isArray(grupos) && grupos.length > 0) {
+            andConditions.push({
+                formptmo: {
+                    tipoptmo: {
+                        grupo: {
+                            in: grupos // SQL equivalente: WHERE tipoptmo.grupo IN ('GRUPO1', 'GRUPO2')
+                        }
+                    }
+                }
+            });
+        }
         return where;
     }
     async findAll(filters: GetCarteraprestamosFilterDto) {
@@ -60,7 +71,8 @@ export class CarteraprestamosService {
             filters.producto,
             filters.periodo,
             filters.moneda,
-            filters.condicion
+            filters.condicion,
+            filters.grupos
         );
 
         const [data, total] = await Promise.all([
@@ -71,11 +83,18 @@ export class CarteraprestamosService {
                 orderBy: [
                     { nombre: 'asc' },
                     { fechades: 'asc' },
-                ]
+                ],
+                include: {
+                    formptmo: {
+                        include: {
+                            tipoptmo: true
+                        }
+                    }
+                }
             }),
             this.prisma.consolidado_carteraxperiodo_prestamo.count({ where }),
         ]);
-
+        const grupo = data.map(item => item.formptmo?.tipoptmo?.grupo || 'SIN GRUPO');
         return {
             data,
             meta: {
@@ -83,7 +102,8 @@ export class CarteraprestamosService {
                 page,
                 limit,
                 totalPages: Math.ceil(total / limit)
-            }
+            },
+            grupos: Array.from(new Set(grupo))
         };
     }
 
@@ -105,10 +125,52 @@ export class CarteraprestamosService {
     }
 
     async obtenerPeriodos() {
-        return this.prisma.calendario_periodos.findMany({
+        const [periodos, periodoActivoResult] = await Promise.all([
+            this.prisma.calendario_periodos.findMany({
+                orderBy: { periodo: 'desc' },
+            }),
+            this.prisma.calendario_periodos.findFirst({
+                where: { activo: true },
+                select: { periodo: true },
+                orderBy: { periodo: 'desc' },
+            }),
+        ]);
+
+        const periodoActivo = periodoActivoResult?.periodo || null;
+
+        // Trae únicamente los tipos de préstamo que existen en el período activo
+        const tiposDisponibles = await this.prisma.tipoptmo.findMany({
+            where: {
+                formptmo: {
+                    some: {
+                        carteraxperiodo_prestamo: {
+                            some: {
+                                periodo: periodoActivo!,
+                                condicion: 'VIGENTE'
+                            },
+                        },
+                    },
+                },
+            },
+            select: {
+                grupo: true,
+            },
+            distinct: ['grupo'],
+        });
+
+        // Extrae el resultado a un array simple de strings (ej: ['CONVENIOS', 'MEDIANAS EMPRESAS'])
+        const gruposDisponibles = tiposDisponibles
+            .map(item => item.grupo)
+            .filter((grupo): grupo is string => Boolean(grupo));
+
+        const productos = await this.prisma.formptmo.findMany({
             orderBy: {
-                periodo: 'desc',
+                descri: 'asc',
             },
         });
+        return {
+            periodos: periodos,
+            gruposDisponibles: gruposDisponibles
+        };
     }
 }
