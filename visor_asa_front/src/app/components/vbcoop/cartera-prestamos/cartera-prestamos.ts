@@ -200,7 +200,7 @@ export class CarteraPrestamos implements OnInit {
 
   marcarTodosGrupos(estado: boolean): void {
     this.gruposDisponibles.forEach(g => g.seleccionado = estado);
-    this.aplicarFiltrosLocales();
+
   }
   // Cambiar de página respetando los filtros actuales
   cambiarPagina(page: number): void {
