@@ -348,7 +348,7 @@ export class MovactivosService {
                         SUM(seguro) AS pagoseguro, 
                         SUM(aporte) AS pagoaporte, 
                         SUM(CASE WHEN car_abo = 'C' THEN total ELSE total * (-1) END) AS totalPago ,
-                        max(m.fecha) as fecultmovimiento
+                        MAX(CASE WHEN capital != 0 THEN m.fecha END) AS fecultmovimiento
                     FROM consolidado.movimientosprestamos M
                 WHERE 
                     m.fecha <= c.fecha 

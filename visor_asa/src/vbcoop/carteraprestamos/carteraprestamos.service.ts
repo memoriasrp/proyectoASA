@@ -113,7 +113,8 @@ export class CarteraprestamosService {
             filters.producto,
             filters.periodo,
             filters.moneda,
-            filters.condicion
+            filters.condicion,
+            filters.grupos
         )
         return this.prisma.consolidado_carteraxperiodo_prestamo.findMany({
             where,
@@ -121,6 +122,14 @@ export class CarteraprestamosService {
                 { nombre: 'asc' },
                 { fechades: 'asc' }
             ]
+            ,
+            include: {
+                formptmo: {
+                    include: {
+                        tipoptmo: true
+                    }
+                }
+            }
         });
     }
 

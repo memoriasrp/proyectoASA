@@ -1323,8 +1323,9 @@ model garantes {
 }
 
 model tipogastos {
-  idtipogasto Int     @id @default(autoincrement())
-  descripcion String? @db.VarChar(255)
+  idtipogasto    Int              @id @default(autoincrement())
+  descripcion    String?          @db.VarChar(255)
+  registrogastos registrogastos[]
 
   @@map("tipogastos")
   @@schema("consolidado")
@@ -1341,6 +1342,23 @@ model tipoptmo {
   formptmo          formptmo[]
 
   @@schema("ctacte")
+}
+
+model registrogastos {
+  id                Int        @id @default(autoincrement())
+  idsocio           String?    @db.VarChar(25)
+  idtipogasto       Int
+  fecha             DateTime   @default(now()) @db.Timestamp(6)
+  montopactado      Decimal    @db.Decimal
+  montopagado       Decimal    @db.Decimal
+  fechapago         DateTime?  @db.Timestamp(6)
+  detalle           String
+  idusuariocreacion Int
+  idusuariopago     Int
+  created_at        DateTime?  @default(now()) @db.Timestamp(6)
+  tipogastos        tipogastos @relation(fields: [idtipogasto], references: [idtipogasto], map: "fk_registrogastos_tipogastos")
+
+  @@schema("consolidado")
 }
 
 enum GrupoMenu {

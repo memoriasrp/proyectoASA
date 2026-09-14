@@ -44,6 +44,7 @@ export class CateraPrestamosService {
     if (grupos && grupos.length > 0) {
       params = params.set('grupos', grupos.join(','));
     }
+    console.log(params);
     return this.http.get<any[]>(`${this.apiUrl}/exportar`, { params });
   }
 

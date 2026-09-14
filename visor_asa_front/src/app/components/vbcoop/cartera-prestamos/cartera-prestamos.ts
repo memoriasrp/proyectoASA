@@ -65,7 +65,6 @@ export class CarteraPrestamos implements OnInit {
     this.carteraPrestamosService.getPeriodosDisponibles().subscribe({
       next: (data: any[]) => {
         this.dataSource = data || [];
-        console.log(this.dataSource);
         this.listaPeriodos = this.dataSource.periodos || [];
         const periodoActivo = this.listaPeriodos.find(p => p.activo === true);
         this.gruposDisponibles = this.dataSource.gruposDisponibles.map((nombre: string) => ({
@@ -226,17 +225,25 @@ export class CarteraPrestamos implements OnInit {
 
   // Función de Exportación a Excel nativa
   exportarAExcel(): void {
+    const hayDesmarcados = this.gruposDisponibles.some(grupo => !grupo.seleccionado);
+
+    const gruposSeleccionados: string[] | null = hayDesmarcados
+      ? this.gruposDisponibles
+        .filter(grupo => grupo.seleccionado)
+        .map(grupo => grupo.nombre)
+      : null;
+
     this.carteraPrestamosService.getCarteraPrestamosParaExportar(
       this.searchTerm,
       this.monedaSeleccionada,
       this.productoSeleccionado,
       this.periodoSeleccionado,
-      this.condicionSeleccionado
+      this.condicionSeleccionado,
+      gruposSeleccionados
     ).subscribe({
       next: (res) => {
-        if (!res || res.length === 0) return;
-        if (this.carteraPrestamos.length === 0) {
-          alert('No hay datos en la tabla para exportar.');
+        if (!res || res.length === 0) {
+          alert('No hay datos disponibles para exportar.');
           return;
         }
 
@@ -255,46 +262,26 @@ export class CarteraPrestamos implements OnInit {
           return '';
         };
 
-        // 1. Mapeamos los datos garantizando tipos numéricos reales
-        const datosExportar = res.map(item => {
-          const desembolso = Number(item.desembolso) || 0;
-          const saldoCapitalMo = Number(item.saldocapitalmo) || 0;
+        // 🟢 CORREGIDO: Cálculo estricto de días enteros (Entero puro)
+        const calcularDiasAtraso = (fechaUltMov: any): number => {
+          if (!fechaUltMov) return 0;
 
-          let pctPagadoDecimal = 0;
-          if (desembolso > 0) {
-            pctPagadoDecimal = (desembolso - saldoCapitalMo) / desembolso;
-          }
+          const fechaMov = new Date(fechaUltMov);
+          const hoy = new Date();
 
-          return {
-            'Pagare': item.idpagare,
-            'ID Socio': item.idsocio,
-            'Socio': item.nombre,
-            'Documento': item.numdoc,
-            'Producto': item.descri,
-            'MN': item.moneda === 'S' ? 'S/.' : '$',
-            'F.Desem': formatearFecha(item.fechades),
-            'F.Ult.Mov': formatearFecha(item.fecultmovimiento),
-            'Desembolso MO': desembolso,
-            'Cuotas': `${item.cuotas_pagadas || 0} de ${item.plazo || 0}`,
-            'P.Interes mo': Number(item.pagointeresmo) || 0,
-            'P.Interes mn': Number(item.pagointeresmn) || 0,
-            'P.Mora mo': Number(item.pagomoramo) || 0,
-            'P.Mora mn': Number(item.pagomoramn) || 0,
-            'P.Seguro mo': Number(item.pagoseguromn) || 0,
-            'P.Seguro mn': Number(item.pagoseguromn) || 0,
-            'saldo_periodomo': saldoCapitalMo,
-            'saldo_periodomn': Number(item.saldocapitalmn) || 0,
-            '% de pago': pctPagadoDecimal,
-            'tasa': Number(item.tasa) || 0,
-            '# Mov.': Number(item.totalmov) || 0,
-            'Condicion': item.condicion
-          };
-        });
+          if (isNaN(fechaMov.getTime())) return 0;
 
-        // Generamos la hoja de cálculo inicial
-        const worksheet = XLSX.utils.json_to_sheet(datosExportar);
+          // Extraer milisegundos UTC a medianoche para evitar desfasajes por zona horaria/DST
+          const utcMov = Date.UTC(fechaMov.getUTCFullYear(), fechaMov.getUTCMonth(), fechaMov.getUTCDate());
+          const utcHoy = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
-        // 2. 🟢 DEFINICIÓN DE ESTILOS DE EXCEL
+          const diferenciaMs = utcHoy - utcMov;
+          const dias = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
+
+          return dias > 0 ? dias : 0;
+        };
+
+        // Estilo base para celdas y cabeceras
         const bordeDelgado = {
           top: { style: 'thin', color: { rgb: '000000' } },
           bottom: { style: 'thin', color: { rgb: '000000' } },
@@ -304,77 +291,221 @@ export class CarteraPrestamos implements OnInit {
 
         const estiloCabecera = {
           font: { bold: true, color: { rgb: 'FFFFFF' }, size: 10 },
-          fill: { fgColor: { rgb: '27AE60' } }, // Color verde corporativo de fondo
+          fill: { fgColor: { rgb: '27AE60' } },
           alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
           border: bordeDelgado
         };
 
-        const columnasMoneda = ['I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'];
-        const columnaPorcentaje = 'S';
-        const columnaTasa = 'T';
+        // 🟢 CORREGIDO: formateador global de hojas con soporte para enteros (colEnteros)
+        const aplicarEstilosHoja = (
+          worksheet: any,
+          colsMoneda: string[],
+          colsEnteros: string[] = [],
+          colPct?: string,
+          colTasa?: string
+        ) => {
+          for (const cellAddress in worksheet) {
+            if (cellAddress[0] === '!') continue;
 
-        // 3. 🟢 RECORRER Y ESTILIZAR TODAS LAS CELDAS
-        for (const cellAddress in worksheet) {
-          if (cellAddress[0] === '!') continue; // Saltar metadata de la hoja
+            const celda = worksheet[cellAddress];
+            const columna = cellAddress.replace(/[0-9]/g, '');
+            const fila = parseInt(cellAddress.replace(/[^0-9]/g, ''), 10);
 
-          const celda = worksheet[cellAddress];
-          const columna = cellAddress.replace(/[0-9]/g, '');
-          const fila = parseInt(cellAddress.replace(/[^0-9]/g, ''), 10);
+            celda.s = {
+              border: bordeDelgado,
+              font: { size: 9 },
+              alignment: { vertical: 'center' }
+            };
 
-          // Inicializamos el objeto de estilos en la celda
-          celda.s = {
-            border: bordeDelgado, // Bordes negros finos para todas las celdas
-            font: { size: 9 },
-            alignment: { vertical: 'center' }
-          };
-
-          if (fila === 1) {
-            // A. Si es la fila 1, aplicamos el diseño de cabecera en negrita
-            celda.s = estiloCabecera;
-          } else {
-            // B. Si es fila de datos, aplicamos los formatos numéricos y alineaciones correspondientes
-            if (celda.t === 'n') {
-              if (columnasMoneda.includes(columna)) {
-                celda.z = '#,##0.00';
-                celda.s.alignment = { horizontal: 'right' }; // Números a la derecha
-              } else if (columna === columnaPorcentaje) {
-                celda.z = '0.00%';
-                celda.s.alignment = { horizontal: 'right' };
-              } else if (columna === columnaTasa) {
-                celda.z = '0.00';
-                celda.s.alignment = { horizontal: 'right' };
-              }
+            if (fila === 1) {
+              celda.s = estiloCabecera;
             } else {
-              // Textos alineados a la izquierda o centro
-              if (['A', 'B', 'D', 'F', 'G', 'H', 'J', 'U', 'V'].includes(columna)) {
-                celda.s.alignment = { horizontal: 'center' };
+              if (celda.t === 'n') {
+                if (colsMoneda.includes(columna)) {
+                  celda.z = '#,##0.00';
+                  celda.s.alignment = { horizontal: 'right' };
+                } else if (columna === colPct) {
+                  celda.z = '0.00%';
+                  celda.s.alignment = { horizontal: 'right' };
+                } else if (columna === colTasa) {
+                  celda.z = '0.00';
+                  celda.s.alignment = { horizontal: 'right' };
+                } else if (colsEnteros.includes(columna)) {
+                  celda.z = '#,##0'; // 👈 Formato explícito para enteros sin decimales
+                  celda.s.alignment = { horizontal: 'right' };
+                } else {
+                  celda.z = '#,##0';
+                  celda.s.alignment = { horizontal: 'right' };
+                }
               } else {
                 celda.s.alignment = { horizontal: 'left' };
               }
             }
           }
+        };
+
+        // ==========================================
+        // 1. HOJA: RESUMIDO (Agrupado por T.Credito / Grupo)
+        // ==========================================
+        interface AcumuladoGrupoMoneda {
+          grupo: string;
+          monedaStr: string;
+          cantidad: number;
+          totalDesembolso: number;
+          totalSaldoMO: number;
+          totalSaldoMN: number;
         }
 
-        // Configuración de anchos de columnas
-        worksheet['!cols'] = [
-          { wch: 12 }, { wch: 10 }, { wch: 40 }, { wch: 10 },
-          { wch: 40 }, { wch: 5 }, { wch: 10 }, { wch: 10 },
-          { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 15 },
-          { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-          { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 8 },
-          { wch: 8 }, { wch: 12 }
+        const resumenMap = new Map<string, AcumuladoGrupoMoneda>();
+
+        res.forEach(item => {
+          const grupo = item.formptmo?.tipoptmo?.grupo || 'SIN GRUPO';
+          const monedaStr = item.moneda === 'S' ? 'S/.' : '$';
+          const key = `${grupo}|${monedaStr}`;
+
+          const desembolso = Number(item.desembolso) || 0;
+          const saldoMO = Number(item.saldocapitalmo) || 0;
+          const saldoMN = Number(item.saldocapitalmn) || 0;
+
+          if (!resumenMap.has(key)) {
+            resumenMap.set(key, {
+              grupo,
+              monedaStr,
+              cantidad: 0,
+              totalDesembolso: 0,
+              totalSaldoMO: 0,
+              totalSaldoMN: 0,
+            });
+          }
+
+          const actual = resumenMap.get(key)!;
+          actual.cantidad += 1;
+          actual.totalDesembolso += desembolso;
+          actual.totalSaldoMO += saldoMO;
+          actual.totalSaldoMN += saldoMN;
+        });
+
+        const datosResumidos = Array.from(resumenMap.values()).map((acum) => ({
+          'Tipo de Crédito': acum.grupo,
+          Moneda: acum.monedaStr,
+          'Cant. Préstamos': acum.cantidad,
+          'Total Desembolso': acum.totalDesembolso,
+          'Total Saldo MO': acum.totalSaldoMO,
+          'Total Saldo MN': acum.totalSaldoMN,
+        }));
+
+        const sheetResumido = XLSX.utils.json_to_sheet(datosResumidos);
+        // C: Cantidad (Entero), D, E, F: Monedas
+        aplicarEstilosHoja(sheetResumido, ['D', 'E', 'F'], ['C']);
+        sheetResumido['!cols'] = [
+          { wch: 30 }, { wch: 10 }, { wch: 15 }, { wch: 18 }, { wch: 18 }, { wch: 18 }
         ];
 
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimientos Prestamos');
+        // ==========================================
+        // 2. HOJA: SALDOS
+        // ==========================================
+        const datosSaldos = res.map(item => ({
+          'T.Credito': item.formptmo?.tipoptmo?.grupo || 'SIN GRUPO',
+          'Producto': item.descri,
+          'Pagare': item.idpagare,
+          'ID Socio': item.idsocio,
+          'Socio': item.nombre,
+          'Documento': item.numdoc,
+          'Moneda': item.moneda === 'S' ? 'S/.' : '$',
+          'Desembolso MO': Number(item.desembolso) || 0,
+          'Saldo Capital MO': Number(item.saldocapitalmo) || 0,
+          'Saldo Capital MN': Number(item.saldocapitalmn) || 0,
+          'D. Atraso': calcularDiasAtraso(item.fecultmovimiento)
+        }));
 
-        // Descarga el Excel con estilos
-        XLSX.writeFile(workbook, `Reporte_carteraPrestamos_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        const sheetSaldos = XLSX.utils.json_to_sheet(datosSaldos);
+        // 🟢 CORREGIDO: Monedas en H, I, J | D. Atraso en K (Entero)
+        aplicarEstilosHoja(sheetSaldos, ['H', 'I', 'J'], ['K']);
+        sheetSaldos['!cols'] = [
+          { wch: 25 }, { wch: 35 }, { wch: 15 }, { wch: 15 }, { wch: 35 },
+          { wch: 12 }, { wch: 8 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 12 }
+        ];
+
+        // ==========================================
+        // 3. HOJA: DETALLADO (Todos los campos)
+        // ==========================================
+        const datosDetallados = res.map(item => {
+          const desembolso = Number(item.desembolso) || 0;
+          const saldoCapitalMo = Number(item.saldocapitalmo) || 0;
+          let pctPagadoDecimal = 0;
+          if (desembolso > 0) {
+            pctPagadoDecimal = (desembolso - saldoCapitalMo) / desembolso;
+          }
+
+          return {
+            'T.Credito': item.formptmo?.tipoptmo?.grupo || 'SIN GRUPO',
+            'Producto': item.descri,
+            'Pagare': item.idpagare,
+            'ID Socio': item.idsocio,
+            'Socio': item.nombre,
+            'Documento': item.numdoc,
+            'MN': item.moneda === 'S' ? 'S/.' : '$',
+            'F.Desem': formatearFecha(item.fechades),
+            'F.Ult.Mov': formatearFecha(item.fecultmovimiento),
+            'D. Atraso': calcularDiasAtraso(item.fecultmovimiento),
+            'Desembolso MO': desembolso,
+            'Cuotas': `${item.cuotas_pagadas || 0} de ${item.plazo || 0}`,
+            'P.Interes mn': Number(item.pagointeresmn) || 0,
+            'P.Mora mn': Number(item.pagomoramn) || 0,
+            'P.Seguro mn': Number(item.pagoseguromn) || 0,
+            'saldo_periodomn': Number(item.saldocapitalmn) || 0,
+            '% de pago': pctPagadoDecimal,
+            'tasa': Number(item.tasa) || 0,
+            '# Mov.': Number(item.totalmov) || 0
+          };
+        });
+
+        const sheetDetallado = XLSX.utils.json_to_sheet(datosDetallados);
+        // Monedas: K, M, N, O, P, Q, R, S, T | Enteros: J ('D. Atraso'), W ('# Mov.') | Pct: U | Tasa: V
+        aplicarEstilosHoja(
+          sheetDetallado,
+          ['K', 'M', 'N', 'O', 'P'], // Monedas
+          ['J', 'S'],               // Enteros
+          'Q',                       // % de pago
+          'R'                        // Tasa
+        );
+
+        // 🟢 Anchos ajustados exactamente para las 19 columnas (A a la S)
+        sheetDetallado['!cols'] = [
+          { wch: 25 }, // A: T.Credito
+          { wch: 30 }, // B: Producto
+          { wch: 15 }, // C: Pagare
+          { wch: 12 }, // D: ID Socio
+          { wch: 35 }, // E: Socio
+          { wch: 12 }, // F: Documento
+          { wch: 6 },  // G: MN
+          { wch: 12 }, // H: F.Desem
+          { wch: 12 }, // I: F.Ult.Mov
+          { wch: 10 }, // J: D. Atraso
+          { wch: 16 }, // K: Desembolso MO
+          { wch: 12 }, // L: Cuotas
+          { wch: 15 }, // M: P.Interes mn
+          { wch: 15 }, // N: P.Mora mn
+          { wch: 15 }, // O: P.Seguro mn
+          { wch: 16 }, // P: saldo_periodomn
+          { wch: 12 }, // Q: % de pago
+          { wch: 8 },  // R: tasa
+          { wch: 8 },  // S: # Mov.
+        ];
+
+        // ==========================================
+        // ENSAMBLAR LIBRO DE TRABAJO Y DESCARGAR
+        // ==========================================
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, sheetResumido, 'Resumido');
+        XLSX.utils.book_append_sheet(workbook, sheetSaldos, 'Saldos');
+        XLSX.utils.book_append_sheet(workbook, sheetDetallado, 'Detallado');
+
+        XLSX.writeFile(workbook, `Reporte_CarteraPrestamos_${new Date().toISOString().slice(0, 10)}.xlsx`);
       },
       error: (err) => console.error('Error al exportar cartera de préstamos:', err)
     });
   }
-
 
   abrirModalSeguimiento(item: any) {
     this.socioSeleccionado = item;
