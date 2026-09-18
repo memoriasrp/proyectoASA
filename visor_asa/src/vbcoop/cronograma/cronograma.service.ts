@@ -130,7 +130,7 @@ export class CronogramaService {
         }
         console.log("la ta" + tcompensatorio + " y la tea es " + tea);
 
-        const deuda = this.calcularInteresPorAnos(fechaUltimoAbono, fechaConsulta, datosPlan.importe - capitalPagado, tea, 40);
+        const deuda = this.calcularInteresPorAnos(fechaUltimoAbono, fechaConsulta, datosPlan.importe - capitalPagado, tea, tmor);
         return {
             cabecera: {
                 idpagare: pagare.idpagare,
