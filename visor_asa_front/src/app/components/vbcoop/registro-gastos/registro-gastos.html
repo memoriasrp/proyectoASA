@@ -161,49 +161,60 @@
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL: REGISTRAR NUEVO GASTO             -->
+<!-- MODAL FLOTANTE: REGISTRAR NUEVO GASTO      -->
 <!-- ========================================== -->
 <div class="custom-modal-backdrop" *ngIf="mostrarModalGasto">
-    <div class="modal-dialog">
+    <div class="modal-container modal-lg ">
         <div class="modal-content">
 
             <!-- Encabezado del Modal -->
-            <div class="modal-header">
-                <h3 style="margin: 0; font-size: 1.15rem; font-weight: bold;">📝 Registrar Nuevo Gasto</h3>
+            <div class="modal-header"
+                style="background: #34495e; color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.15rem; font-weight: bold; color: #ffffff;">📝 Registrar Nuevo Gasto
+                </h3>
                 <button type="button" (click)="cerrarModalNuevoGasto()"
                     style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; font-weight: bold;">✕</button>
             </div>
 
             <!-- Cuerpo del Formulario -->
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 20px; background-color: #ffffff;">
                 <form (ngSubmit)="guardarGasto()">
-                    <!-- 1. SELECTOR DE SOCIOS CON BÚSQUEDA INTEGRADAS -->
+
+                    <!-- SELECTOR DE SOCIOS DENTRO DEL MODAL -->
                     <div class="form-group mb-3" style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
                         <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">
                             Socio / Beneficiario:
                         </label>
 
                         <ng-select [items]="(listaSocios$ | async) ?? []" bindLabel="descripcion" bindValue="idsocio"
-                            [(ngModel)]="nuevoGasto.idsocio" name="idsocio"
-                            placeholder="Seleccione o busque por ID | DNI | Nombre..."
+                            [(ngModel)]="nuevoGasto.idsocio" name="idsocio" placeholder="🔍"
                             notFoundText="No se encontraron coincidencias" [searchable]="true" [clearable]="true"
                             appendTo="body" required style="width: 100%;">
+
+                            <!-- 🟢 CAMBIO CLAVE: Usar 'ng-value-tmp' en lugar de 'ng-label-tmp' -->
+                            <ng-template ng-value-tmp let-item="item">
+                                <span class="ng-value-label" style="font-weight: 600; color: #1e293b;">
+                                    {{ item.descripcion }}
+                                </span>
+                            </ng-template>
+
                         </ng-select>
                     </div>
+                    <!-- SELECTOR DE SOCIOS DENTRO DEL MODAL -->
+                    <!-- SELECTOR DE TIPO DE GASTO DENTRO DEL MODAL -->
+                    <div class="form-group mb-3" style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">
+                            Tipo de Gasto:
+                        </label>
 
-                    <!-- 2. Tipo de Gasto -->
-                    <div class="form-group mb-3"
-                        style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px;">
-                        <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">Tipo de Gasto:</label>
-                        <select [(ngModel)]="nuevoGasto.idtipogasto" name="idtipogasto" required
+                        <select [(ngModel)]="nuevoGasto.idtipogasto" name="idtipogasto"
                             style="padding: 9px; border: 1px solid #ccc; border-radius: 4px; width: 100%; color: #2c3e50; font-size: 0.9rem;">
-                            <option [ngValue]="null" disabled selected>Seleccione un tipo de gasto</option>
+
                             <option *ngFor="let tgasto of tipoGastos$ | async" [ngValue]="tgasto.idtipogasto">
                                 {{ tgasto.descripcion }}
                             </option>
                         </select>
                     </div>
-
                     <!-- 3. Monto Pactado y Fecha -->
                     <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                         <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
@@ -222,7 +233,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. Observación / Descripción -->
+                    <!-- 4. Observaciones -->
                     <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px;">
                         <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">Observaciones /
                             Detalle:</label>
@@ -235,13 +246,13 @@
             </div>
 
             <!-- Pie del Modal -->
-            <div class="modal-footer">
+            <div class="modal-footer"
+                style="padding: 15px 20px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px;">
                 <button type="button" (click)="cerrarModalNuevoGasto()"
                     style="padding: 9px 16px; background: #95a5a6; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
                     Cancelar
                 </button>
                 <button type="button" (click)="guardarGasto()"
-                    [disabled]="!nuevoGasto.idsocio || !nuevoGasto.idtipogasto || !nuevoGasto.montopactado"
                     style="padding: 9px 20px; background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
                     💾 Guardar Gasto
                 </button>

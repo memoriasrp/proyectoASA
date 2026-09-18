@@ -154,10 +154,13 @@ export class RegistroGastos implements OnInit {
   }
 
   guardarGasto(): void {
+    console.log("insi");
+    console.log(this.nuevoGasto);
+
     if (!this.nuevoGasto.idsocio || !this.nuevoGasto.idtipogasto || !this.nuevoGasto.montopactado) {
       return;
     }
-
+    console.log(this.nuevoGasto);
     // this.gastosService.registrarGasto(this.nuevoGasto).subscribe({
     //   next: () => {
     //     this.cerrarModalNuevoGasto();
