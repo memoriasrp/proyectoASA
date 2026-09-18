@@ -194,9 +194,8 @@
                 <div class="gestion-meta">
                     <div class="meta-info">
                         <span class="meta-fecha">📅 {{ item.condicion }}</span>
-                        <span class="meta-cuenta">Cuenta: {{item.idcdp}}&nbsp;- &nbsp;{{ item.descri }}
-                            &nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.cap_originalmo | number:'1.2-2' }}
-                        </span>
+                        <span class="meta-cuenta">Cuenta: {{item.idcdp}}&nbsp;- &nbsp;{{ item.descri }} &nbsp;{{
+                            item.moneda==='D'?'$':'S/.' }} {{ item.cap_originalmo | number:'1.2-2' }}</span>
                     </div>
                     <span class="meta-usuario">
                         Saldo: <strong>&nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.saldo_periodomo | number:'1.2-2'
@@ -251,9 +250,8 @@
                 <div class="gestion-meta">
                     <div class="meta-info">
                         <span class="meta-fecha">📅 {{ item.condicion }}</span>
-                        <span class="meta-cuenta">Pagaré: {{item.idpagare}}&nbsp;- &nbsp;{{ item.descri }}
-                            &nbsp;{{ item.moneda==='D'?'$':'S/.' }} {{ item.desembolso | number:'1.2-2' }}
-                        </span>
+                        <span class="meta-cuenta">Pagaré: {{item.idpagare}}&nbsp;- &nbsp;{{ item.descri }} &nbsp;{{
+                            item.moneda==='D'?'$':'S/.' }} {{ item.desembolso | number:'1.2-2' }}</span>
                         <span class="meta-reprogramado" *ngIf="item.fecha_repr != null">REPROGRAMADO</span>
                     </div>
                     <span class="meta-usuario">
@@ -423,8 +421,8 @@
                     class="mb-2">
                     <h3 class="modal-title fw-bold m-0 fs-3 text-white text-center"
                         style="display: inline-block !important; width: 100% !important; text-align: center !important;">
-                        📋 PAGARE {{ cronogramaData?.cabecera?.idpagare}}
-                        - {{cronogramaData?.cabecera?.descripcionProducto}}
+                        📋 PAGARE {{ cronogramaData?.cabecera?.idpagare}} -
+                        {{cronogramaData?.cabecera?.descripcionProducto}}
                     </h3>
                 </div>
 
@@ -449,6 +447,7 @@
                         <strong>TEM:</strong> {{ cronogramaData?.cabecera?.tem }}%
                     </span>
                 </div>
+
                 <!-- TERCERA LÍNEA: Detalle Alineado a la Izquierda -->
                 <div style="display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-start !important; gap: 0.5rem !important; width: 100% !important; font-size: 0.95rem !important; text-align: left !important;"
                     class="text-white-50">
@@ -463,14 +462,12 @@
                     </span>
                     <span>&bull;</span>
                     <span class="text-white">
-                        <strong>F.Desembolso:</strong> {{ cronogramaData?.cabecera?.fechaDes |
-                        date:'dd/MM/yy':'UTC'}}
+                        <strong>F.Desembolso:</strong> {{ cronogramaData?.cabecera?.fechaDes | date:'dd/MM/yy':'UTC'}}
                     </span>
                     <span>&bull;</span>
                     <span class="text-white">
                         <strong>T.Moratoria:</strong> {{ cronogramaData?.cabecera?.tmor }}%
                     </span>
-
                 </div>
             </div>
 
@@ -485,18 +482,46 @@
 
                 <!-- Contenido Dinámico -->
                 <div *ngIf="!cargandoCronograma && cronogramaData">
-                    <!-- SECTOR SUPERIOR: FECHA DE CÁLCULO CON ESPACIADO INFERIOR -->
-                    <div class="d-flex align-items-center mb-4 p-2 bg-light rounded border gap-3 no-print">
-                        <label for="fechaCalculoInput" class="form-label fw-bold text-dark mb-0 fs-5 text-nowrap">
-                            📅 Fecha de Cálculo:
-                        </label>
-                        <input type="date" id="fechaCalculoInput"
-                            class="form-control form-control-lg fw-bold text-dark shadow-sm border-secondary"
-                            style="max-width: 220px; font-size: 1.1rem; color: #1a252f;" [(ngModel)]="fechaCalculo"
-                            (change)="onFechaCalculoChange()">
-                    </div>
+                    <!-- BARRA DE INPUTS EN GRILLA DE 3 COLUMNAS -->
+                    <div class="mb-4 p-3 bg-light rounded border no-print"
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; align-items: end; width: 100%;">
 
-                    <!-- PARALELO LADO A LADO -->
+                        <!-- 1. Fecha de Cálculo -->
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <label for="fechaCalculoInput" class="form-label fw-bold text-dark mb-0 fs-6 text-nowrap">
+                                📅 Fecha de Cálculo:
+                            </label>
+                            <input type="date" id="fechaCalculoInput"
+                                class="form-control fw-bold text-dark shadow-sm border-secondary"
+                                style="width: 100%; font-size: 0.95rem; color: #1a252f;" [(ngModel)]="fechaCalculo"
+                                (change)="onFechaCalculoChange()">
+                        </div>
+
+                        <!-- 2. TEA Compensatoria -->
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <label for="teaCompensatoriaInput"
+                                class="form-label fw-bold text-dark mb-0 fs-6 text-nowrap">
+                                TEA compensatoria%:
+                            </label>
+                            <input type="number" id="teaCompensatoriaInput" step="0.01" min="0" placeholder="0.00"
+                                class="form-control fw-bold text-dark shadow-sm border-secondary"
+                                style="width: 100%; font-size: 0.95rem; color: #1a252f;" [(ngModel)]="teaCompensatoria"
+                                (change)="onFechaCalculoChange()">
+                        </div>
+
+                        <!-- 3. TEA Moratoria -->
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <label for="teaMoratoriaInput" class="form-label fw-bold text-dark mb-0 fs-6 text-nowrap">
+                                TEA moratoria%:
+                            </label>
+                            <input type="number" id="teaMoratoriaInput" step="0.01" min="0" placeholder="0.00"
+                                class="form-control fw-bold text-dark shadow-sm border-secondary"
+                                style="width: 100%; font-size: 0.95rem; color: #1a252f;" [(ngModel)]="teaMoratoria"
+                                (change)="onFechaCalculoChange()">
+                        </div>
+
+                    </div> <!-- FIN DE BARRA DE INPUTS EN GRILLA -->
+                    <!-- PARALELO LADO A LADO (HISTORIAL Y CRONOGRAMA) -->
                     <div class="modal-grid-container">
                         <div class="modal-grid-col">
                             <div class="p-3 border rounded shadow-sm bg-white h-100">
@@ -521,25 +546,16 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let cuota of cronogramaData.movimientos">
-                                                <td style="padding: 12px; text-align: right;"
-                                                    class="text-center fw-bold">{{ cuota.nrocuota }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-center">{{
-                                                    cuota.fecha | date:'dd/MM/yy':'UTC' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.capital | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.interes | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.mora | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.seguro | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.aporte | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;"
-                                                    class="text-end fw-bold text-success">{{ cuota.total |
+                                                <td class="text-center fw-bold">{{ cuota.nrocuota }}</td>
+                                                <td class="text-center">{{ cuota.fecha | date:'dd/MM/yy':'UTC' }}</td>
+                                                <td class="text-end">{{ cuota.capital | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.interes | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.mora | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.seguro | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.aporte | number:'1.2-2' }}</td>
+                                                <td class="text-end fw-bold text-success">{{ cuota.total |
                                                     number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.saldo | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.saldo | number:'1.2-2' }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -570,21 +586,14 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let cuota of cronogramaData.cronograma">
-                                                <td style="padding: 12px; text-align: right;"
-                                                    class="text-center fw-bold">{{ cuota.orden }}</td>
-                                                <td style="padding: 12px; text-align: right;">{{ cuota.fecha |
-                                                    date:'dd/MM/yy':'UTC' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.capital | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.interes | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.aporte | number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;"
-                                                    class="text-end text-primary fw-bold">{{ cuota.cuota |
+                                                <td class="text-center fw-bold">{{ cuota.orden }}</td>
+                                                <td>{{ cuota.fecha | date:'dd/MM/yy':'UTC' }}</td>
+                                                <td class="text-end">{{ cuota.capital | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.interes | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.aporte | number:'1.2-2' }}</td>
+                                                <td class="text-end text-primary fw-bold">{{ cuota.cuota |
                                                     number:'1.2-2' }}</td>
-                                                <td style="padding: 12px; text-align: right;" class="text-end">{{
-                                                    cuota.saldo | number:'1.2-2' }}</td>
+                                                <td class="text-end">{{ cuota.saldo | number:'1.2-2' }}</td>
                                                 <td class="text-center">
                                                     <span class="badge"
                                                         [ngClass]="cuota.estado === 'PAGADO' || cuota.estado === 'PAG' ? 'bg-success text-white' : 'bg-danger text-white'">
@@ -598,182 +607,187 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- SECCIÓN DINÁMICA: DEUDAS POR AÑO Y TOTALES LADO A LADO -->
-                <div class="mt-4 pt-3 border-top">
-                    <h5 class="fw-bold text-dark mb-3 fs-5">
-                        <i class="bi bi-calculator me-2 text-warning"></i>DESGLOSE DE INTERESES Y MORA POR AÑO
-                    </h5>
+                    <!-- SECCIÓN DINÁMICA: DEUDAS POR AÑO Y TOTALES LADO A LADO -->
+                    <div class="mt-4 pt-3 border-top">
+                        <h5 class="fw-bold text-dark mb-3 fs-5">
+                            <i class="bi bi-calculator me-2 text-warning"></i>DESGLOSE DE INTERESES Y MORA POR AÑO
+                        </h5>
 
-                    <!-- PARALELO LADO A LADO -->
-                    <div class="modal-grid-container align-items-start">
-                        <!-- COLUMNA IZQUIERDA: LISTA EDITABLE ANUAL -->
-                        <div class="modal-grid-col">
-                            <div class="p-3 border rounded shadow-sm bg-white">
+                        <!-- PARALELO LADO A LADO -->
+                        <div class="modal-grid-container align-items-start">
+                            <!-- COLUMNA IZQUIERDA: LISTA EDITABLE ANUAL -->
+                            <div class="modal-grid-col">
+                                <div class="p-3 border rounded shadow-sm bg-white">
 
-                                <!-- Cabecera de Columnas -->
-                                <div class="desglose-fila-unica p-2 bg-secondary text-white rounded-top mb-2"
-                                    *ngIf="deudasPorAno.length > 0">
-                                    <div class="desglose-label text-center fw-bold text-white small">Año / Días</div>
+                                    <!-- Cabecera de Columnas -->
+                                    <div class="desglose-fila-unica p-2 bg-secondary text-white rounded-top mb-2"
+                                        *ngIf="deudasPorAno.length > 0">
+                                        <div class="desglose-label text-center fw-bold text-white small">Año / Días
+                                        </div>
 
-                                    <div
-                                        class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
-                                        <span
-                                            class="fw-bold text-dark mb-3 fs-5"><strong>INT.COMPENSATORIO</strong></span>
+                                        <div
+                                            class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
+                                            <span
+                                                class="fw-bold text-dark mb-3 fs-5"><strong>INT.COMPENSATORIO</strong></span>
+                                        </div>
+                                        <div
+                                            class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
+                                            <span class="fw-bold text-dark mb-3 fs-5"><strong>INT.
+                                                    MORATORIO</strong></span>
+                                        </div>
+                                        <div
+                                            class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
+                                            <span class="fw-bold text-dark mb-3 fs-5"><strong>TOTAL</strong></span>
+                                        </div>
                                     </div>
-                                    <div
-                                        class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
-                                        <span class="fw-bold text-dark mb-3 fs-5"><strong>INT. MORATORIO</strong></span>
+
+                                    <!-- Lista de Filas + Total -->
+                                    <div class="desglose-scroll-container p-2 bg-light border rounded"
+                                        *ngIf="deudasPorAno.length > 0">
+
+                                        <!-- Filas Dinámicas (Con Bordes en Editables) -->
+                                        <div class="desglose-fila-unica bg-white p-2 mb-2 border rounded shadow-sm"
+                                            *ngFor="let item of deudasPorAno; let i = index">
+
+                                            <!-- Año / Días -->
+                                            <div class="desglose-label fw-bold text-secondary text-nowrap">
+                                                {{ item.ano }} <span class="badge bg-light text-dark border">({{
+                                                    item.dias }} d)</span>
+                                            </div>
+
+                                            <!-- Input Interés Compensatorio (Editable - Con Bordes) -->
+                                            <div class="input-group input-group-sm desglose-input-group">
+                                                <input type="number" step="0.01"
+                                                    class="form-control text-end fw-semibold pe-2"
+                                                    style="text-align: right !important;"
+                                                    [(ngModel)]="deudasPorAno[i].interes"
+                                                    (input)="calcularTotalDeudas()">
+                                            </div>
+
+                                            <!-- Input Interés Moratorio (Editable - Con Bordes) -->
+                                            <div class="input-group input-group-sm desglose-input-group">
+                                                <input type="number" step="0.01"
+                                                    class="form-control text-end fw-semibold pe-2"
+                                                    style="text-align: right !important;"
+                                                    [(ngModel)]="deudasPorAno[i].mora" (input)="calcularTotalDeudas()">
+                                            </div>
+
+                                            <!-- Total Fila (Sin Bordes) -->
+                                            <div class="input-group input-group-sm desglose-input-group">
+                                                <input type="text"
+                                                    class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                    style="text-align: right !important;"
+                                                    [value]="(deudasPorAno[i].interes + deudasPorAno[i].mora | number:'1.2-2')"
+                                                    readonly>
+                                            </div>
+                                        </div>
+
+                                        <!-- FILA TOTALES GENERALES (Todas las cajas SIN BORDES) -->
+                                        <div
+                                            class="desglose-fila-unica bg-white p-2 border-top border-2 border-dark rounded-bottom mt-2">
+                                            <div class="desglose-label fw-bold text-dark text-nowrap">
+                                                TOTAL:
+                                            </div>
+
+                                            <!-- Suma Compensatorio (Sin Bordes) -->
+                                            <div class="input-group input-group-sm desglose-input-group">
+                                                <input type="text"
+                                                    class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                    style="text-align: right !important;"
+                                                    [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalInteresAnos | number:'1.2-2')"
+                                                    readonly>
+                                            </div>
+
+                                            <!-- Suma Moratorio (Sin Bordes) -->
+                                            <div class="input-group input-group-sm desglose-input-group">
+                                                <input type="text"
+                                                    class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                    style="text-align: right !important;"
+                                                    [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalMoraAnos | number:'1.2-2')"
+                                                    readonly>
+                                            </div>
+
+                                            <!-- Total Acumulado (Sin Bordes) -->
+                                            <div class="input-group input-group-sm desglose-input-group">
+                                                <input type="text"
+                                                    class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
+                                                    style="text-align: right !important;"
+                                                    [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalMoraAnos + totalInteresAnos | number:'1.2-2')"
+                                                    readonly>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div
-                                        class="input-group input-group-sm desglose-input-group justify-content-end pe-2">
-                                        <span class="fw-bold text-dark mb-3 fs-5"><strong>TOTAL</strong></span>
+
+                                    <!-- Mensaje sin datos -->
+                                    <div *ngIf="deudasPorAno.length === 0"
+                                        class="alert alert-light text-center py-2 text-muted mb-0">
+                                        No hay registros de intereses devengados por año para mostrar.
                                     </div>
+
                                 </div>
-
-                                <!-- Lista de Filas + Total -->
-                                <div class="desglose-scroll-container p-2 bg-light border rounded"
-                                    *ngIf="deudasPorAno.length > 0">
-
-                                    <!-- Filas Dinámicas (Con Bordes en Editables) -->
-                                    <div class="desglose-fila-unica bg-white p-2 mb-2 border rounded shadow-sm"
-                                        *ngFor="let item of deudasPorAno; let i = index">
-
-                                        <!-- Año / Días -->
-                                        <div class="desglose-label fw-bold text-secondary text-nowrap">
-                                            {{ item.ano }} <span class="badge bg-light text-dark border">({{ item.dias
-                                                }} d)</span>
-                                        </div>
-
-                                        <!-- Input Interés Compensatorio (Editable - Con Bordes) -->
-                                        <div class="input-group input-group-sm desglose-input-group">
-                                            <input type="number" step="0.01"
-                                                class="form-control text-end fw-semibold pe-2"
-                                                style="text-align: right !important;"
-                                                [(ngModel)]="deudasPorAno[i].interes" (input)="calcularTotalDeudas()">
-                                        </div>
-
-                                        <!-- Input Interés Moratorio (Editable - Con Bordes) -->
-                                        <div class="input-group input-group-sm desglose-input-group">
-                                            <input type="number" step="0.01"
-                                                class="form-control text-end fw-semibold pe-2"
-                                                style="text-align: right !important;" [(ngModel)]="deudasPorAno[i].mora"
-                                                (input)="calcularTotalDeudas()">
-                                        </div>
-
-                                        <!-- Total Fila (Sin Bordes) -->
-                                        <div class="input-group input-group-sm desglose-input-group">
-                                            <input type="text"
-                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
-                                                style="text-align: right !important;"
-                                                [value]="(deudasPorAno[i].interes + deudasPorAno[i].mora | number:'1.2-2')"
-                                                readonly>
-                                        </div>
-                                    </div>
-
-                                    <!-- FILA TOTALES GENERALES (Todas las cajas SIN BORDES) -->
-                                    <div
-                                        class="desglose-fila-unica bg-white p-2 border-top border-2 border-dark rounded-bottom mt-2">
-                                        <div class="desglose-label fw-bold text-dark text-nowrap">
-                                            TOTAL:
-                                        </div>
-
-                                        <!-- Suma Compensatorio (Sin Bordes) -->
-                                        <div class="input-group input-group-sm desglose-input-group">
-                                            <input type="text"
-                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
-                                                style="text-align: right !important;"
-                                                [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalInteresAnos | number:'1.2-2')"
-                                                readonly>
-                                        </div>
-
-                                        <!-- Suma Moratorio (Sin Bordes) -->
-                                        <div class="input-group input-group-sm desglose-input-group">
-                                            <input type="text"
-                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
-                                                style="text-align: right !important;"
-                                                [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalMoraAnos | number:'1.2-2')"
-                                                readonly>
-                                        </div>
-
-                                        <!-- Total Acumulado (Sin Bordes) -->
-                                        <div class="input-group input-group-sm desglose-input-group">
-                                            <input type="text"
-                                                class="form-control text-end fw-bold text-dark pe-2 input-sin-borde"
-                                                style="text-align: right !important;"
-                                                [value]="((moneda === '1' || moneda === 'S') ? 'S/.' : '$') + ' ' + (totalMoraAnos + totalInteresAnos | number:'1.2-2')"
-                                                readonly>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Mensaje sin datos -->
-                                <div *ngIf="deudasPorAno.length === 0"
-                                    class="alert alert-light text-center py-2 text-muted mb-0">
-                                    No hay registros de intereses devengados por año para mostrar.
-                                </div>
-
                             </div>
-                        </div>
 
-                        <!-- COLUMNA DERECHA: TARJETA DE TOTALES -->
-                        <div class="modal-grid-col">
-                            <div class="p-3 border rounded shadow-sm bg-dark text-white h-100"
-                                style="display: flex !important; flex-direction: column !important; justify-content: center !important;">
+                            <!-- COLUMNA DERECHA: TARJETA DE TOTALES -->
+                            <div class="modal-grid-col">
+                                <div class="p-3 border rounded shadow-sm bg-dark text-white h-100"
+                                    style="display: flex !important; flex-direction: column !important; justify-content: center !important;">
 
-                                <h6
-                                    class="text-uppercase fw-bold text-warning border-bottom border-secondary pb-2 mb-3 fs-6">
-                                    📊 SALDO DEUDOR AL {{ fechaCalculo | date:'dd/MM/yyyy':'UTC' }}
-                                </h6>
+                                    <h6
+                                        class="text-uppercase fw-bold text-warning border-bottom border-secondary pb-2 mb-3 fs-6">
+                                        📊 SALDO DEUDOR AL {{ fechaCalculo | date:'dd/MM/yyyy':'UTC' }}
+                                    </h6>
 
-                                <div class="mb-3"
-                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">SLD.
-                                        CAPITAL:</span>
-                                    <span class="fs-5 fw-bold text-warning"
-                                        style="white-space: nowrap; text-align: right !important;">
-                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ saldoCapitalMo |
-                                        number:'1.2-2' }}
-                                    </span>
-                                </div>
+                                    <div class="mb-3"
+                                        style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                        <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">SLD.
+                                            CAPITAL:</span>
+                                        <span class="fs-5 fw-bold text-warning"
+                                            style="white-space: nowrap; text-align: right !important;">
+                                            {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ saldoCapitalMo |
+                                            number:'1.2-2' }}
+                                        </span>
+                                    </div>
 
-                                <div class="mb-3"
-                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. Int.
-                                        Compensatorio:</span>
-                                    <span class="fs-5 fw-bold text-warning"
-                                        style="white-space: nowrap; text-align: right !important;">
-                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalInteresAnos |
-                                        number:'1.2-2' }}
-                                    </span>
-                                </div>
+                                    <div class="mb-3"
+                                        style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                        <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. Int.
+                                            Compensatorio:</span>
+                                        <span class="fs-5 fw-bold text-warning"
+                                            style="white-space: nowrap; text-align: right !important;">
+                                            {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalInteresAnos |
+                                            number:'1.2-2' }}
+                                        </span>
+                                    </div>
 
-                                <div class="mb-3"
-                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. Int.
-                                        Moratorio:</span>
-                                    <span class="fs-5 fw-bold text-warning"
-                                        style="white-space: nowrap; text-align: right !important;">
-                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalMoraAnos |
-                                        number:'1.2-2' }}
-                                    </span>
-                                </div>
+                                    <div class="mb-3"
+                                        style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                        <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">T. Int.
+                                            Moratorio:</span>
+                                        <span class="fs-5 fw-bold text-warning"
+                                            style="white-space: nowrap; text-align: right !important;">
+                                            {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalMoraAnos |
+                                            number:'1.2-2' }}
+                                        </span>
+                                    </div>
 
-                                <div class="pt-2 border-top border-secondary"
-                                    style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
-                                    <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">TOT.
-                                        GENERAL:</span>
-                                    <span class="fs-4 fw-bold text-success"
-                                        style="white-space: nowrap; text-align: right !important;">
-                                        {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalGeneralAnos |
-                                        number:'1.2-2' }}
-                                    </span>
+                                    <div class="pt-2 border-top border-secondary"
+                                        style="display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important;">
+                                        <span class="fs-6 text-light fw-bold" style="white-space: nowrap;">TOT.
+                                            GENERAL:</span>
+                                        <span class="fs-4 fw-bold text-success"
+                                            style="white-space: nowrap; text-align: right !important;">
+                                            {{ (moneda === '1' || moneda === 'S') ? 'S/.' : '$' }} {{ totalGeneralAnos |
+                                            number:'1.2-2' }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
+
             </div>
 
             <!-- Pie del Modal -->

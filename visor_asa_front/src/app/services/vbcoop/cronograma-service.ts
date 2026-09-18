@@ -12,7 +12,7 @@ export class CronogramaService {
   constructor(private http: HttpClient,
     private periodoEstadoService: PeriodoEstadoService) { }
 
-  obtenerCronograma(idpagare: string, fecha: string): Observable<any[]> {
+  obtenerCronograma(idpagare: string, fecha: string, tcompensatorio: number, tmoratorio: number): Observable<any[]> {
     const token = localStorage.getItem('access_token') || localStorage.getItem('token');
     const periodoInfo = this.periodoEstadoService.periodoActual;
 
@@ -26,8 +26,9 @@ export class CronogramaService {
       headers = headers.set('x-tipo-cambio', periodoInfo.tc ? periodoInfo.tc.toString() : '0');
     }
 
-    const params = new HttpParams().set('fecha', fecha);
-
+    let params = new HttpParams().set('fecha', fecha);
+    params = params.set('tcompensatorio', tcompensatorio);
+    params = params.set('tmoratorio', tmoratorio);
     // 2. 🟢 Pasamos AMBOS objetos ({ headers, params }) en la opción del GET
     return this.http.get<any[]>(`${this.apiUrl}/${idpagare}/cronograma`, { headers, params });
   }

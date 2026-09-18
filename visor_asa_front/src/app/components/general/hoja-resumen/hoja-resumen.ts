@@ -46,6 +46,8 @@ export class HojaResumen implements OnInit {
   moneda: string = '';
   excluirCancelados = true;
   fechaCalculo: string = new Date().toISOString().substring(0, 10);
+  teaCompensatoria: number = 0;
+  teaMoratoria: number = 0;
   pagareActual: string = '';
 
   productosAgrupados: { tipo: string, lista: any[] }[] = [];
@@ -222,12 +224,13 @@ export class HojaResumen implements OnInit {
     const params = new HttpParams().set('fecha', fechaConsulta);
 
     // // Llamada al endpoint de NestJS
-    this.cronogramaService.obtenerCronograma(idpagare, fechaConsulta).subscribe({
+    this.cronogramaService.obtenerCronograma(idpagare, fechaConsulta, this.teaCompensatoria, this.teaMoratoria).subscribe({
       next: (data: any) => {
         this.cronogramaData = data;
         this.cargandoCronograma = false;
         this.cargarDeudasPorAno(data.deuda || []);
-
+        this.teaMoratoria = data.cabecera?.tmor;
+        this.teaCompensatoria = data.cabecera?.tea;
 
         this.cdRef.detectChanges();
       },

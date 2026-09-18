@@ -677,7 +677,37 @@ button:has(> i.bi-chevron-right),
 }
 
 
-
 /* ==========================================================================
-   SOPORTE DE IMPRESIÓN GLOBAL (Agregar al final de styles.css)
+   ESTILOS GLOBALES PARA NG-SELECT FLOTANTE (REGLA DE SOBREPOSICIÓN)
    ========================================================================== */
+
+/* 1. Forzar que el menú sea una capa flotante absoluta por encima del modal */
+body>.ng-dropdown-panel,
+.ng-dropdown-panel {
+    position: absolute !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 4px !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+    z-index: 3000 !important;
+    /* Capa por encima de modales (z-index modal: 2000) */
+}
+
+/* 2. Asignar fondo blanco e impedir transparencias en las opciones */
+.ng-dropdown-panel .ng-dropdown-panel-items {
+    background-color: #ffffff !important;
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    background-color: #ffffff !important;
+    color: #2c3e50 !important;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* 3. Estilos de Selección u Hover sobre la lista de socios */
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked,
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option:hover {
+    background-color: #e2e8f0 !important;
+    color: #1e293b !important;
+}

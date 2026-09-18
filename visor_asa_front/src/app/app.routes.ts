@@ -29,6 +29,7 @@ import { RegistroPago } from './components/vbcoop/registro-pago/registro-pago';
 import { Cronograma } from './components/vbcoop/cronograma/cronograma';
 import { HojaResumen } from './components/general/hoja-resumen/hoja-resumen';
 import { TipoGastos } from './components/configuracion/tipo-gastos/tipo-gastos';
+import { RegistroGastos } from './components/vbcoop/registro-gastos/registro-gastos';
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },
@@ -89,6 +90,7 @@ export const routes: Routes = [
             { path: 'hoja-resumen/:idsocio', component: HojaResumen },
             { path: 'seguimiento-nuevo/:idsocio', component: Seguimiento },
             { path: 'registro-pago', component: RegistroPago },
+            { path: 'registro-gastos', component: RegistroGastos },
             { path: '', redirectTo: 'inicio', pathMatch: 'full' }
         ]
     },

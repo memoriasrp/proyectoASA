@@ -12,12 +12,13 @@ export class CronogramaController {
   async getCronograma(
     @Param('idpagare') idpagare: string,
     @Query('fecha') fecha?: string,
+    @Query('tcompensatorio') tcompensatorio?: number,
+    @Query('tmoratorio') tmoratorio?: number,
     @GetPeriodo() periodo?: string,
     @GetTipoCambio() tc?: number
   ) {
     try {
-      console.log(`Generando cronograma para idpagare: ${idpagare}, fecha: ${fecha}, periodo: ${periodo}, tipo de cambio: ${tc}`);
-      return await this.cronogramaService.generarCronograma(idpagare, fecha, periodo, tc);
+      return await this.cronogramaService.generarCronograma(idpagare, fecha, periodo, tc, tcompensatorio, tmoratorio);
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Console } from 'console';
 
 
 export interface CuotaCronograma {
@@ -27,7 +28,8 @@ export class CronogramaService {
 
     constructor(private prisma: PrismaService) { }
 
-    async generarCronograma(idpagare: string, fechaConsultaStr?: string, periodo?: string, tc?: number) {
+    async generarCronograma(idpagare: string, fechaConsultaStr?: string, periodo?: string,
+        tc?: number, tcompensatorio?: number, tmoratorio?: number) {
         const fechaConsulta = fechaConsultaStr ? new Date(fechaConsultaStr) : new Date();
 
         const pagare = await this.prisma.pagares.findFirst({
@@ -111,11 +113,22 @@ export class CronogramaService {
             ...datosPlan,
             capitalPagado,
         });
-        const tea = Number((((Math.pow(1 + (datosPlan.tasa / 100), 12) - 1) * 100)).toFixed(2));
-        const tasaMora = Number(cartera?.formptmo?.mora ?? 3.3);
+        let tea = Number(tcompensatorio || 0);
+        if (tea == 0)
+
+            tea = Number((((Math.pow(1 + (datosPlan.tasa / 100), 12) - 1) * 100)).toFixed(2));
+
+
+
+        let tasaMora = Number(cartera?.formptmo?.mora ?? 3.3);
 
         // 2. Aplicar la fórmula con los paréntesis del Math.pow correctamente ubicados
-        const tmor = (((Math.pow(1 + (tasaMora / 100), 12)) - 1) * 100).toFixed(2);
+        let tmor = Number(tmoratorio || 0);
+        if (tmor === 0) {
+            const tasaCalculada = ((Math.pow(1 + (tasaMora / 100), 12) - 1) * 100);
+            tmor = Number(tasaCalculada.toFixed(2)); // 🟢 Convertido a 'number'
+        }
+        console.log("la ta" + tcompensatorio + " y la tea es " + tea);
 
         const deuda = this.calcularInteresPorAnos(fechaUltimoAbono, fechaConsulta, datosPlan.importe - capitalPagado, tea, 40);
         return {
@@ -132,7 +145,7 @@ export class CronogramaService {
                 fechaUltimoAbono: fechaUltimoAbono,
                 tea: tea,
                 tem: datosPlan.tasa,
-                tmor: 40,// Number(tmor),
+                tmor: Number(tmor),
                 descripcionProducto: cartera?.descri,
                 ndocumento: cartera?.numdoc,
                 fechaDes: cartera?.fechades,
@@ -320,7 +333,6 @@ export class CronogramaService {
                 // Diferencia exacta en días
                 const diffTime = finRango.getTime() - inicioRango.getTime();
                 const dias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                console.log(`Diferencia en días: ${dias}`);
 
                 if (dias > 0) {
                     console.log("la mora es" + tmor + "la tasa mor " + tasaMor + "la tasa mensual es " + tasaMensual + "la tasa diaria es " + tasaDia);
