@@ -1,47 +1,36 @@
 import { IsNotEmpty, IsNumber, IsString, IsOptional, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
-
 export class CreateRegistrogastoDto {
-    @IsOptional()
-    @IsString()
-    idsocio?: string;
+
+    @IsNotEmpty({ message: 'El socio es obligatorio' })
+    idsocio: string;
 
     @IsNotEmpty()
-    @IsNumber()
     @Type(() => Number)
+    @IsNumber()
     idtipogasto: number;
 
-    @IsOptional()
-    @IsDate()
-    @Type(() => Date)
-    fecha?: Date;
-
-    @IsNotEmpty()
-    @IsNumber()
+    @IsNotEmpty({ message: 'El monto pactado es obligatorio' })
     @Type(() => Number)
+    @IsNumber({}, { message: 'montopactado debe ser un número' })
     montopactado: number;
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsNotEmpty({ message: 'El monto pagado es obligatorio' })
     @Type(() => Number)
+    @IsNumber({}, { message: 'montopagado debe ser un número' })
     montopagado: number;
 
-    @IsOptional()
-    @IsDate()
-    @Type(() => Date)
-    fechapago?: Date;
-
-    @IsNotEmpty()
+    @IsNotEmpty({ message: 'El detalle es obligatorio' })
     @IsString()
     detalle: string;
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsNotEmpty({ message: 'El detalle es obligatorio' })
     @Type(() => Number)
-    idusuariocreacion: number;
+    @IsNumber()
+    idusuariocreacion?: number;
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsOptional()
     @Type(() => Number)
-    idusuariopago: number;
+    @IsNumber()
+    idusuariopago?: number;
 }

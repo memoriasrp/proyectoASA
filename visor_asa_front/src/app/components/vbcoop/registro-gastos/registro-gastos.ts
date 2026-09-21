@@ -47,7 +47,8 @@ export class RegistroGastos implements OnInit {
     idtipogasto: null,
     montopactado: null,
     fecha: new Date().toISOString().substring(0, 10),
-    observacion: ''
+    observacion: '',
+    montopagado: 0
   };
 
   // Variables para la Búsqueda Integrada con ng-select
@@ -139,8 +140,11 @@ export class RegistroGastos implements OnInit {
   }
 
   cerrarModalNuevoGasto(): void {
+
     this.mostrarModalGasto = false;
     this.limpiarFormularioGasto();
+    this.ejecutarBusqueda();
+    this.cdr.detectChanges();
   }
 
   limpiarFormularioGasto(): void {
@@ -149,25 +153,35 @@ export class RegistroGastos implements OnInit {
       idtipogasto: null,
       montopactado: null,
       fecha: new Date().toISOString().substring(0, 10),
-      observacion: ''
+      observacion: '',
+      montopagado: 0
     };
   }
 
   guardarGasto(): void {
-    console.log("insi");
-    console.log(this.nuevoGasto);
-
     if (!this.nuevoGasto.idsocio || !this.nuevoGasto.idtipogasto || !this.nuevoGasto.montopactado) {
+      alert('Debe ingresar todos los campos.');
       return;
     }
-    console.log(this.nuevoGasto);
-    // this.gastosService.registrarGasto(this.nuevoGasto).subscribe({
-    //   next: () => {
-    //     this.cerrarModalNuevoGasto();
-    //     this.ejecutarBusqueda(); // Recarga la tabla de la vista principal
-    //   },
-    //   error: (err) => console.error('Error al registrar gasto:', err)
-    // });
+    const payload = {
+      idsocio: this.nuevoGasto.idsocio,
+      idtipogastos: Number(this.nuevoGasto.idtipogasto),
+      montopactado: Number(this.nuevoGasto.montopactado || 0),
+      montopagado: Number(this.nuevoGasto.montopagado || 0),
+      detalle: this.nuevoGasto.observacion
+    };
+
+    this.registroGastosService.registrarGasto(payload).subscribe({
+      next: (res) => {
+        alert('Gasto registrado con éxito.');
+        this.cerrarModalNuevoGasto();
+      },
+      error: (err) => {
+        console.error('Error del servidor:', err);
+        alert('Error al guardar el registro.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 }
 

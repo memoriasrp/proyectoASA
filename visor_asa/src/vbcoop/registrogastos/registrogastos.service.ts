@@ -114,20 +114,15 @@ export class RegistrogastosService {
       },
     };
   }
-  async create(createRegistrogastoDto: CreateRegistrogastoDto) {
+  async create(createRegistrogastoDto: CreateRegistrogastoDto, idUsuarioReal: number) {
+    createRegistrogastoDto.montopagado = 0;
+    const { idTipoGastos, idusuariocreacion, ...restoDto } = createRegistrogastoDto as any;
     return await this.prisma.registrogastos.create({
-      data: createRegistrogastoDto,
-      include: {
-        socios: {
-          select: {
-            idsocio: true,
-            nombres: true,
-            paterno: true,
-            materno: true,
-            numdoc: true,
-          },
-        },
-        tipogastos: true,
+      data: {
+        ...restoDto,
+        idtipogasto: Number(idTipoGastos || createRegistrogastoDto['idtipogasto']),
+        montopagado: 0,
+        idusuariocreacion: idUsuarioReal || 1,
       },
     });
   }

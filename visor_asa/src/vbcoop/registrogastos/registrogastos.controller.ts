@@ -4,6 +4,7 @@ import {
   Get, UploadedFile, ParseFilePipe, UseGuards,
   BadRequestException, NotFoundException, Res, Req, Patch
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { RegistrogastosService } from './registrogastos.service';
 import { CreateRegistrogastoDto } from './dto/create-registrogasto.dto';
 import { UpdateRegistrogastoDto } from './dto/update-registrogasto.dto';
@@ -15,10 +16,27 @@ export class RegistrogastosController {
   constructor(private readonly registrogastosService: RegistrogastosService) { }
 
   @Post()
-  create(@Body() createRegistrogastoDto: CreateRegistrogastoDto) {
-    return this.registrogastosService.create(createRegistrogastoDto);
+  create(
+    @Body() body: any,
+    @Req() req: Request
+  ) {
+    const usuario = (req as any).user;
+    const idUsuarioReal = usuario?.id || 1;
+    const createRegistrogastoDto: CreateRegistrogastoDto = {
+      idsocio: body.idsocio,
+      idtipogasto: Number(body.idtipogastos),
+      montopactado: Number(body.montopactado || 0),
+      montopagado: Number(body.montopagado || 0),
+      detalle: body.detalle || '',
+      idusuariocreacion: idUsuarioReal,
+      idusuariopago: Number(body.montopagado) > 0 ? idUsuarioReal : undefined,
+    };
+    return this.registrogastosService.create({
+      ...createRegistrogastoDto,
+      idusuariocreacion: idUsuarioReal,
+      idusuariopago: createRegistrogastoDto.montopagado > 0 ? idUsuarioReal : undefined,
+    }, idUsuarioReal);
   }
-
   @Get()
   findAll(@Query() filters: GetRegistroGastosFilterDto) {
     return this.registrogastosService.findAll(filters);

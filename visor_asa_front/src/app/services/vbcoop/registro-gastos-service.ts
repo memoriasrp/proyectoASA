@@ -30,4 +30,20 @@ export class RegistroGastosService {
   getListaSocios(): Observable<{ idsocio: string; descripcion: string }[]> {
     return this.http.get<{ idsocio: string; descripcion: string }[]>(this.apiUrl + '/socios', { headers: this.getHeaders() });
   }
+
+
+  registrarGasto(formData: any): Observable<any> {
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+
+    // 2. Crea las cabeceras e inyecta el "Bearer <token>"
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    console.log("entrnado al servicio");
+    console.log(formData);
+    console.log(headers);
+    return this.http.post<any>(this.apiUrl, formData, { headers: headers });
+  }
+
 }
