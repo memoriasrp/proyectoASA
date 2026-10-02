@@ -30,13 +30,15 @@ export class Seguimiento implements OnInit {
   archivoSeleccionado: File | null = null;
   cargando: boolean = false;
   archivosSeleccionados: File[] = [];
-
+  fecha: string = new Date().toLocaleDateString('sv-SE');
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private seguimientoHistorialService: SeguimientoHistorialService,
     private cdRef: ChangeDetectorRef
-  ) { }
+  ) {
+
+  }
 
   ngOnInit(): void {
     this.idsocio = this.route.snapshot.paramMap.get('idsocio') || '';
@@ -131,6 +133,7 @@ export class Seguimiento implements OnInit {
     formData.append('idsocio', this.idsocio);
     formData.append('detalle', this.detalle);
     formData.append('tipoproducto', this.tipoSeleccionado);
+    formData.append('fecha', this.fecha);
 
     const idUsuarioLogeado = localStorage.getItem('idusuario') || '1';
     formData.append('idusuario', idUsuarioLogeado);

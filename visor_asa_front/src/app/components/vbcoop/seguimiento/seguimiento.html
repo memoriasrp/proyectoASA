@@ -11,9 +11,15 @@
             <form (ngSubmit)="guardar()">
 
                 <div class="row mb-4 align-items-end" style="margin-bottom: 1.5rem;">
+                    <div class="col-md-3">
+                        <label class="label-estilizado">1.Fecha De Gestion</label>
+                        <input type="date" [(ngModel)]="fecha" name="fecha"
+                            style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; color: #2c3e50; font-size: 0.9rem; box-sizing: border-box;">
+
+                    </div>
 
                     <div class="col-md-3">
-                        <label class="label-estilizado">1. Categoría de Gestión</label>
+                        <label class="label-estilizado">2. Categoría de Gestión</label>
                         <select class="input-estilizado" [(ngModel)]="tipoSeleccionado" name="tipoProducto"
                             (change)="onTipoChange()">
                             <option *ngFor="let tipo of tiposUnicos" [value]="tipo">
@@ -23,7 +29,7 @@
                     </div>
 
                     <div class="col-md-9">
-                        <label class="label-estilizado">2. Vincular a Cuenta / Documento</label>
+                        <label class="label-estilizado">3. Vincular a Cuenta / Documento</label>
                         <select class="input-estilizado" [(ngModel)]="cuentaSeleccionada" name="cuentaProducto"
                             [disabled]="tipoSeleccionado === 'GENERAL'">
 

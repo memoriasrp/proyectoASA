@@ -56,6 +56,7 @@ export class SeguimientoController {
             tipoproducto: body.tipoproducto ? body.tipoproducto.trim().toUpperCase() : 'GENERAL',
             idproducto: body.idproducto ? body.idproducto.trim() : '',
             detalle: body.detalle,
+            fecha: body.fecha,
             idusuario: idUsuarioReal,
             files: files || []
         });

@@ -6,5 +6,6 @@ export interface CrearSeguimientoDto {
     idproducto: string;
     detalle: string;
     idusuario: number;
+    fecha: Date;
     files: Array<Express.Multer.File>;
 }
