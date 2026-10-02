@@ -21,7 +21,7 @@ export class SeguimientoService {
                         idproducto: dto.idproducto || null,
                         detalle: dto.detalle,
                         idusuario: dto.idusuario,
-                        fecha: dto.fecha,
+                        fecha: dto.fecha ? new Date(`${dto.fecha}T12:00:00Z`) : new Date(),
                     },
                 });
                 // 2. Insertar los adjuntos si existen
