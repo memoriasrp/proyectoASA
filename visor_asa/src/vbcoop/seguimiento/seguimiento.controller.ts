@@ -50,10 +50,8 @@ export class SeguimientoController {
             throw new BadRequestException('El código de socio y el detalle son obligatorios.');
         }
         const usuario = req.user as any;
-        console.log(usuario);
         const idUsuarioReal = usuario?.id || 1; // Si no viene, por defecto usa 1 (aquí es donde se puede estar quedando trabado)s
 
-        console.log("usuarui" + idUsuarioReal);
         return this.seguimientoService.crearSeguimientoConAdjuntos({
             idsocio: body.idsocio.trim(),
             tipoproducto: body.tipoproducto ? body.tipoproducto.trim().toUpperCase() : 'GENERAL',
