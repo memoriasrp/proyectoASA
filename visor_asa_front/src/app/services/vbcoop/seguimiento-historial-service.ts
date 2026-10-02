@@ -23,7 +23,7 @@ export class SeguimientoHistorialService {
   guardarSeguimiento(formData: FormData): Observable<any> {
     // Angular deduce automáticamente el 'Content-Type': 'multipart/form-data' al pasarle un FormData
     const token = localStorage.getItem('access_token') || localStorage.getItem('token');
-
+    console.log(token);
     // 2. Crea las cabeceras e inyecta el "Bearer <token>"
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
