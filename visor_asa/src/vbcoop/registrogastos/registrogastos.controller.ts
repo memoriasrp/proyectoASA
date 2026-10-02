@@ -1,5 +1,5 @@
 import {
-  Controller, Post, Body, Query, Delete,
+  Controller, Post, Body, Query, Delete, Put,
   UseInterceptors, UploadedFiles, Param,
   Get, UploadedFile, ParseFilePipe, UseGuards,
   BadRequestException, NotFoundException, Res, Req, Patch
@@ -30,6 +30,7 @@ export class RegistrogastosController {
       detalle: body.detalle || '',
       idusuariocreacion: idUsuarioReal,
       idusuariopago: Number(body.montopagado) > 0 ? idUsuarioReal : undefined,
+      fecha: body.fecha ? new Date(body.fecha) : new Date(),
     };
     return this.registrogastosService.create({
       ...createRegistrogastoDto,
@@ -52,13 +53,13 @@ export class RegistrogastosController {
     return this.registrogastosService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRegistrogastoDto: UpdateRegistrogastoDto) {
-    return this.registrogastosService.update(+id, updateRegistrogastoDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() updateRegistrogastoDto: UpdateRegistrogastoDto) {
+    return this.registrogastosService.update(id, updateRegistrogastoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.registrogastosService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.registrogastosService.remove(id);
   }
 }

@@ -21,6 +21,7 @@ export class CateraPrestamosService {
   getCarteraPrestamosPaginados(
     page: number, limit: number, search?: string, moneda?: string, producto?: string, periodo?: string,
     condicion?: string, grupos?: string[] | null): Observable<any> {
+    console.log(periodo);
     let params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
     if (search) params = params.set('search', search);
     if (moneda) params = params.set('moneda', moneda);

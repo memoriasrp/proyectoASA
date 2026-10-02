@@ -65,6 +65,7 @@ export class CarteraprestamosService {
         const limit = Number(filters.limit) || 20;
         const skip = (page - 1) * limit;
 
+        console.log(filters);
         // (search, producto, desde, hasta, moneda)
         const where = this.buildWhereCondition(
             filters.search,

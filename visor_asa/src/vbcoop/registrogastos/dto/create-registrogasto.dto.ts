@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, IsOptional, IsDate } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsOptional, IsDate, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 export class CreateRegistrogastoDto {
 
@@ -33,4 +33,9 @@ export class CreateRegistrogastoDto {
     @Type(() => Number)
     @IsNumber()
     idusuariopago?: number;
+
+    @IsNotEmpty({ message: 'La fecha es obligatoria' })
+    @Type(() => Date) // 🟢 Convierte la cadena "2025-02-21" recibida en un objeto Date
+    @IsDate()
+    fecha?: Date;
 }

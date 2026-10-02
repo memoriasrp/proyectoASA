@@ -239,19 +239,6 @@
                             name="idnumoperacion"
                             style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; font-size: 0.9rem; box-sizing: border-box;">
                     </div>
-
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
-                        <label style="font-size: 0.85rem; font-weight: bold; color: #34495e;">Cuota maxima a
-                            abonar:</label>
-                        <select [(ngModel)]="cuotaSeleccionada" name="cuotaSeleccionada"
-                            style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; color: #2c3e50; font-size: 0.9rem; box-sizing: border-box;">
-                            <option [ngValue]="null" disabled>-- Seleccione --</option>
-                            <option *ngFor="let cuota of cuotasPendientes" [value]="cuota">
-                                Cuota {{ cuota }}
-                            </option>
-                        </select>
-                    </div>
-
                 </div>
 
                 <!-- FILA 2: Capital, Interés, Mora, Seguro y Aporte (Forzado en Flex Horizontal) -->

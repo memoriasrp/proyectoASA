@@ -154,7 +154,7 @@ export class RegistrogastosService {
   async update(id: number, updateRegistrogastoDto: UpdateRegistrogastoDto) {
     // Verificar primero la existencia del registro
     await this.findOne(id);
-
+    console.log(updateRegistrogastoDto);
     return await this.prisma.registrogastos.update({
       where: { id },
       data: updateRegistrogastoDto,

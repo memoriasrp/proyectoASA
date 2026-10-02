@@ -60,15 +60,19 @@ export class RegistroPago implements OnInit {
 
   ngOnInit(): void {
     this.cargarCombos();
-    this.ejecutarBusqueda();
   }
   cargarCombos(): void {
-    //    this.periodos$ = this.carteraPasivosService.getPeriodosDisponibles();
     this.carteraPrestamosService.getPeriodosDisponibles().subscribe({
-      next: (data) => {
-        this.listaPeriodos = data || [];
-        const periodoActivo = this.listaPeriodos.find(p => p.activo === true);
-        this.periodoSeleccionado = periodoActivo.periodo;
+      next: (res: any) => {
+        this.listaPeriodos = res?.periodos || [];
+        // Buscar el periodo activo
+        const periodoActivo = this.listaPeriodos.find(p => p.activo === true || p.activo === 1);
+        console.log(periodoActivo);
+        if (periodoActivo) {
+          this.periodoSeleccionado = periodoActivo.periodo;
+          console.log(this.periodoSeleccionado);
+        }
+        this.ejecutarBusqueda();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -77,6 +81,7 @@ export class RegistroPago implements OnInit {
     });
 
     this.condicionSeleccionado = 'VIGENTE';
+
   }
 
   ejecutarBusqueda(): void {
@@ -87,7 +92,8 @@ export class RegistroPago implements OnInit {
   cargarTabla(): void {
     this.loading = true;
     this.cdr.detectChanges();
-
+    console.log(this.periodoSeleccionado);
+    console.log("este es el this " + this.periodo);
     this.carteraPrestamosService.getCarteraPrestamosPaginados(
       this.currentPage,
       20,
@@ -98,7 +104,6 @@ export class RegistroPago implements OnInit {
       this.condicionSeleccionado
     ).subscribe({
       next: (res: any) => {
-        // 🟢 DETECCION FLEXIBLE: Si 'res' es directamente el array o viene en 'res.data'
         const dataCruda = Array.isArray(res) ? res : (res.data || []);
 
         this.carteraPrestamos = dataCruda.map((item: any) => {
@@ -156,11 +161,16 @@ export class RegistroPago implements OnInit {
 
   abrirModalPago(item: any) {
     this.pagareSeleccionado = item;
+    this.traerGastosPendientes(item.idsocio);
     this.generarCuotasPendientes();
     this.mostrarModal = true;
     this.cdr.detectChanges();
   }
 
+
+  traerGastosPendientes(idsocio: number): void {
+    console.log(idsocio);
+  }
   generarCuotasPendientes(): void {
     this.cuotasPendientes = [];
     const cuotasPagadas = parseInt(this.pagareSeleccionado?.cuotas_pagadas, 10) || 0;
@@ -171,11 +181,9 @@ export class RegistroPago implements OnInit {
     if (this.cuotasPendientes.length === 0) {
       this.cuotasPendientes.push(cuotasPagadas);
     }
-
+    this.cuotaSeleccionada = this.pagareSeleccionado.plazo;
     // Opcional: preseleccionar la primera cuota pendiente (ej. Cuota 51)
-    if (this.cuotasPendientes.length > 0) {
-      this.cuotaSeleccionada = this.cuotasPendientes[0];
-    }
+
 
   }
 

@@ -40,10 +40,27 @@ export class RegistroGastosService {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    console.log("entrnado al servicio");
-    console.log(formData);
-    console.log(headers);
     return this.http.post<any>(this.apiUrl, formData, { headers: headers });
   }
 
+  updateGasto(id: number, formData: any): Observable<any> {
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+
+    // 2. Crea las cabeceras e inyecta el "Bearer <token>"
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.put(`${this.apiUrl}/${id}`, formData, { headers: this.getHeaders() });
+  }
+
+  deleteGasto(id: number): Observable<any> {
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.delete<any>(this.apiUrl + `/${id}`, { headers });
+  }
 }
+
+

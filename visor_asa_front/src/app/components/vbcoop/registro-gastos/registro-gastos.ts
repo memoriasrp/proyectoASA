@@ -33,22 +33,30 @@ export class RegistroGastos implements OnInit {
   fechaDesde: string = '';
   fechaHasta: string = '';
 
+  nombreSocio: string = '';
+  nombreGasto: string = '';
+
   busquedaRealizada: boolean = false;
   loading: boolean = false;
+  editar: boolean = false;
 
   tipoGastos$!: Observable<TipoGasto[]>;
 
   // Control de Modal
   mostrarModalGasto: boolean = false;
+  mostrarModalPagoGasto: boolean = false;
 
   // Modelo del formulario de nuevo gasto
   nuevoGasto = {
+    id: 0,
     idsocio: null,
     idtipogasto: null,
     montopactado: null,
     fecha: new Date().toISOString().substring(0, 10),
     observacion: '',
-    montopagado: 0
+    montopagado: 0,
+    fechaPago: new Date().toISOString().substring(0, 10),
+
   };
 
   // Variables para la Búsqueda Integrada con ng-select
@@ -135,26 +143,74 @@ export class RegistroGastos implements OnInit {
 
   // Métodos de control del Modal
   abrirModalNuevoGasto(): void {
+    this.editar = false;
     this.limpiarFormularioGasto();
     this.mostrarModalGasto = true;
   }
 
-  cerrarModalNuevoGasto(): void {
+  obtenerNombreSocioObservable(idBuscado: string): Observable<string> {
+    return this.listaSocios$.pipe(
+      map((lista: any[]) => {
+        const socio = lista.find(item => item.idsocio === idBuscado);
+        if (!socio) return 'Socio no encontrado';
 
+        return socio.descripcion;
+      })
+    );
+  }
+
+  pagarRegistro(registro: any): void {
+    this.obtenerNombreSocioObservable(registro.idsocio).subscribe(nombre => {
+      this.nombreSocio = nombre;
+    });
+    this.nombreGasto = registro.tipogastos.descripcion;
+
+    this.mostrarModalPagoGasto = true;
+    this.nuevoGasto.idsocio = registro.idsocio;
+    this.nuevoGasto.idtipogasto = registro.idtipogasto;
+    this.nuevoGasto.montopactado = registro.montopactado;
+    this.nuevoGasto.montopagado = registro.montopagado;
+    this.nuevoGasto.id = registro.id;
+    if (registro.fecha) {
+      // Convertimos a objeto Date y extraemos el formato 'YYYY-MM-DD'
+      const dateObj = new Date(registro.fecha);
+      this.nuevoGasto.fecha = dateObj.toISOString().split('T')[0];
+    } else {
+      this.nuevoGasto.fecha = '';
+    }
+    this.nuevoGasto.observacion = registro.detalle;
+    if (registro.fechaPago) {
+      const dateObj = new Date(registro.fechapago);
+      this.nuevoGasto.fechaPago = dateObj.toISOString().split('T')[0];
+    } else {
+      // Fecha actual por defecto
+      const hoy = new Date();
+      this.nuevoGasto.fechaPago = hoy.toISOString().split('T')[0];
+    }
+
+  }
+  cerrarModalNuevoGasto(): void {
     this.mostrarModalGasto = false;
     this.limpiarFormularioGasto();
     this.ejecutarBusqueda();
     this.cdr.detectChanges();
   }
 
+  CancelarPagoGasto(): void {
+    this.mostrarModalPagoGasto = false;
+    this.ejecutarBusqueda();
+    this.cdr.detectChanges();
+  }
   limpiarFormularioGasto(): void {
     this.nuevoGasto = {
+      id: 0,
       idsocio: null,
       idtipogasto: null,
       montopactado: null,
       fecha: new Date().toISOString().substring(0, 10),
       observacion: '',
-      montopagado: 0
+      montopagado: 0,
+      fechaPago: new Date().toISOString().substring(0, 10),
     };
   }
 
@@ -168,20 +224,73 @@ export class RegistroGastos implements OnInit {
       idtipogastos: Number(this.nuevoGasto.idtipogasto),
       montopactado: Number(this.nuevoGasto.montopactado || 0),
       montopagado: Number(this.nuevoGasto.montopagado || 0),
-      detalle: this.nuevoGasto.observacion
-    };
+      detalle: this.nuevoGasto.observacion,
+      fecha: this.nuevoGasto.fecha
 
-    this.registroGastosService.registrarGasto(payload).subscribe({
-      next: (res) => {
-        alert('Gasto registrado con éxito.');
-        this.cerrarModalNuevoGasto();
-      },
-      error: (err) => {
-        console.error('Error del servidor:', err);
-        alert('Error al guardar el registro.');
-        this.cdr.detectChanges();
-      }
-    });
+    };
+    if (!this.editar)
+      this.registroGastosService.registrarGasto(payload).subscribe({
+        next: (res) => {
+          alert('Gasto registrado con éxito.');
+          this.cerrarModalNuevoGasto();
+        },
+        error: (err) => {
+          console.error('Error del servidor:', err);
+          alert('Error al guardar el registro.');
+          this.cdr.detectChanges();
+        }
+      });
+    else {
+      this.registroGastosService.updateGasto(this.nuevoGasto.id, payload).subscribe({
+        next: (res) => {
+          alert('Gasto registrado con éxito.');
+          this.cerrarModalNuevoGasto();
+        },
+        error: (err) => {
+          console.error('Error del servidor:', err);
+          alert('Error al guardar el registro.');
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  editarRegistro(registro: any): void {
+    this.editar = true;
+    this.nuevoGasto.idsocio = registro.idsocio;
+    this.nuevoGasto.idtipogasto = registro.idtipogasto;
+    this.nuevoGasto.montopactado = registro.montopactado;
+    this.nuevoGasto.montopagado = registro.montopagado;
+    this.nuevoGasto.id = registro.id;
+    if (registro.fecha) {
+      // Convertimos a objeto Date y extraemos el formato 'YYYY-MM-DD'
+      const dateObj = new Date(registro.fecha);
+      this.nuevoGasto.fecha = dateObj.toISOString().split('T')[0];
+    } else {
+      this.nuevoGasto.fecha = '';
+    }
+    this.nuevoGasto.observacion = registro.detalle;
+    this.mostrarModalGasto = true;
+  }
+
+  eliminarRegistro(idRegistro: number) {
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario de manera permanente?')) {
+
+      this.registroGastosService.deleteGasto(idRegistro).subscribe({
+        next: (response) => {
+          console.log('Usuario eliminado con éxito del sistema', response);
+
+
+          this.ejecutarBusqueda();
+        },
+        error: (err) => {
+          console.error('Error al intentar eliminar el gasto:', err);
+          alert('Hubo un error en el servidor. No se pudo eliminar el registro.');
+        }
+      });
+
+    }
+
   }
 }
 
