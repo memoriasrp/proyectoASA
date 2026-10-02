@@ -21,7 +21,6 @@ export class CateraPrestamosService {
   getCarteraPrestamosPaginados(
     page: number, limit: number, search?: string, moneda?: string, producto?: string, periodo?: string,
     condicion?: string, grupos?: string[] | null): Observable<any> {
-    console.log(periodo);
     let params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
     if (search) params = params.set('search', search);
     if (moneda) params = params.set('moneda', moneda);
@@ -45,11 +44,14 @@ export class CateraPrestamosService {
     if (grupos && grupos.length > 0) {
       params = params.set('grupos', grupos.join(','));
     }
-    console.log(params);
     return this.http.get<any[]>(`${this.apiUrl}/exportar`, { params });
   }
 
   getPeriodosDisponibles(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/periodos-disponibles`);
+  }
+
+  getGastos(idSocio: string): Observable<any> {
+    return this.http.get<any[]>(`${this.apiUrl}/${idSocio}/gastosSocio`);
   }
 }

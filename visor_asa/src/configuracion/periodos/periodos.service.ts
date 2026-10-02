@@ -110,8 +110,6 @@ export class PeriodosService {
         }
 
         console.log(`Recalculando periodo: ${periodo}`);
-
-        // 🟢 Configuración de la Transacción con Timeout Ampliado (60 segundos)
         return this.prisma.$transaction(
             [
                 // 1. Borra los pasivos de este periodo

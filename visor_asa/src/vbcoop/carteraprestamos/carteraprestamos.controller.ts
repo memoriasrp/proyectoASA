@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Param } from '@nestjs/common';
 import { CarteraprestamosService } from './carteraprestamos.service';
 import { GetCarteraprestamosFilterDto } from './dto/get-carteraprestamos-filter.dto';
 
@@ -16,7 +16,10 @@ export class CarteraprestamosController {
   findAll(@Query() filters: GetCarteraprestamosFilterDto) {
     return this.carteraprestamosService.findAll(filters);
   }
-
+  @Get(':id/gastosSocio')
+  findGastos(@Param('id') id: string) {
+    return this.carteraprestamosService.findGastos(id);
+  }
   @Get('periodos-disponibles')
   async getPeriodosDisponibles() {
     return await this.carteraprestamosService.obtenerPeriodos();

@@ -183,4 +183,22 @@ export class CarteraprestamosService {
             gruposDisponibles: gruposDisponibles
         };
     }
+
+    async findGastos(idSocio: string) {
+        return await this.prisma.registrogastos.findMany({
+            where: {
+                idsocio: idSocio,
+                montopagado: 0, // 🟢 Filtra donde el monto pagado es igual a 0
+            },
+            include: {
+                tipogastos: true,       // Incluye relación con Tipo de Gasto
+                socios: true,           // Incluye relación con Datos del Socio
+                usuarioCreacion: true,  // Incluye usuario que registró
+                usuarioPago: true,      // Incluye usuario que pagó
+            },
+            orderBy: {
+                fecha: 'desc', // Ordena los registros del más reciente al más antiguo
+            },
+        });
+    }
 }

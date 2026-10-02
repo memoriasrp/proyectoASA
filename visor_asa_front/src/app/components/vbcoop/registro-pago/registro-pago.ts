@@ -53,6 +53,10 @@ export class RegistroPago implements OnInit {
   fecha: string = '';
   idnumope: string = '';
 
+
+  gastosPendientes: any[] = [];
+  montoOtrosGastos: number = 0;
+
   constructor(private carteraPrestamosService: CateraPrestamosService,
     private movactivosService: MovactivosService,
     private cdr: ChangeDetectorRef) { }
@@ -92,8 +96,6 @@ export class RegistroPago implements OnInit {
   cargarTabla(): void {
     this.loading = true;
     this.cdr.detectChanges();
-    console.log(this.periodoSeleccionado);
-    console.log("este es el this " + this.periodo);
     this.carteraPrestamosService.getCarteraPrestamosPaginados(
       this.currentPage,
       20,
@@ -161,16 +163,40 @@ export class RegistroPago implements OnInit {
 
   abrirModalPago(item: any) {
     this.pagareSeleccionado = item;
-    this.traerGastosPendientes(item.idsocio);
+    this.obtenerGastosPendientes(item.idsocio);
     this.generarCuotasPendientes();
     this.mostrarModal = true;
     this.cdr.detectChanges();
   }
 
 
-  traerGastosPendientes(idsocio: number): void {
-    console.log(idsocio);
+  obtenerGastosPendientes(idsocio: string) {
+    this.carteraPrestamosService.getGastos(idsocio).subscribe({
+      next: (data: any[]) => {
+        // Agregamos la propiedad 'seleccionado' en true por defecto
+        this.gastosPendientes = (data || []).map(gasto => ({
+          ...gasto,
+          seleccionado: true
+        }));
+
+        // Calculamos la suma inicial
+        this.recalcularOtrosGastos();
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar gastos:', err)
+    });
   }
+
+  recalcularOtrosGastos() {
+    this.montoOtrosGastos = this.gastosPendientes
+      .filter(g => g.seleccionado)
+      .reduce((sum, g) => sum + Number(g.montopactado || 0), 0);
+
+
+  }
+
+
   generarCuotasPendientes(): void {
     this.cuotasPendientes = [];
     const cuotasPagadas = parseInt(this.pagareSeleccionado?.cuotas_pagadas, 10) || 0;
@@ -196,8 +222,8 @@ export class RegistroPago implements OnInit {
     const m = Number(this.mora) || 0;
     const s = Number(this.seguro) || 0;
     const a = Number(this.aporte) || 0;
-
-    return c + i + m + s + a;
+    const o = Number(this.montoOtrosGastos) || 0;
+    return c + i + m + s + a + o;
   }
 
   // Método opcional para validar/formatear a 2 decimales en el evento (blur)
@@ -219,13 +245,19 @@ export class RegistroPago implements OnInit {
     this.cdr.detectChanges();
     this.ejecutarBusqueda();
   }
+
   guardarSeguimiento() {
     if (!this.fecha || !this.idnumope || !this.cuotaSeleccionada) {
       alert('Por favor complete la Fecha, Número de Operación y la Cuota.');
       return;
     }
 
-    // 1. Mapeo del payload alineado a la tabla consolidado.movimientosprestamos
+    // 🟢 1. Filtrar los IDs de los gastos que están marcados con el checkbox
+    const idsGastosSeleccionados = this.gastosPendientes
+      .filter(gasto => gasto.seleccionado)
+      .map(gasto => gasto.id);
+
+    // 2. Mapeo del payload alineado a la tabla consolidado.movimientosprestamos
     const nuevoMovimiento = {
       // Claves y datos del Préstamo (extraídos del objeto seleccionado)
       idpagare: this.pagareSeleccionado?.idpagare,
@@ -247,21 +279,24 @@ export class RegistroPago implements OnInit {
       mora: Number(this.mora) || 0,
       seguro: Number(this.seguro) || 0,
       aporte: Number(this.aporte) || 0,
-      total: this.totalPagar,                        // Suma de los 5 conceptos
+      otrosgastos: Number(this.montoOtrosGastos) || 0, // 🟢 Suma acumulada de los gastos
+      total: this.totalPagar,                        // Suma de los 6 conceptos
       importe: this.totalPagar,                      // Mismo monto abonado
 
       // Auditoría y Operación
       operacion: 'DOC',
+      idusuario: localStorage.getItem('idusuario') || '1',
 
-      idusuario: localStorage.getItem('idusuario') || '1'
+      // 🟢 3. Enviar lista de IDs de los gastos asociados a este pago
+      gastosIds: idsGastosSeleccionados
+    };
 
-    }
-    // 2. Envío al servicio HTTP
+    // 4. Envío al servicio HTTP
     this.movactivosService.registrarMovimiento(nuevoMovimiento).subscribe({
       next: (res) => {
         alert('El pago se guardó correctamente.');
         this.cerrarModal();
-        // Opcional: Emitir evento para refrescar la tabla principal de préstamos
+        // Opcional: Refrescar tabla de préstamos o emitir evento
         // this.onPagoExitoso.emit();
       },
       error: (err) => {
