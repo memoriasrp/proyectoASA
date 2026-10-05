@@ -149,11 +149,16 @@ export class MovactivosService {
         return productos.map(p => p.descri);
     }
 
-    async registrar(dto: CreateMovimientoDto) {
-        const existe = await this.prisma.movimientosprestamos.findFirst({ where: { idpagare: dto.idpagare, nrocuota: 0, car_abo: 'C' } });
+    async registrar(dto: CreateMovimientoDto, idUsuarioReal: number) {
+        const existe = await this.prisma.movimientosprestamos.findFirst({
+            where: { idpagare: dto.idpagare, nrocuota: 0, car_abo: 'C' }
+        });
+
         if (!existe) {
             throw new NotFoundException(`No se encontró el cargo inicial (cuota 0) para el pagaré ${dto.idpagare}`);
         }
+
+        // Llenar campos heredados del cargo inicial
         dto.idsocio = existe?.idsocio ?? '';
         dto.nombre = existe?.nombre ?? '';
         dto.numdoc = existe?.numdoc ?? '';
@@ -175,90 +180,113 @@ export class MovactivosService {
         dto.castigada = existe?.castigada ? existe.castigada.toNumber() : 0;
         dto.castigo = existe?.castigo ? existe.castigo.toNumber() : 0;
 
-        const { fecha, fechades, f1, f2, ...restoDto } = dto;
-        //return await this.prisma.movimientosprestamos.create({ data: dto });
+        // Desestructurar propiedades auxiliares para no distorsionar el modelo
+        const { fecha, fechades, f1, f2, gastosIds, ...restoDto } = dto;
+
         return await this.prisma.$transaction(async (tx) => {
+
+            // 1. Insertar el nuevo movimiento de abono
             const nuevoMovimiento = await tx.movimientosprestamos.create({
                 data: {
                     ...restoDto,
                     fecha: new Date(dto.fecha),
-
-                    // Asegurarte de que el resto de fechas opcionales también sean Date o null/undefined
                     fechades: dto.fechades ? new Date(dto.fechades) : undefined,
                     f1: dto.f1 ? new Date(dto.f1) : undefined,
                     f2: dto.f2 ? new Date(dto.f2) : undefined,
                 },
             });
-            await tx.$executeRaw`
-                DELETE FROM consolidado.carteraxperiodo_prestamo
-                WHERE idsocio = ${dto.idsocio} 
-                AND idpagare = ${dto.idpagare} 
-                AND periodo IN (
-                    SELECT prd.periodo 
-                    FROM consolidado.calendario_periodos prd 
-                    WHERE fecha > ${dto.fecha}::date
-                );
-            `;
 
+            // 2. Actualizar la lista de gastos seleccionados (SI EXISTEN)
+            if (gastosIds && Array.isArray(gastosIds) && gastosIds.length > 0) {
+                await tx.$executeRaw`
+                UPDATE consolidado.registrogastos
+                SET nrodocumento = ${dto.idnumope},
+                    idmovimientosprestamos = ${nuevoMovimiento.id},
+                    fechapago = ${dto.fecha}::date,
+                    montopagado = montopactado,
+                    idusuariopago = ${idUsuarioReal}
+                WHERE id = ANY(${gastosIds}::int[]);
+            `;
+            }
+
+            // 3. Eliminar períodos posteriores a la fecha del pago
             await tx.$executeRaw`
-               insert into consolidado.carteraxperiodo_prestamo  
-                SELECT     c.periodo,	c.tc,    c.fecha AS fecha_corte,
+            DELETE FROM consolidado.carteraxperiodo_prestamo
+            WHERE idsocio = ${dto.idsocio} 
+              AND idpagare = ${dto.idpagare} 
+              AND periodo IN (
+                  SELECT prd.periodo 
+                  FROM consolidado.calendario_periodos prd 
+                  WHERE fecha > ${dto.fecha}::date
+              );
+        `;
+
+            // 4. Recalcular e insertar el historial de cartera
+            await tx.$executeRaw`
+            INSERT INTO consolidado.carteraxperiodo_prestamo  
+            SELECT    c.periodo,   c.tc,    c.fecha AS fecha_corte,
+                idpagare, idsocio, nombre, 
+                numdoc, descri, moneda, 
+                desembolso, plazo, tasa, 
+                fechades, cuotas_pagadas, totalmov, 
+                saldocapital AS saldocapitalmo, 
+                CASE WHEN moneda='D' THEN saldocapital*c.tc ELSE saldocapital END AS saldocapitalmn, 
+                pagointeres AS pagointeresmo,
+                CASE WHEN moneda='D' THEN pagointeres*c.tc ELSE pagointeres END AS pagointeresmn,
+                pagomora AS pagomoramo,
+                CASE WHEN moneda='D' THEN pagomora*c.tc ELSE pagomora END AS pagomoramn,
+                pagoseguro AS pagoseguromo,
+                CASE WHEN moneda='D' THEN pagoseguro*c.tc ELSE pagoseguro END AS pagoseguromn,
+                pagoaporte AS pagoaportemo,
+                CASE WHEN moneda='D' THEN pagoaporte*c.tc ELSE pagoaporte END AS pagoaportemn,
+                totalpago AS totalpagomo,
+                CASE WHEN moneda='D' THEN totalpago*c.tc ELSE totalpago END AS totalpagomn,
+                CASE WHEN saldocapital = 0 THEN 'CANCELADO' ELSE 'VIGENTE' END AS condicion,
+                fecultmovimiento
+            FROM consolidado.calendario_periodos c
+            CROSS JOIN LATERAL (
+                SELECT 
                     idpagare, idsocio, nombre, 
-                    numdoc, descri, moneda, 
-                    desembolso, plazo, tasa, 
-                    fechades, cuotas_pagadas, totalmov, 
-                    saldocapital as saldocapitalmo, 
-                    case when moneda='D' then saldocapital*c.tc else saldocapital end saldocapitalmn, 
-                    pagointeres as pagointeresmo,
-                    case when moneda='D' then pagointeres*c.tc else pagointeres end as pagointeresmn,
-                    pagomora as pagomoramo,
-                    case when moneda='D' then pagomora*c.tc else pagomora end  as pagomoramn,
-                    pagoseguro as pagoseguromo,
-                    case when moneda='D' then pagoseguro*c.tc else pagoseguro end as pagoseguromn,
-                    pagoaporte as pagoaportemo,
-                    case when moneda='D' then pagoaporte*c.tc  else pagoaporte end  as pagoaportemn,
-                    totalpago as totalpagomo,
-                    case when moneda='D' then totalpago*c.tc else totalpago end as totalpagomn,
-                    CASE WHEN saldocapital = 0 THEN 'CANCELADO' ELSE 'VIGENTE' END AS condicion,
-                    fecultmovimiento
-                FROM consolidado.calendario_periodos c
-                CROSS JOIN LATERAL (
-                    SELECT 
-                        idpagare, idsocio, nombre, 
-                        numdoc, descri, moneda, importe as desembolso, tasa, fechades,plazo,
-                        MAX(nrocuota) AS cuotas_pagadas, 
-                        COUNT(*) AS totalmov,
-                        SUM(CASE WHEN car_abo = 'C' THEN capital ELSE capital * (-1) END) AS saldoCapital, 
-                        SUM(interes) AS pagointeres, 
-                        SUM(mora) AS pagomora, 
-                        SUM(seguro) AS pagoseguro, 
-                        SUM(aporte) AS pagoaporte, 
-                        SUM(CASE WHEN car_abo = 'C' THEN total ELSE total * (-1) END) AS totalPago ,
-                        max(m.fecha) as fecultmovimiento
-                    FROM consolidado.movimientosprestamos M
+                    numdoc, descri, moneda, importe AS desembolso, tasa, fechades, plazo,
+                    MAX(nrocuota) AS cuotas_pagadas, 
+                    COUNT(*) AS totalmov,
+                    SUM(CASE WHEN car_abo = 'C' THEN capital ELSE capital * (-1) END) AS saldoCapital, 
+                    SUM(interes) AS pagointeres, 
+                    SUM(mora) AS pagomora, 
+                    SUM(seguro) AS pagoseguro, 
+                    SUM(aporte) AS pagoaporte, 
+                    SUM(CASE WHEN car_abo = 'C' THEN total ELSE total * (-1) END) AS totalPago,
+                    MAX(m.fecha) AS fecultmovimiento
+                FROM consolidado.movimientosprestamos M
                 WHERE 
                     m.fecha <= c.fecha 
                     AND c.fecha > ${dto.fecha}::date
                     AND idsocio = ${dto.idsocio} 
                     AND idpagare = ${dto.idpagare}
-                GROUP BY  idpagare, idsocio, nombre, 
-                 numdoc, descri, moneda, importe, plazo, tasa, fechades
-                ) AS cartera
-                ORDER BY c.periodo, cartera.idpagare, nombre;      `;
+                GROUP BY idpagare, idsocio, nombre, 
+                         numdoc, descri, moneda, importe, plazo, tasa, fechades
+            ) AS cartera
+            ORDER BY c.periodo, cartera.idpagare, nombre;
+        `;
 
+            // 5. Actualizar el acumulado del saldo en movimientosprestamos
             await tx.$executeRaw`
-                 UPDATE consolidado.movimientosprestamos f set saldo = 
-                    (SELECT sum(case when car_Abo ='C' then capital else capital *(-1) end) 
-                    FROM consolidado.movimientosprestamos cal where cal.idpagare= f.idpagare and cal.fecha <=f.fecha)
-                    WHERE saldo is null and idpagare= ${dto.idpagare} AND idsocio= ${dto.idsocio} ; `;
+            UPDATE consolidado.movimientosprestamos f 
+            SET saldo = (
+                SELECT SUM(CASE WHEN car_Abo ='C' THEN capital ELSE capital *(-1) END) 
+                FROM consolidado.movimientosprestamos cal 
+                WHERE cal.idpagare = f.idpagare AND cal.fecha <= f.fecha
+            )
+            WHERE saldo IS NULL AND idpagare = ${dto.idpagare} AND idsocio = ${dto.idsocio};
+        `;
+
+            return nuevoMovimiento;
+
         }).catch((error) => {
-            // Si ocurre CUALQUIER error en paso 1, 2 o 3, Prisma hace ROLLBACK automático de todo
             throw new InternalServerErrorException(
                 `Error al procesar el movimiento y actualizar la cartera: ${error.message}`
             );
         });
-
-
     }
 
     async update(id: string, updateMovimientoActivoDto: UpdateMovimientoActivoDto) {

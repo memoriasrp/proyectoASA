@@ -92,8 +92,6 @@
                     <th style="padding: 12px;">ID Socio</th>
                     <th style="padding: 12px; width: 620px;">Socio / Razón Social</th>
                     <th style="padding: 12px; text-align: right;">M.Pactado</th>
-                    <th style="padding: 12px; text-align: right;">M.Pagado</th>
-                    <th style="padding: 12px; text-align: center; width: 220px;">Saldo</th>
                     <th style="padding: 12px;">Fec pago</th>
                     <th style="padding: 12px; text-align: center; width: 220px;">Condcion</th>
                     <th style="padding: 12px; text-align: center; width: 220px;">Usu.Creacion</th>
@@ -111,14 +109,7 @@
                         item.socios.paterno }} {{ item.socios.materno }}</td>
                     <td style="padding: 12px; text-align: right; font-weight: bold;">{{ item.montopactado |
                         number:'1.2-2' }}</td>
-                    <td [style.color]="item.montopagado > 0 ? '#2c3e50' : '#C1121F'"
-                        style="padding: 12px; text-align: right; font-weight: bold;">
-                        {{ item.montopagado | number:'1.2-2' }}
-                    </td>
-                    <td [style.color]="item.saldoPendiente > 0 ? '#C1121F' : '#2c3e50'"
-                        style="padding: 12px; text-align: right; font-weight: bold;">
-                        {{ item.saldoPendiente | number:'1.2-2' }}
-                    </td>
+
                     <td style="padding: 12px;">{{ (item.fechaPago ? (item.fechaPago | date:'dd/MM/yyyy':'UTC') : null)
                         ?? '--' }}</td>
                     <td style="padding: 12px; text-align: center;">
@@ -132,15 +123,14 @@
                     <td style="padding: 12px; font-weight: bold; color: #7f8c8d;">{{ item.usuarioCreacion.nombre }}</td>
                     <td style="padding: 12px; font-weight: bold; color: #7f8c8d;">{{ item.usuarioPago?.nombre || '--' }}
                     </td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-sm btn-danger" (click)="pagarRegistro(item)">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </button>
+                    <td style="text-align: center;padding: 12px; display: flex; justify-content: center; gap: 5px;">
+
                         <button [disabled]="item.montopagado!=0" (click)="editarRegistro(item)"
                             class="btn btn-warning btn-sm">
                             <i class="fas fa-pencil-alt"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger" (click)="eliminarRegistro(item.id)">
+                        <button [disabled]="item.montopagado!=0" class="btn btn-sm btn-danger"
+                            (click)="eliminarRegistro(item.id)">
                             <i class="fas fa-trash-alt"></i>
                         </button>
 

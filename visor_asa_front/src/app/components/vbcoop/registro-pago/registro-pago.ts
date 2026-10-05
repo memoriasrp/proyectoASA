@@ -291,6 +291,7 @@ export class RegistroPago implements OnInit {
       gastosIds: idsGastosSeleccionados
     };
 
+    console.log('Payload a enviar al servicio:', nuevoMovimiento);
     // 4. Envío al servicio HTTP
     this.movactivosService.registrarMovimiento(nuevoMovimiento).subscribe({
       next: (res) => {

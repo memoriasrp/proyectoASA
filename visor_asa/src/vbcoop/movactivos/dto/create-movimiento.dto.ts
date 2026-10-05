@@ -98,6 +98,10 @@ export class CreateMovimientoDto {
 
     @IsNumber()
     @IsOptional()
+    otrosgastos?: number;
+
+    @IsNumber()
+    @IsOptional()
     total?: number;
 
     @IsNumber()
