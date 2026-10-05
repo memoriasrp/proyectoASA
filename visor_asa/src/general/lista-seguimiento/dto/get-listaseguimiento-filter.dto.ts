@@ -17,4 +17,12 @@ export class GetListaSeguimientoFilterDto {
     @IsOptional()
     @IsString()
     search?: string; // Para buscar por nombre, apellido o documento   
+
+    @IsOptional()
+    @IsString()
+    orderBy?: string; // Columna por la que se ordenará
+
+    @IsOptional()
+    @IsString()
+    orderDir?: string; // Dirección del ordenamiento: 'ASC' o 'DESC'
 }

@@ -93,19 +93,90 @@
         style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
-                <tr style="background: #34495e; color: white;">
-                    <th style="padding: 12px;">Tipo</th>
-                    <th style="padding: 12px;">ID Socio</th>
-                    <th style="padding: 12px;">Socio / Razón Social</th>
-                    <th style="padding: 12px;">Moneda</th>
+                <tr style="background: #34495e; color: white; user-select: none;">
+                    <!-- Tipo -->
+                    <th (click)="ordenarPor('tipo')" style="padding: 12px; cursor: pointer;">
+                        Tipo
+                        <span *ngIf="columnaOrden === 'tipo'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
 
-                    <th style="padding: 12px;">Cuenta</th>
-                    <th style="padding: 12px;">Producto</th>
-                    <th style="padding: 12px;">Fecha Creacion</th>
-                    <th style="padding: 12px; text-align: right;">Saldo MO</th>
-                    <th style="padding: 12px; text-align: right;">Saldo MN</th>
-                    <th style="padding: 12px;">Fec UltMovimiento</th>
-                    <th>📝</th>
+                    <!-- ID Socio -->
+                    <th (click)="ordenarPor('idsocio')" style="padding: 12px; cursor: pointer;">
+                        ID Socio
+                        <span *ngIf="columnaOrden === 'idsocio'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Socio / Razón Social -->
+                    <th (click)="ordenarPor('nombre')" style="padding: 12px; cursor: pointer;">
+                        Socio / Razón Social
+                        <span *ngIf="columnaOrden === 'nombre'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Moneda -->
+                    <th (click)="ordenarPor('moneda')" style="padding: 12px; cursor: pointer;">
+                        Moneda
+                        <span *ngIf="columnaOrden === 'moneda'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Cuenta -->
+                    <th (click)="ordenarPor('idcdp')" style="padding: 12px; cursor: pointer;">
+                        Cuenta
+                        <span *ngIf="columnaOrden === 'idcdp'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Producto -->
+                    <th (click)="ordenarPor('descri')" style="padding: 12px; cursor: pointer;">
+                        Producto
+                        <span *ngIf="columnaOrden === 'descri'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Fecha Creación -->
+                    <th (click)="ordenarPor('fecing')" style="padding: 12px; cursor: pointer;">
+                        Fecha Creacion
+                        <span *ngIf="columnaOrden === 'fecing'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Saldo MO -->
+                    <th (click)="ordenarPor('saldo_periodomo')"
+                        style="padding: 12px; text-align: right; cursor: pointer;">
+                        Saldo MO
+                        <span *ngIf="columnaOrden === 'saldo_periodomo'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Saldo MN -->
+                    <th (click)="ordenarPor('saldo_periodomn')"
+                        style="padding: 12px; text-align: right; cursor: pointer;">
+                        Saldo MN
+                        <span *ngIf="columnaOrden === 'saldo_periodomn'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <!-- Fec UltMovimiento -->
+                    <th (click)="ordenarPor('fecultmov')" style="padding: 12px; cursor: pointer;">
+                        Fec UltMovimiento
+                        <span *ngIf="columnaOrden === 'fecultmov'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+
+                    <th style="padding: 12px;">📝</th>
                 </tr>
             </thead>
             <tbody>

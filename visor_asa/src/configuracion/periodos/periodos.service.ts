@@ -191,7 +191,7 @@ export class PeriodosService {
                     SUM(CASE WHEN car_abo = 'A' THEN (capital + interes) ELSE capital * (-1) END) AS saldo_periodo, 
                     SUM(interes) AS pagointeres_periodo, 
                     MIN(fecha) AS fecdeposito,
-                    MAX(fecha) AS fecultmov
+                    MAX(CASE WHEN operacion !='AJU' THEN m.fecha END) AS fecultmov
                 FROM consolidado.todo_mov_pas m
                 WHERE m.tipo = 'AHORRO' 
                   AND m.fecha <= c.fecha 

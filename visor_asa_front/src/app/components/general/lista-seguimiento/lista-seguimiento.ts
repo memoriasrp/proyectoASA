@@ -24,6 +24,12 @@ export class ListaSeguimiento implements OnInit {
   totalPages: number = 1;
   totalRecords: number = 0;
   private searchSubject = new Subject<string>();
+
+  /////ORDEN DE LAS CABECERAS 
+  // Variables para controlar el estado del ordenamiento
+  columnaOrden: string = 'idsocio'; // Columna por defecto
+  ordenAscendente: boolean = true;
+
   constructor(
     private listaSegimientoService: ListaSegimientoService,
     private cdr: ChangeDetectorRef) { }
@@ -53,8 +59,13 @@ export class ListaSeguimiento implements OnInit {
   }
 
   cargarTabla() {
-    this.listaSegimientoService.getListaSeguimientoPaginados(this.currentPage, 50,
-      this.searchTerm)
+    const orderDir = this.ordenAscendente ? 'ASC' : 'DESC';
+
+    this.listaSegimientoService.getListaSeguimientoPaginados(
+      this.currentPage, 20,
+      this.searchTerm,
+      this.columnaOrden,
+      orderDir)
       .subscribe({
         next: (res: any) => {
           this.seguimientos = Array.isArray(res) ? res : (res.data || []);
@@ -83,6 +94,23 @@ export class ListaSeguimiento implements OnInit {
     this.totalPages = 1;
     this.totalRecords = 0;
     this.cdr.detectChanges();
+  }
+
+  ordenarPor(columna: string): void {
+    if (this.columnaOrden === columna) {
+      // Si vuelve a presionar la misma columna, invierte el sentido (ASC/DESC)
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      // Si cambia de columna, establece la nueva columna en modo ascendente por defecto
+      this.columnaOrden = columna;
+      this.ordenAscendente = true;
+    }
+
+    // Al reordenar desde el servidor, se recomienda volver a la primera página
+    this.currentPage = 1;
+
+    // 🟢 Volvemos a consultar la API con el nuevo ordenamiento
+    this.cargarTabla();
   }
 
 

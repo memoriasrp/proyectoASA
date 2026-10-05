@@ -53,7 +53,8 @@ export class CarterapasivosService {
         const page = Number(filters.page) || 1;
         const limit = Number(filters.limit) || 20;
         const skip = (page - 1) * limit;
-
+        const orderByField = filters.orderBy || 'idsocio';
+        const orderDir = filters.orderDir?.toLowerCase() === 'desc' ? 'desc' : 'asc';
         // (search, producto, desde, hasta, moneda)
         const where = this.buildWhereCondition(
             filters.search,
@@ -69,8 +70,7 @@ export class CarterapasivosService {
                 skip,
                 take: limit,
                 orderBy: [
-                    { nombre: 'asc' },
-                    { fecing: 'asc' },
+                    { [orderByField]: orderDir },
                 ]
             }),
             this.prisma.carteraxperiodo_pasivo.count({ where }),
@@ -88,6 +88,8 @@ export class CarterapasivosService {
     }
 
     async findParaExportar(filters: GetCarterapasivosFilterDto) {
+        const orderByField = filters.orderBy || 'idsocio';
+        const orderDir = filters.orderDir?.toLowerCase() === 'desc' ? 'desc' : 'asc';
         const where = this.buildWhereCondition(
             filters.search,
             filters.producto,
@@ -98,8 +100,7 @@ export class CarterapasivosService {
         return this.prisma.carteraxperiodo_pasivo.findMany({
             where,
             orderBy: [
-                { nombre: 'asc' },
-                { fecing: 'asc' }
+                { [orderByField]: orderDir }
             ]
         });
     }

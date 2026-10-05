@@ -54,7 +54,8 @@ export class ListaSeguimientoService {
             group by sg.idsocio,  sc.paterno ,sc.materno , sc.nombres , 
         sc.numdoc,sc.ruc
         )  AS unificado  ${sqlWhereClause}           
-           ORDER BY 2,3,4
+           ORDER BY 
+            ${filters.orderBy || 'idsocio'} ${filters.orderDir || 'ASC'}
                   LIMIT ${limit} OFFSET ${skip};`;
 
         const countQuery = `

@@ -1,26 +1,59 @@
-<div class="container">
+<div class="modulo-container" style="padding: 20px;">
     <div class="header-section" style="margin-bottom: 20px;">
         <h2>Padrón de Seguimientos</h2>
         <p class="text-muted">Consulta de los seguimientos Registrados en la Cooperativa</p>
     </div>
 
-    <div class="filter-box">
+    <div class="filter-card"
+        style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+
         <div class="input-group">
             <input type="text" placeholder="Buscar por código de socio, nombres, apellidos ,DNI o RUC..."
                 class="form-control" [value]="searchTerm" (input)="onSearch($event)" />
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="custom-table">
+    <div class="table-container" id="area-impresion"
+        style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
-                <tr>
-                    <th>Código Socio</th>
-                    <th>Apellidos y Nombres</th>
-                    <th>Num Documento</th>
-                    <th>Total Registros</th>
-                    <th>1er Registro</th>
-                    <th>Ultimo Registro</th>
+                <tr style="background: #34495e; color: white; user-select: none;">
+                    <th (click)="ordenarPor('idsocio')" style="padding: 12px; cursor: pointer;">
+                        Código Socio
+                        <span *ngIf="columnaOrden === 'idsocio'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('paterno')" style="padding: 12px; cursor: pointer;">
+                        Apellidos y Nombres
+                        <span *ngIf="columnaOrden === 'paterno'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('numdoc')" style="padding: 12px; cursor: pointer;">
+                        Num Documento
+                        <span *ngIf="columnaOrden === 'numdoc'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('tot_registros')" style="padding: 12px; cursor: pointer;">
+                        Total Registros
+                        <span *ngIf="columnaOrden === 'tot_registros'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('primer_registro')" style="padding: 12px; cursor: pointer;">
+                        1er Registro
+                        <span *ngIf="columnaOrden === 'primer_registro'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('ult_registro')" style="padding: 12px; cursor: pointer;">
+                        Ultimo Registro
+                        <span *ngIf="columnaOrden === 'ult_registro'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
                     <th>Seguimiento</th>
                 </tr>
             </thead>

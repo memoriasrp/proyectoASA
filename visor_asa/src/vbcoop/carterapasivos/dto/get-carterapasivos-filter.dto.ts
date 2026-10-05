@@ -33,4 +33,13 @@ export class GetCarterapasivosFilterDto {
     @IsOptional()
     @IsString()
     condicion?: string;
+
+    @IsOptional()
+    @IsString()
+    orderBy?: string;
+
+    @IsOptional()
+    @IsString()
+    orderDir?: string;
+
 }

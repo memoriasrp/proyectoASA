@@ -46,6 +46,12 @@ export class CarteraPasivos implements OnInit {
   archivoSeleccionado: File | null = null;
   cargando: boolean = false;
   archivosSeleccionados: File[] = [];
+
+  /////ORDEN DE LAS CABECERAS 
+  // Variables para controlar el estado del ordenamiento
+  columnaOrden: string = 'idsocio'; // Columna por defecto
+  ordenAscendente: boolean = true;
+
   constructor(
     private carteraPasivosService: CateraPasivosService,
     private seguimientoHistorialService: SeguimientoHistorialService,
@@ -84,6 +90,8 @@ export class CarteraPasivos implements OnInit {
 
   cargarTabla(): void {
     this.loading = true;
+    this.busquedaRealizada = true;
+    const orderDir = this.ordenAscendente ? 'ASC' : 'DESC';
     this.cdr.detectChanges();
 
     this.carteraPasivosService.getCarteraPasivosPaginados(
@@ -93,7 +101,9 @@ export class CarteraPasivos implements OnInit {
       this.monedaSeleccionada,
       this.productoSeleccionado,
       this.periodoSeleccionado,
-      this.condicionSeleccionado
+      this.condicionSeleccionado,
+      this.columnaOrden,
+      orderDir
     ).subscribe({
       next: (res: any) => {
         this.carteraPasivos = Array.isArray(res) ? res : (res.data || []);
@@ -113,10 +123,10 @@ export class CarteraPasivos implements OnInit {
   }
 
   // Cambiar de página respetando los filtros actuales
-  cambiarPagina(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.cargarTabla();
+  cambiarPagina(nuevaPagina: number): void {
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPages) {
+      this.currentPage = nuevaPagina;
+      this.ejecutarBusqueda();
     }
   }
 
@@ -245,7 +255,24 @@ export class CarteraPasivos implements OnInit {
       });
   }
 
+  ordenarPor(columna: string): void {
+    if (this.columnaOrden === columna) {
+      // Si vuelve a presionar la misma columna, invierte el sentido (ASC/DESC)
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      // Si cambia de columna, establece la nueva columna en modo ascendente por defecto
+      this.columnaOrden = columna;
+      this.ordenAscendente = true;
+    }
 
+    // Al reordenar desde el servidor, se recomienda volver a la primera página
+    this.currentPage = 1;
+
+    // 🟢 Volvemos a consultar la API con el nuevo ordenamiento
+    this.ejecutarBusqueda();
+  }
+
+  //////////////////////////////////////////////SEGUIMIENTO
   abrirModalSeguimiento(item: any) {
     this.socioSeleccionado = item;
     this.mostrarModal = true;
@@ -256,6 +283,7 @@ export class CarteraPasivos implements OnInit {
     this.socioSeleccionado = null;
     this.cdr.detectChanges();
   }
+
   guardarSeguimiento() {
     if (!this.detalle.trim()) {
       alert('Debe ingresar el detalle de la gestión.');
