@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional, IsDateString, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 export class CreateMovimientoDto {
     // Clave Primaria Compuesta & Identificadores de Operación
@@ -137,4 +137,9 @@ export class CreateMovimientoDto {
     @IsString()
     @IsOptional()
     idusuario?: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsNumber({}, { each: true }) // Valida que cada elemento del arreglo sea un entero
+    gastosIds?: number[];
 }

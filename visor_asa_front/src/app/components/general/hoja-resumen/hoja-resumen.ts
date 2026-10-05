@@ -36,6 +36,7 @@ export class HojaResumen implements OnInit {
   datosAhorros: any;
   datosDpf: any;
   datosPrestamos: any;
+  datosGastos: any;
   datosSeguimiento: any;
   deudasPorAno: InteresAnoEditable[] = [];
   totalInteresAnos: number = 0;
@@ -95,6 +96,7 @@ export class HojaResumen implements OnInit {
       this.datosPrestamos = (this.socioData?.prestamo || []);
 
     }
+    this.datosGastos = (this.socioData?.gastos || []);
     this.datosSeguimiento = (this.socioData?.historial || []);
   }
   cargarHojaResumen(): void {

@@ -105,6 +105,8 @@ export class HojaResumenService {
       ORDER BY sg.fecha DESC;
     `;
 
+        const gastos = await this.findGastos(idSocio);
+
         // 3. Formatear y consolidar la respuesta final
         return {
             datosPersonales: socio,
@@ -112,7 +114,24 @@ export class HojaResumenService {
             ahorros: ahorros,
             depositosPlazoFijo: dpf,
             prestamo: prestamo,
+            gastos: gastos,
             historial: historial
         }
+    }
+    findGastos(idSocio: string) {
+        return this.prisma.registrogastos.findMany({
+            where: {
+                idsocio: idSocio,
+                montopagado: 0, // 🟢 Filtra donde el monto pagado es igual a 0
+            },
+            include: {
+                tipogastos: true,       // Incluye relación con Tipo de Gasto               
+                usuarioCreacion: true,  // Incluye usuario que registró
+                usuarioPago: true,      // Incluye usuario que pagó
+            },
+            orderBy: {
+                fecha: 'desc', // Ordena los registros del más reciente al más antiguo
+            },
+        });
     }
 }

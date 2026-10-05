@@ -287,11 +287,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding: 6px 12px; white-space: nowrap;">
-                                <strong style="color: #495057;">Cuotas:</strong>
-                                <span style="color: #212529; margin-left: 5px;">{{item.cuotas_pagadas}}&nbsp; de&nbsp;
-                                    {{ item.plazo}}</span>
-                            </td>
+
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Pago Capital:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{(item.desembolso -
@@ -319,6 +315,11 @@
                             </td>
                         </tr>
                         <tr *ngIf="item.fecha_repr != null">
+                            <td style="padding: 6px 12px; white-space: nowrap;">
+                                <strong style="color: #495057;">Cuotas:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{item.cuotas_pagadas}}&nbsp; de&nbsp;
+                                    {{ item.plazo}}</span>
+                            </td>
                             <td style="padding: 6px 12px; white-space: nowrap;">
                                 <strong style="color: #495057;">Tasa Reprogramado:</strong>
                                 <span style="color: #212529; margin-left: 5px;">{{item.tasa_repro}}%</span>
@@ -363,7 +364,42 @@
             </div>
         </div>
     </div>
-
+    <!-- CATEGORÍA: GASTOS -->
+    <div class="categoria-bloque" *ngIf="!cargando && datosGastos.length > 0">
+        <div class="categoria-header">
+            <span class="categoria-titulo">Categoría: GASTOS</span>
+        </div>
+        <div class="categoria-body">
+            <div class="gestion-card shadow-sm" *ngFor="let item of datosGastos">
+                <div class="gestion-detalle">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; table-layout: fixed;">
+                        <tr>
+                            <td style="padding: 6px 12px; white-space: nowrap; width: 33%;">
+                                <strong style="color: #495057;">Tipo Gasto:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item.tipogastos.descripcion}}</span>
+                            </td>
+                            <td style="padding: 6px 12px; white-space: nowrap; width: 33%;">
+                                <strong style="color: #495057;">Monto:</strong>
+                                <span style="color: #212529; margin-left: 5px;"> {{ item.montopactado | number:'1.2-2'
+                                    }}</span>
+                            </td>
+                            <td style="padding: 6px 12px; white-space: nowrap; width: 33%;">
+                                <strong style="color: #495057;">Fecha:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item?.fecha |
+                                    date:'dd/MM/yy':'UTC'}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 12px; white-space: normal; word-break: break-word;" colspan="3">
+                                <strong style="color: #495057;">Detalle:</strong>
+                                <span style="color: #212529; margin-left: 5px;">{{ item?.detalle }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- CATEGORÍA: SEGUIMIENTO -->
     <div class="categoria-bloque" *ngIf="!cargando && datosSeguimiento.length > 0">
         <div class="categoria-header">
