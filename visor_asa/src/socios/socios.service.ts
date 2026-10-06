@@ -10,6 +10,8 @@ export class SociosService {
         const limit = Number(filters.limit) || 20;
         const skip = (page - 1) * limit;
         const search = filters.search;
+        const orderBy = filters.orderBy || 'paterno';
+        const orderDir = filters.orderDir || 'ASC';
 
         // 1. Construir dinámicamente la cláusula WHERE para SQL Raw
         let whereClause = Prisma.sql`WHERE 1=1`;
@@ -60,7 +62,7 @@ export class SociosService {
                 GROUP BY idsocio
             ) pre ON pre.idsocio = sc.idsocio
             ${whereClause}
-            ORDER BY sc.paterno ASC
+            ORDER BY ${Prisma.raw(orderBy)} ${Prisma.raw(orderDir)}
             LIMIT ${limit} OFFSET ${skip};
         `;
 

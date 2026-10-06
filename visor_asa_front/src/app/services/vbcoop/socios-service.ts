@@ -23,7 +23,9 @@ export class SociosService {
       'Authorization': `Bearer ${token}`
     });
   }
-  getSocios(page: number, limit: number, search?: string): Observable<any> {
+  getSocios(
+    page: number, limit: number, search?: string,
+    columnaOrden?: string, orderDir?: string): Observable<any> {
     const token = localStorage.getItem('access_token') || localStorage.getItem('token');
 
     const periodoInfo = this.periodoEstadoService.periodoActual;
@@ -42,9 +44,17 @@ export class SociosService {
       params = params.set('search', search);
     }
 
+    if (columnaOrden) {
+      params = params.set('orderBy', columnaOrden);
+    }
+
+    if (orderDir) {
+      params = params.set('orderDir', orderDir);
+    }
+
     return this.http.get<any>(this.apiUrl, { headers, params });
   }
-  getSociosParaExportar(search?: string): Observable<any> {
+  getSociosParaExportar(search?: string, columnaOrden?: string, orderDir?: string): Observable<any> {
     const token = localStorage.getItem('access_token') || localStorage.getItem('token');
 
     const periodoInfo = this.periodoEstadoService.periodoActual;

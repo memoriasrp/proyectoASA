@@ -13,19 +13,65 @@
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="custom-table">
+    <div class="table-container" id="area-impresion"
+        style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
-                <tr>
-                    <th>Código Socio</th>
-                    <th>Apellidos y Nombres</th>
-                    <th>Num Documento</th>
-                    <th>F. Ingreso</th>
-                    <th>F. Retiro</th>
-                    <th>S.Aportes</th>
-                    <th>S.Ahorros</th>
-                    <th>S.DPF</th>
-                    <th>S.Prestamos</th>
+                <tr style="background: #34495e; color: white; user-select: none;">
+                    <th (click)="ordenarPor('idsocio')" style="padding: 12px; cursor: pointer;">
+                        Código Socio
+                        <span *ngIf="columnaOrden === 'idsocio'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('paterno')" style="padding: 12px; cursor: pointer;">
+                        Apellidos y Nombres
+                        <span *ngIf="columnaOrden === 'paterno'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('numdoc')" style="padding: 12px; cursor: pointer;">
+                        Num Documento
+                        <span *ngIf="columnaOrden === 'numdoc'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('fecing')" style="padding: 12px; cursor: pointer;">
+                        F. Ingreso
+                        <span *ngIf="columnaOrden === 'fecing'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('fecret')" style="padding: 12px; cursor: pointer;">
+                        F. Retiro
+                        <span *ngIf="columnaOrden === 'fecret'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('total_aportes')" style="padding: 12px; cursor: pointer;">
+                        S.Aportes
+                        <span *ngIf="columnaOrden === 'total_aportes'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('total_ahorros')" style="padding: 12px; cursor: pointer;">
+                        S.Ahorros
+                        <span *ngIf="columnaOrden === 'total_ahorros'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('total_dpf')" style="padding: 12px; cursor: pointer;">
+                        S.DPF
+                        <span *ngIf="columnaOrden === 'total_dpf'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
+                    <th (click)="ordenarPor('total_prestamos')" style="padding: 12px; cursor: pointer;">
+                        S.Prestamos
+                        <span *ngIf="columnaOrden === 'total_prestamos'">
+                            {{ ordenAscendente ? '▲' : '▼' }}
+                        </span>
+                    </th>
                     <th>Seguimiento</th>
                     <th><i class="fa-solid fa-file-lines"></i></th>
                 </tr>

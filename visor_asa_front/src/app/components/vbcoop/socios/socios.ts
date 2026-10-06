@@ -31,6 +31,10 @@ export class Socios implements OnInit {
 
   // Manejo de debounce para optimizar el buscador de socios (+1000 registros)
   private searchSubject = new Subject<string>();
+  /////ORDEN DE LAS CABECERAS 
+  // Variables para controlar el estado del ordenamiento
+  columnaOrden: string = 'idsocio'; // Columna por defecto
+  ordenAscendente: boolean = true;
 
   ngOnInit(): void {
     this.loadSocios();
@@ -47,7 +51,11 @@ export class Socios implements OnInit {
   }
 
   loadSocios(): void {
-    this.sociosService.getSocios(this.currentPage, this.pageSize, this.searchTerm)
+    const orderDir = this.ordenAscendente ? 'ASC' : 'DESC';
+    this.sociosService.getSocios(
+      this.currentPage, this.pageSize, this.searchTerm,
+      this.columnaOrden,
+      orderDir)
       .subscribe({
         next: (response) => {
           this.socios = response.data;
@@ -59,6 +67,23 @@ export class Socios implements OnInit {
         },
         error: (err) => console.error('Error al consultar el padrón de socios', err)
       });
+  }
+
+  ordenarPor(columna: string): void {
+    if (this.columnaOrden === columna) {
+      // Si vuelve a presionar la misma columna, invierte el sentido (ASC/DESC)
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      // Si cambia de columna, establece la nueva columna en modo ascendente por defecto
+      this.columnaOrden = columna;
+      this.ordenAscendente = true;
+    }
+
+    // Al reordenar desde el servidor, se recomienda volver a la primera página
+    this.currentPage = 1;
+
+    // Volvemos a consultar la API con el nuevo ordenamiento
+    this.loadSocios();
   }
 
   onSearch(event: Event): void {
@@ -79,9 +104,9 @@ export class Socios implements OnInit {
       return;
     }
     const filtroActual = this.searchTerm; // Ajusta al nombre de tu variable de filtro
-
+    const orderDir = this.ordenAscendente ? 'ASC' : 'DESC';
     // 2. Llamamos al servicio pidiéndole TODO lo filtrado sin paginar (ej. pasando limite: 0 o todo: true)
-    this.sociosService.getSociosParaExportar(filtroActual).subscribe({
+    this.sociosService.getSociosParaExportar(filtroActual, this.columnaOrden, orderDir).subscribe({
       next: (todosLosSociosFiltrados) => {
         if (!todosLosSociosFiltrados || todosLosSociosFiltrados.length === 0) {
           alert('No hay datos filtrados para exportar.');
