@@ -52,6 +52,16 @@ export class CarteraPasivos implements OnInit {
   columnaOrden: string = 'idsocio'; // Columna por defecto
   ordenAscendente: boolean = true;
 
+  // Variables para controlar el modal de liquidación
+  mostrarModalLiquidacion: boolean = false;
+
+  formularioLiquidacion = {
+    fecha: '',
+    nrodocumento: '',
+    tipoliquidacion: 'EFE',// Valor por defecto
+    detalle: ''
+  };
+
   constructor(
     private carteraPasivosService: CateraPasivosService,
     private seguimientoHistorialService: SeguimientoHistorialService,
@@ -271,6 +281,77 @@ export class CarteraPasivos implements OnInit {
     // 🟢 Volvemos a consultar la API con el nuevo ordenamiento
     this.ejecutarBusqueda();
   }
+  /**
+   * Cierra el modal de liquidación
+   */
+  cerrarModalLiquidacion(): void {
+    this.mostrarModalLiquidacion = false;
+  }
+
+  /**
+   * Procesa la liquidación enviando los datos al servicio backend
+   */
+  guardarLiquidacion(): void {
+    if (!this.formularioLiquidacion.fecha || !this.formularioLiquidacion.tipoliquidacion) {
+      alert('Por favor complete la fecha y el tipo de liquidación.');
+      return;
+    }
+    const confirmacion = confirm(`¿Está seguro de que desea liquidar la cuenta ${this.socioSeleccionado?.idcdp} del socio ${this.socioSeleccionado?.idsocio}?`);
+    if (confirmacion) {
+      // Lógica para liquidar la cuenta
+      const payload = {
+        idsocio: this.socioSeleccionado?.idsocio,
+        idcdp: this.socioSeleccionado?.idcdp, // Cuenta o producto
+        tipo: this.socioSeleccionado?.tipo,
+        monto: this.socioSeleccionado?.saldo_periodomo,
+        fecha: this.formularioLiquidacion.fecha,
+        idnumope: this.formularioLiquidacion.nrodocumento,
+        tipoliquidacion: this.formularioLiquidacion.tipoliquidacion,
+        detalle: this.formularioLiquidacion.detalle
+      };
+
+      console.log('Datos a liquidar:', payload);
+
+      // Ejemplo de consumo del servicio backend:
+
+      this.carteraPasivosService.liquidarCuenta(payload).subscribe({
+        next: (res) => {
+          alert('La cuenta se liquidó correctamente.');
+          this.cerrarModalLiquidacion();
+          this.ejecutarBusqueda(); // Recargar la lista
+        },
+        error: (err) => {
+          console.error('Error al liquidar la cuenta:', err);
+          alert('Ocurrió un error al liquidar la cuenta.');
+        }
+      });
+
+
+      // Simulación local:
+      alert('Liquidación registrada con éxito.');
+      this.cerrarModalLiquidacion();
+    }
+
+  }
+  /**
+   * Abre el modal de liquidación de cuenta asignando la fecha de hoy por defecto
+   */
+  liquidarCuenta(item: any): void {
+    this.socioSeleccionado = item;
+
+    // Asignar fecha de hoy en formato YYYY-MM-DD
+    const hoy = new Date();
+    const fechaHoy = hoy.toISOString().split('T')[0];
+
+    this.formularioLiquidacion = {
+      fecha: fechaHoy,
+      nrodocumento: '',
+      tipoliquidacion: 'EFECTIVO',
+      detalle: ''
+    };
+
+    this.mostrarModalLiquidacion = true;
+  }
 
   //////////////////////////////////////////////SEGUIMIENTO
   abrirModalSeguimiento(item: any) {
@@ -342,5 +423,6 @@ export class CarteraPasivos implements OnInit {
     }
     this.cdr.detectChanges(); // Forzar dibujo de la lista de adjuntos
   }
+
 }
 

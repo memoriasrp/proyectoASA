@@ -175,7 +175,7 @@
                             {{ ordenAscendente ? '▲' : '▼' }}
                         </span>
                     </th>
-
+                    <th style="padding: 12px;"><i class="bi bi-cash-stack me-1"></i></th>
                     <th style="padding: 12px;">📝</th>
                 </tr>
             </thead>
@@ -208,6 +208,13 @@
 
                     </td>
                     <td style="padding: 12px;">{{ item.fecultmov | date:'dd/MM/yy':'UTC' }}</td>
+                    <td style="padding: 12px; text-align: center; white-space: nowrap;">
+                        <button type="button" (click)="liquidarCuenta(item)" title="Liquidar Cuenta de Ahorro"
+                            style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: all 0.2s ease;">
+                            <span>💸</span>
+                            <span>Liquidar</span>
+                        </button>
+                    </td>
                     <td><button style="background: none; border: none; cursor: pointer; font-size: 1.2rem;"
                             title="Registrar Seguimiento" (click)="abrirModalSeguimiento(item)">
                             📝
@@ -344,6 +351,195 @@
             </form>
 
         </div>
+    </div>
+</div>
+}
+
+<!-- MODAL DE LIQUIDACIÓN DE CUENTA DE AHORRO -->
+@if (mostrarModalLiquidacion) {
+<div class="modal-backdrop">
+    <div class="modal-container modal-md">
+
+        <!-- 1. CABECERA DEL MODAL -->
+        <div class="modal-header"
+            style="display: flex; flex-direction: column; align-items: flex-start !important; position: relative; padding: 20px 24px !important; gap: 4px;">
+
+            <!-- Botón de cerrar (X) rojo -->
+            <button type="button" class="btn-close-modal-red" (click)="cerrarModalLiquidacion()" title="Cerrar">
+                &times;
+            </button>
+
+            <h3
+                style="margin: 0 !important; font-size: 1.3rem !important; font-weight: 700 !important; text-transform: uppercase;">
+                <span style="color: #b91c1c;">💸 LIQUIDACIÓN DE CUENTA</span>
+            </h3>
+
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important;">
+                <strong>SOCIO:</strong> <span style="color: #0284c7;">{{ socioSeleccionado?.nombre }}</span>
+            </p>
+
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important;">
+                <strong>{{ socioSeleccionado?.tipo }}:</strong> {{ socioSeleccionado?.idcdp }} - {{
+                socioSeleccionado?.descri }}
+            </p>
+
+            <p
+                style="margin: 0 !important; font-size: 0.95rem !important; color: #15803d !important; font-weight: bold;">
+                <strong>MONTO A LIQUIDAR:</strong> {{ socioSeleccionado?.saldo_periodomo |
+                currency:(socioSeleccionado?.moneda === 'S' ? 'PEN' : 'USD'):'symbol':'1.2-2':'es-PE' }}
+            </p>
+        </div>
+
+        <!-- 2. CUERPO DEL MODAL CON FORMULARIO -->
+        <div class="modal-body" style="padding: 24px !important;">
+            <form (ngSubmit)="guardarLiquidacion()">
+
+                <!-- Campo 1: Fecha de Liquidación -->
+                <div class="form-group" style="margin-bottom: 16px; width: 100%;">
+                    <label
+                        style="font-size: 0.85rem; font-weight: bold; color: #34495e; margin-bottom: 5px; display: block;">
+                        Fecha de Liquidación:
+                    </label>
+                    <input type="date" [(ngModel)]="formularioLiquidacion.fecha" name="fechaLiquidacion"
+                        style="padding: 9px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 0.9rem;">
+                </div>
+
+                <!-- Campo 2: Tipo de Liquidación (Combo) -->
+                <div class="form-group" style="margin-bottom: 16px; width: 100%;">
+                    <label
+                        style="font-size: 0.85rem; font-weight: bold; color: #34495e; margin-bottom: 5px; display: block;">
+                        Tipo de Liquidación:
+                    </label>
+                    <select [(ngModel)]="formularioLiquidacion.tipoliquidacion" name="tipoliquidacion"
+                        style="padding: 9px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 0.9rem; background-color: white;">
+                        <option value="EFE">EFECTIVO</option>
+                        <option value="DOC">DOCUMENTO</option>
+                        <option value="PAG">PAGO GASTOS</option>
+                    </select>
+                </div>
+
+                <!-- Campo 3: Número de Documento -->
+                <div class="form-group" style="margin-bottom: 20px; width: 100%;">
+                    <label
+                        style="font-size: 0.85rem; font-weight: bold; color: #34495e; margin-bottom: 5px; display: block;">
+                        N° de Documento / Recibo / Vócher:
+                    </label>
+                    <input type="text" [(ngModel)]="formularioLiquidacion.nrodocumento" name="nrodocumento"
+                        placeholder="Ej. REC-001234 o N° Operación"
+                        style="padding: 9px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 0.9rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">
+                        Detalle / Observación
+                    </label>
+                    <textarea class="form-control" rows="4" [(ngModel)]="formularioLiquidacion.detalle" name="detalle"
+                        placeholder="Escribe aquí los compromisos de pago, llamadas o acuerdos con el socio..."></textarea>
+                </div>
+                <!-- Botones de Acción -->
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary" (click)="cerrarModalLiquidacion()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                        style="background-color: #b91c1c !important; border: none;">
+                        Procesar Liquidación
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+}
+
+<!-- MODAL DE LIQUIDACIÓN DE CUENTA DE AHORRO -->
+@if (mostrarModalLiquidacion) {
+<div class="modal-backdrop">
+    <div class="modal-container modal-md">
+
+        <!-- 1. CABECERA DEL MODAL -->
+        <div class="modal-header"
+            style="display: flex; flex-direction: column; align-items: flex-start !important; position: relative; padding: 20px 24px !important; gap: 4px;">
+
+            <!-- Botón de cerrar (X) rojo -->
+            <button type="button" class="btn-close-modal-red" (click)="cerrarModalLiquidacion()" title="Cerrar">
+                &times;
+            </button>
+
+            <h3
+                style="margin: 0 !important; font-size: 1.3rem !important; font-weight: 700 !important; text-transform: uppercase;">
+                <span style="color: #b91c1c;">💸 LIQUIDACIÓN DE CUENTA</span>
+            </h3>
+
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important;">
+                <strong>SOCIO:</strong> <span style="color: #0284c7;">{{ socioSeleccionado?.nombre }}</span>
+            </p>
+
+            <p style="margin: 0 !important; font-size: 0.9rem !important; color: #64748b !important;">
+                <strong>{{ socioSeleccionado?.tipo }}:</strong> {{ socioSeleccionado?.idcdp }} - {{
+                socioSeleccionado?.descri }}
+            </p>
+
+            <p
+                style="margin: 0 !important; font-size: 0.95rem !important; color: #15803d !important; font-weight: bold;">
+                <strong>MONTO A LIQUIDAR:</strong> {{ socioSeleccionado?.saldo_periodomo |
+                currency:(socioSeleccionado?.moneda === 'S' ? 'PEN' : 'USD'):'symbol':'1.2-2':'es-PE' }}
+            </p>
+        </div>
+
+        <!-- 2. CUERPO DEL MODAL CON FORMULARIO -->
+        <div class="modal-body" style="padding: 24px !important;">
+            <form (ngSubmit)="guardarLiquidacion()">
+
+                <!-- Campo 1: Fecha de Liquidación -->
+                <div class="form-group" style="margin-bottom: 16px; width: 100%;">
+                    <label
+                        style="font-size: 0.85rem; font-weight: bold; color: #34495e; margin-bottom: 5px; display: block;">
+                        Fecha de Liquidación:
+                    </label>
+                    <input type="date" [(ngModel)]="formularioLiquidacion.fecha" name="fechaLiquidacion"
+                        style="padding: 9px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 0.9rem;">
+                </div>
+
+                <!-- Campo 2: Tipo de Liquidación (Combo) -->
+                <div class="form-group" style="margin-bottom: 16px; width: 100%;">
+                    <label
+                        style="font-size: 0.85rem; font-weight: bold; color: #34495e; margin-bottom: 5px; display: block;">
+                        Tipo de Liquidación:
+                    </label>
+                    <select [(ngModel)]="formularioLiquidacion.tipoliquidacion" name="tipoliquidacion"
+                        style="padding: 9px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 0.9rem; background-color: white;">
+                        <option value="EFECTIVO">EFECTIVO</option>
+                        <option value="DOCUMENTO">DOCUMENTO</option>
+                    </select>
+                </div>
+
+                <!-- Campo 3: Número de Documento -->
+                <div class="form-group" style="margin-bottom: 20px; width: 100%;">
+                    <label
+                        style="font-size: 0.85rem; font-weight: bold; color: #34495e; margin-bottom: 5px; display: block;">
+                        N° de Documento / Recibo / Vócher:
+                    </label>
+                    <input type="text" [(ngModel)]="formularioLiquidacion.nrodocumento" name="nrodocumento"
+                        placeholder="Ej. REC-001234 o N° Operación"
+                        style="padding: 9px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 0.9rem;">
+                </div>
+
+                <!-- Botones de Acción -->
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary" (click)="cerrarModalLiquidacion()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                        style="background-color: #b91c1c !important; border: none;">
+                        Procesar Liquidación
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
     </div>
 </div>
 }
