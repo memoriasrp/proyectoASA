@@ -32,78 +32,6 @@
         <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 32px;">
 
-            <!-- TARJETA 1: AHORROS -->
-            <div
-                style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <span style="font-size: 0.95rem; font-weight: 700; color: #0284c7;">💰 AHORROS</span>
-                    <span
-                        style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
-                        {{ resumenData.ahorros.cantidad }} Vigentes (Ini: {{ resumenData.ahorros.cantidadInicial }})
-                    </span>
-                </div>
-
-                <!-- Consolidado Total en Soles -->
-                <div style="margin-bottom: 12px;">
-                    <small style="color: #64748b; display: block;">Saldo Actual Consolidado (MN)</small>
-                    <span style="font-size: 1.65rem; font-weight: 800; color: #0f172a;">
-                        S/. {{ resumenData.ahorros.Saldo | number:'1.2-2' }}
-                    </span>
-                </div>
-
-                <!-- Desglose por Moneda -->
-                <div
-                    style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; color: #475569;">
-                    <span><strong>Soles ({{ resumenData.ahorros.cantidadMN }}):</strong> S/. {{
-                        resumenData.ahorros.SaldoMN | number:'1.2-2' }}</span>
-                    <span><strong>Dólares ({{ resumenData.ahorros.cantidadME }}):</strong> $ {{
-                        resumenData.ahorros.SaldoME | number:'1.2-2' }}</span>
-                </div>
-
-                <!-- Comparativa Saldo Inicial SBS -->
-                <div
-                    style="margin-top: 10px; font-size: 0.82rem; color: #64748b; display: flex; justify-content: space-between;">
-                    <span>Saldo Inicial SBS (31/08/23):</span>
-                    <strong style="color: #334155;">S/. {{ resumenData.ahorros.SaldoInicial | number:'1.2-2' }}</strong>
-                </div>
-            </div>
-
-            <!-- TARJETA 2: DPF -->
-            <div
-                style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <span style="font-size: 0.95rem; font-weight: 700; color: #7c3aed;">📈 DPF (PLAZO FIJO)</span>
-                    <span
-                        style="background: #f3e8ff; color: #6d28d9; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
-                        {{ resumenData.dpf.cantidad }} Vigentes (Ini: {{ resumenData.dpf.cantidadInicial }})
-                    </span>
-                </div>
-
-                <!-- Consolidado Total en Soles -->
-                <div style="margin-bottom: 12px;">
-                    <small style="color: #64748b; display: block;">Saldo Actual Consolidado (MN)</small>
-                    <span style="font-size: 1.65rem; font-weight: 800; color: #0f172a;">
-                        S/. {{ resumenData.dpf.total | number:'1.2-2' }}
-                    </span>
-                </div>
-
-                <!-- Desglose por Moneda -->
-                <div
-                    style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; color: #475569;">
-                    <span><strong>Soles ({{ resumenData.dpf.cantidadMN }}):</strong> S/. {{ resumenData.dpf.totalMN |
-                        number:'1.2-2' }}</span>
-                    <span><strong>Dólares ({{ resumenData.dpf.cantidadME }}):</strong> $ {{ resumenData.dpf.totalME |
-                        number:'1.2-2' }}</span>
-                </div>
-
-                <!-- Comparativa Saldo Inicial SBS -->
-                <div
-                    style="margin-top: 10px; font-size: 0.82rem; color: #64748b; display: flex; justify-content: space-between;">
-                    <span>Saldo Inicial SBS (31/08/23):</span>
-                    <strong style="color: #334155;">S/. {{ resumenData.dpf.totalInicial | number:'1.2-2' }}</strong>
-                </div>
-            </div>
-
             <!-- TARJETA 3: PRÉSTAMOS -->
             <div
                 style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
@@ -111,7 +39,8 @@
                     <span style="font-size: 0.95rem; font-weight: 700; color: #16a34a;">🤝 PRÉSTAMOS</span>
                     <span
                         style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
-                        {{ resumenData.prestamos.cantidad }} Vigentes (Ini: {{ resumenData.prestamos.cantidadInicial }})
+                        {{ resumenData.prestamos.cantidad }} Vigentes
+                        <!-- (Ini: {{ resumenData.prestamos.cantidadInicial }}) -->
                     </span>
                 </div>
 
@@ -133,13 +62,87 @@
                 </div>
 
                 <!-- Comparativa Saldo Inicial SBS -->
-                <div
+                <!-- <div
                     style="margin-top: 10px; font-size: 0.82rem; color: #64748b; display: flex; justify-content: space-between;">
                     <span>Saldo Inicial SBS:</span>
                     <strong style="color: #334155;">S/. {{ resumenData.prestamos.totalInicial | number:'1.2-2'
                         }}</strong>
-                </div>
+                </div> -->
             </div>
+            <!-- TARJETA 1: AHORROS -->
+            <div
+                style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <span style="font-size: 0.95rem; font-weight: 700; color: #0284c7;">💰 AHORROS</span>
+                    <span
+                        style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
+                        {{ resumenData.ahorros.cantidad }} Vigentes
+                        <!-- (Ini: {{ resumenData.ahorros.cantidadInicial }}) -->
+                    </span>
+                </div>
+
+                <!-- Consolidado Total en Soles -->
+                <div style="margin-bottom: 12px;">
+                    <small style="color: #64748b; display: block;">Saldo Actual Consolidado (MN)</small>
+                    <span style="font-size: 1.65rem; font-weight: 800; color: #0f172a;">
+                        S/. {{ resumenData.ahorros.Saldo | number:'1.2-2' }}
+                    </span>
+                </div>
+
+                <!-- Desglose por Moneda -->
+                <div
+                    style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; color: #475569;">
+                    <span><strong>Soles ({{ resumenData.ahorros.cantidadMN }}):</strong> S/. {{
+                        resumenData.ahorros.SaldoMN | number:'1.2-2' }}</span>
+                    <span><strong>Dólares ({{ resumenData.ahorros.cantidadME }}):</strong> $ {{
+                        resumenData.ahorros.SaldoME | number:'1.2-2' }}</span>
+                </div>
+
+                <!-- Comparativa Saldo Inicial SBS -->
+                <!-- <div
+                    style="margin-top: 10px; font-size: 0.82rem; color: #64748b; display: flex; justify-content: space-between;">
+                    <span>Saldo Inicial SBS (31/08/23):</span>
+                    <strong style="color: #334155;">S/. {{ resumenData.ahorros.SaldoInicial | number:'1.2-2' }}</strong>
+                </div> -->
+            </div>
+
+            <!-- TARJETA 2: DPF -->
+            <div
+                style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <span style="font-size: 0.95rem; font-weight: 700; color: #7c3aed;">📈 DPF (PLAZO FIJO)</span>
+                    <span
+                        style="background: #f3e8ff; color: #6d28d9; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
+                        {{ resumenData.dpf.cantidad }}
+                        <!-- Vigentes (Ini: {{ resumenData.dpf.cantidadInicial }}) -->
+                    </span>
+                </div>
+
+                <!-- Consolidado Total en Soles -->
+                <div style="margin-bottom: 12px;">
+                    <small style="color: #64748b; display: block;">Saldo Actual Consolidado (MN)</small>
+                    <span style="font-size: 1.65rem; font-weight: 800; color: #0f172a;">
+                        S/. {{ resumenData.dpf.total | number:'1.2-2' }}
+                    </span>
+                </div>
+
+                <!-- Desglose por Moneda -->
+                <div
+                    style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 0; border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0; color: #475569;">
+                    <span><strong>Soles ({{ resumenData.dpf.cantidadMN }}):</strong> S/. {{ resumenData.dpf.totalMN |
+                        number:'1.2-2' }}</span>
+                    <span><strong>Dólares ({{ resumenData.dpf.cantidadME }}):</strong> $ {{ resumenData.dpf.totalME |
+                        number:'1.2-2' }}</span>
+                </div>
+
+                <!-- Comparativa Saldo Inicial SBS -->
+                <!-- <div
+                    style="margin-top: 10px; font-size: 0.82rem; color: #64748b; display: flex; justify-content: space-between;">
+                    <span>Saldo Inicial SBS (31/08/23):</span>
+                    <strong style="color: #334155;">S/. {{ resumenData.dpf.totalInicial | number:'1.2-2' }}</strong>
+                </div> -->
+            </div>
+
 
         </div>
 
