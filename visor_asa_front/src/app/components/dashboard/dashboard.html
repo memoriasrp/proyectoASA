@@ -11,9 +11,11 @@
 
         <!-- CABECERA DEL SIDEBAR -->
         <div class="sidebar-header">
-            <h2 class="logo-text">
-                {{ (isSidebarOpen || isMobile) ? 'FINCORE' : 'FC' }}
-            </h2>
+            <a routerLink="/dashboard/inicio" style="text-decoration: none; color: inherit;">
+                <h2 class="logo-text">
+                    {{ (isSidebarOpen || isMobile) ? 'FINCORE' : 'FC' }}
+                </h2>
+            </a>
 
             <!-- BOTÓN DE CONTROL PARA ESCRITORIO -->
 

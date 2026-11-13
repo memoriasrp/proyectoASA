@@ -29,13 +29,14 @@ import { CronogramaModule } from './vbcoop/cronograma/cronograma.module';
 import { PeriodoEstadoModule } from './init/periodo-estado/periodo-estado.module';
 import { TipogastosModule } from './configuracion/tipogastos/tipogastos.module';
 import { RegistrogastosModule } from './vbcoop/registrogastos/registrogastos.module';
+import { DashboardModule } from './resultados/dashboard/dashboard.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, AuthModule, MenusModule, TipoUsuariosModule, PermisoPantallasModule,
     SociosModule, AportacionesModule, CreditosModule, AhorrosModule, DpfModule, AsignarIdsocioModule, PeriodosModule,
     MovpasivosModule, MovactivosModule, SeguimientoModule, CarterapasivosModule, CarteraprestamosModule, CarteradpfModule,
     ObservacionesAhorroModule, ObservacionesPrestamoModule, ObservacionesAportesModule, ListaSeguimientoModule, HojaResumenModule,
-    CronogramaModule, PeriodoEstadoModule, TipogastosModule, RegistrogastosModule],
+    CronogramaModule, PeriodoEstadoModule, TipogastosModule, RegistrogastosModule, DashboardModule],
   controllers: [AppController],
   providers: [AppService],
 })

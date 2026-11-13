@@ -33,33 +33,15 @@ export class RegistroGastosService {
 
 
   registrarGasto(formData: any): Observable<any> {
-    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
-
-    // 2. Crea las cabeceras e inyecta el "Bearer <token>"
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    return this.http.post<any>(this.apiUrl, formData, { headers: headers });
+    return this.http.post<any>(this.apiUrl, formData, { headers: this.getHeaders() });
   }
 
   updateGasto(id: number, formData: any): Observable<any> {
-    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
-
-    // 2. Crea las cabeceras e inyecta el "Bearer <token>"
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
     return this.http.put(`${this.apiUrl}/${id}`, formData, { headers: this.getHeaders() });
   }
 
   deleteGasto(id: number): Observable<any> {
-    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.delete<any>(this.apiUrl + `/${id}`, { headers });
+    return this.http.delete<any>(this.apiUrl + `/${id}`, { headers: this.getHeaders() });
   }
 }
 

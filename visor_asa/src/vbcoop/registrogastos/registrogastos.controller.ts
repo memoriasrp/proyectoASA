@@ -10,17 +10,16 @@ import { CreateRegistrogastoDto } from './dto/create-registrogasto.dto';
 import { UpdateRegistrogastoDto } from './dto/update-registrogasto.dto';
 import { GetRegistroGastosFilterDto } from './dto/get-registrogastos-filter.dto';
 import { filter } from 'rxjs';
+import { Request } from 'express';
 
 @Controller('registrogastos')
 export class RegistrogastosController {
   constructor(private readonly registrogastosService: RegistrogastosService) { }
 
   @Post()
-  create(
-    @Body() body: any,
-    @Req() req: Request
-  ) {
-    const usuario = (req as any).user;
+  @UseGuards(AuthGuard('jwt'))
+  create(@Body() body: any, @Req() req: Request) {
+    const usuario = req.user as any;
     const idUsuarioReal = usuario?.id || 1;
     const createRegistrogastoDto: CreateRegistrogastoDto = {
       idsocio: body.idsocio,
